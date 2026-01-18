@@ -28,22 +28,8 @@ export default function AvatarUser() {
     return <Skeleton className="flex w-8 h-8 rounded-full" />;
   }
 
-  let NEW_USER = user;
-
-  const MOCK_USER = {
-    id: '28082000',
-    username: 'eli28',
-    email: 'elianfl28@gmail.com',
-    password: 'doifnsdf',
-    provider: 'local' as 'local' | 'google',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
-
-  NEW_USER = MOCK_USER;
-
   // Si no hay usuario, mostramos un botón de acceso limpio
-  if (!NEW_USER) {
+  if (!user) {
     return (
       <Button
         as={Link}
@@ -76,7 +62,7 @@ export default function AvatarUser() {
         <Avatar
           isBordered
           as="button"
-          className="transition-transform hover:scale-105"
+          className="cursor-pointer transition-transform hover:scale-105"
           color="secondary"
           // Usamos las iniciales del email o nombre
           name={user?.email?.substring(0, 2).toUpperCase()}

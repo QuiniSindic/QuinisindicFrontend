@@ -1,9 +1,9 @@
 'use client';
 
 import { Navbar, NavbarBrand, NavbarContent } from '@heroui/react';
+import AvatarUser from './header/AvatarUser';
 import { Brand } from './header/Brand';
-import AvatarUser from './header/NewAvatar';
-import NewDesktopNavbar from './header/desktop/NewDesktopNavbar';
+import DesktopNavbar from './header/DesktopNavbar';
 
 export default function Header() {
   return (
@@ -11,9 +11,10 @@ export default function Header() {
       maxWidth="full"
       className="h-16 bg-background/80 backdrop-blur-md border-b border-divider"
       classNames={{
-        wrapper: 'relative px-4',
+        wrapper: 'relative px-4', // 'relative' es clave para el centrado absoluto
       }}
     >
+      {/* 1. LADO IZQUIERDO (Desktop) */}
       <NavbarContent justify="start" className="gap-8">
         <NavbarBrand className="hidden md:flex text-nowrap">
           <Brand />
@@ -21,8 +22,9 @@ export default function Header() {
       </NavbarContent>
 
       <NavbarContent className="hidden md:flex gap-4" justify="start">
-        <NewDesktopNavbar />
+        <DesktopNavbar />
       </NavbarContent>
+
       <div className="md:hidden absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
         <Brand showText={false} />
       </div>

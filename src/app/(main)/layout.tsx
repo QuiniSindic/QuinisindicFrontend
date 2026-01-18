@@ -1,5 +1,5 @@
-import Footer from '@/src/components/layout/footer';
-import NewHeader from '@/src/components/layout/NewHeader';
+import Footer from '@/src/components/layout/Footer';
+import Header from '@/src/components/layout/Header';
 
 export default function MainLayout({
   children,
@@ -8,8 +8,7 @@ export default function MainLayout({
 }) {
   return (
     <div className="flex min-h-screen flex-col">
-      {/* <Header /> */}
-      <NewHeader />
+      <Header />
       <main className="flex-1 flex flex-col">{children}</main>
       <Footer />
     </div>

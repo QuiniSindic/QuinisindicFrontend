@@ -1,30 +1,30 @@
 'use client';
 
 import { MENU_ITEMS } from '@/src/utils/header.utils';
-import { NavbarMenu, NavbarMenuItem } from '@heroui/react';
+import { NavbarContent, NavbarItem } from '@heroui/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-export default function NewMobileNavbarMenu() {
+export default function DesktopNavbar() {
   const pathname = usePathname();
 
   return (
-    <NavbarMenu className="bg-background/95 backdrop-blur-md pt-8">
+    <NavbarContent className="hidden md:flex gap-6" justify="start">
       {MENU_ITEMS.map((link) => {
         const isActive = pathname === link.href;
         return (
-          <NavbarMenuItem key={link.href}>
+          <NavbarItem key={link.href} isActive={isActive}>
             <Link
               href={link.href}
-              className={`w-full py-2 text-xl font-semibold ${
-                isActive ? 'text-primary' : 'text-default-500'
+              className={`text-sm font-medium transition-opacity hover:opacity-70 ${
+                isActive ? 'text-secondary' : 'text-default-500'
               }`}
             >
               {link.label}
             </Link>
-          </NavbarMenuItem>
+          </NavbarItem>
         );
       })}
-    </NavbarMenu>
+    </NavbarContent>
   );
 }
