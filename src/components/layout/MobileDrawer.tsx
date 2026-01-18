@@ -3,7 +3,13 @@
 import { useAuth } from '@/src/hooks/useAuth';
 import { useThemeMode } from '@/src/hooks/useThemeMode';
 import { PC_HEADER_ITEMS } from '@/src/utils/header.utils';
-import { Avatar, Divider, Modal, ModalBody, ModalContent } from '@heroui/react';
+import {
+  Avatar,
+  Divider,
+  Drawer,
+  DrawerBody,
+  DrawerContent,
+} from '@heroui/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ThemeToggleButton } from '../ui/theme/ThemeToggleButton';
@@ -19,27 +25,26 @@ export function MobileDrawer({ isOpen, onOpenChange }: MobileDrawerProps) {
   const { isDark } = useThemeMode();
 
   return (
-    <Modal
+    <Drawer
       isOpen={isOpen}
       onOpenChange={onOpenChange}
       placement="bottom"
       backdrop="blur"
+      size="2xl"
       classNames={{
-        wrapper: 'items-end justify-center',
-
-        base: 'm-0 rounded-b-none rounded-t-2xl bg-background pb-safe max-h-[85vh] overflow-y-auto outline-none border-none',
-
+        base: 'rounded-t-2xl bg-background pb-safe max-h-[85vh] outline-none',
         closeButton:
-          'top-6 right-6 z-50 p-2 active:bg-default-100 rounded-full outline-none hover:bg-default-100 transition-colors',
+          'top-6 right-6 z-50 p-2 active:bg-default-100 rounded-full outline-none',
       }}
     >
-      <ModalContent>
+      <DrawerContent>
         {(onClose) => (
-          <ModalBody className="px-4 py-16 pb-8 outline-none">
-            <div className="flex flex-col gap-1 items-stretch">
+          <DrawerBody className="px-4 py-12 pb-8 outline-none relative overflow-y-auto">
+            <div className="absolute top-4 left-1/2 -translate-x-1/2 w-12 h-1 bg-default-300 rounded-full" />
+
+            <div className="flex flex-col gap-1 items-stretch mt-4">
               {PC_HEADER_ITEMS.map((item) => {
                 const isProfile = item.href === '/profile';
-
                 const isActive = pathname === item.href;
 
                 if (isProfile && user) {
@@ -57,12 +62,10 @@ export function MobileDrawer({ isOpen, onOpenChange }: MobileDrawerProps) {
                           name={user.email?.substring(0, 2).toUpperCase()}
                           size="md"
                         />
-
                         <div className="min-w-0">
                           <p className="font-semibold truncate text-foreground">
                             {user.username ?? 'Usuario'}
                           </p>
-
                           <p className="text-xs text-default-500 truncate">
                             {user.email ?? '—'}
                           </p>
@@ -90,13 +93,12 @@ export function MobileDrawer({ isOpen, onOpenChange }: MobileDrawerProps) {
                 <span className="text-sm font-medium text-default-500">
                   {isDark ? 'Modo Oscuro' : 'Modo Claro'}
                 </span>
-
                 <ThemeToggleButton />
               </div>
             </div>
-          </ModalBody>
+          </DrawerBody>
         )}
-      </ModalContent>
-    </Modal>
+      </DrawerContent>
+    </Drawer>
   );
 }
