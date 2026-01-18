@@ -3,21 +3,20 @@ import { NavbarBrand } from '@heroui/react';
 import Link from 'next/link';
 
 interface BrandProps {
-  href?: string;
-  onClick?: () => void;
+  showText?: boolean;
 }
 
-export const Brand = (props: BrandProps) => {
+export const Brand = ({ showText = true }: BrandProps) => {
   return (
-    <NavbarBrand className="flex items-center justify-start w-auto">
-      <Link href={props.href || '/'} onClick={props.onClick}>
+    <NavbarBrand className="flex items-center justify-start w-auto gap-2">
+      <Link href="/">
         <QuinisindicLogo />
       </Link>
-      <Link href="/">
-        <span className="text-lg font-bold hidden sm:inline text-foreground">
-          QuiniSindic
-        </span>
-      </Link>
+      {showText && (
+        <Link href="/">
+          <span className="text-lg font-bold text-foreground">QuiniSindic</span>
+        </Link>
+      )}
     </NavbarBrand>
   );
 };

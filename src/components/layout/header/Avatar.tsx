@@ -25,7 +25,21 @@ export const AvatarActions = () => {
     );
   }
 
-  if (!user) {
+  let NEW_USER = user;
+
+  const MOCK_USER = {
+    id: '28082000',
+    username: 'eli28',
+    email: 'elianfl28@gmail.com',
+    password: 'doifnsdf',
+    provider: 'local' as 'local' | 'google',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+
+  NEW_USER = MOCK_USER;
+
+  if (!NEW_USER) {
     return (
       <div className="flex items-center gap-3">
         <Link href="/login" aria-label="Ir a login" className="text-nowrap">
@@ -47,14 +61,14 @@ export const AvatarActions = () => {
           as="button"
           className="transition-transform cursor-pointer text-foreground-50 dark:text-foreground-900 hover:scale-105"
           color="secondary"
-          name={user.email?.substring(0, 2).toUpperCase()}
+          name={user?.email?.substring(0, 2).toUpperCase()}
           size="sm"
         />
       </DropdownTrigger>
       <DropdownMenu aria-label="Acciones de perfil" variant="flat">
         <DropdownItem key="profile" className="h-14 gap-2">
           <p className="font-semibold">Conectado como</p>
-          <p className="font-semibold">{user.email}</p>
+          <p className="font-semibold">{user?.email}</p>
         </DropdownItem>
 
         <DropdownItem key="settings">Configuración</DropdownItem>

@@ -1,6 +1,6 @@
 import { ThemeSwitcher } from '@/src/components/ui/theme/ThemeSwitcher';
-import { menuItems } from '@/src/constants/menuLinks';
 import { useAuth } from '@/src/hooks/useAuth';
+import { MENU_ITEMS } from '@/src/utils/header.utils';
 import { Button, Divider, User } from '@heroui/react';
 import Link from 'next/link';
 import { useEffect } from 'react';
@@ -96,18 +96,18 @@ export const DesktopNavbarMenu = ({
 
           {/* Enlaces */}
           <nav className="flex flex-col gap-1">
-            {menuItems.map((item) => (
+            {MENU_ITEMS.map((item) => (
               <Button
-                key={item.path}
+                key={item.href}
                 as={Link}
-                href={item.path}
+                href={item.href}
                 onPress={onClose}
                 variant="light"
                 radius="md"
                 className="justify-start h-12"
                 fullWidth
               >
-                {item.name}
+                {item.label}
               </Button>
             ))}
           </nav>

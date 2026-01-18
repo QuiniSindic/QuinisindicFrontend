@@ -1,8 +1,8 @@
 'use client';
 
 import { ThemeSwitcher } from '@/src/components/ui/theme/ThemeSwitcher';
-import { menuItems } from '@/src/constants/menuLinks';
 import { useAuth } from '@/src/hooks/useAuth';
+import { MENU_ITEMS } from '@/src/utils/header.utils';
 import { Avatar, Divider, NavbarMenu, NavbarMenuItem } from '@heroui/react';
 import Link from 'next/link';
 
@@ -15,16 +15,16 @@ export const MobileNavbarMenu = ({ onNavigate }: MobileNavbarMenuProps) => {
 
   return (
     <NavbarMenu className="flex flex-col gap-1 items-stretch px-2 py-2">
-      {menuItems.map((item) => {
-        const isProfile = item.path === '/profile';
+      {MENU_ITEMS.map((item) => {
+        const isProfile = item.href === '/profile';
 
         // Si es el item de perfil, mostramos avatar + username + email
         if (isProfile && user) {
           return (
-            <NavbarMenuItem key={item.path} className="w-full">
+            <NavbarMenuItem key={item.href} className="w-full">
               <Link
-                href={item.path}
-                onClick={() => onNavigate(item.path)}
+                href={item.href}
+                onClick={() => onNavigate(item.href)}
                 className="
                   block w-full text-foreground rounded-xl
                   hover:bg-white/10 transition
@@ -57,16 +57,16 @@ export const MobileNavbarMenu = ({ onNavigate }: MobileNavbarMenuProps) => {
 
         // normal
         return (
-          <NavbarMenuItem key={item.path} className="w-full">
+          <NavbarMenuItem key={item.href} className="w-full">
             <Link
-              href={item.path}
-              onClick={() => onNavigate(item.path)}
+              href={item.href}
+              onClick={() => onNavigate(item.href)}
               className="
                 block w-full py-2 px-2 rounded-xl
                 text-foreground hover:bg-white/10 transition
               "
             >
-              {item.name}
+              {item.label}
             </Link>
           </NavbarMenuItem>
         );
