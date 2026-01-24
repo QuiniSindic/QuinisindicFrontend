@@ -12,7 +12,7 @@ interface BottomNavProps {
 
 export const BottomNav = ({ isOpen, onOpen, pathname }: BottomNavProps) => {
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-background/80 backdrop-blur-lg border-t border-divider flex justify-around items-center z-50 pb-safe">
+    <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-background/80 backdrop-blur-lg border-t border-divider flex justify-around items-center z-50 pb-safe pointer-events-auto">
       {BOTTOM_NAV_ITEMS.map((link) => {
         const isActive = pathname === link.href;
 
@@ -38,7 +38,6 @@ export const BottomNav = ({ isOpen, onOpen, pathname }: BottomNavProps) => {
           </Link>
         );
       })}
-
       <button
         type="button"
         onClick={onOpen}
