@@ -10,9 +10,9 @@ export function MobileNavigation() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   return (
-    <div>
+    <>
       <BottomNav isOpen={isOpen} onOpen={onOpen} pathname={pathname} />
       <MobileDrawer isOpen={isOpen} onOpenChange={onOpenChange} />
-    </div>
+    </>
   );
 }

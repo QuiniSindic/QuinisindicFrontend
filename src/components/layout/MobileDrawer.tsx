@@ -3,13 +3,7 @@
 import { useAuth } from '@/src/hooks/useAuth';
 import { useThemeMode } from '@/src/hooks/useThemeMode';
 import { PC_HEADER_ITEMS } from '@/src/utils/header.utils';
-import {
-  Avatar,
-  Divider,
-  Drawer,
-  DrawerBody,
-  DrawerContent,
-} from '@heroui/react';
+import { Avatar, Divider, Modal, ModalBody, ModalContent } from '@heroui/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ThemeToggleButton } from '../ui/theme/ThemeToggleButton';
@@ -25,24 +19,43 @@ export function MobileDrawer({ isOpen, onOpenChange }: MobileDrawerProps) {
   const { isDark } = useThemeMode();
 
   return (
-    <Drawer
+    <Modal
       isOpen={isOpen}
       onOpenChange={onOpenChange}
       placement="bottom"
       backdrop="blur"
-      size="2xl"
-      className="z-9999"
+      scrollBehavior="inside"
+      motionProps={{
+        variants: {
+          enter: {
+            y: 0,
+            opacity: 1,
+            transition: {
+              duration: 0.3,
+              ease: 'easeOut',
+            },
+          },
+          exit: {
+            y: '100%',
+            opacity: 0,
+            transition: {
+              duration: 0.2,
+              ease: 'easeIn',
+            },
+          },
+        },
+      }}
       classNames={{
-        base: 'rounded-t-2xl mb-0 sm:mb-0 max-h-[85vh] bg-background outline-none',
+        base: 'rounded-t-2xl mb-0 sm:mb-0 w-full max-h-[85vh] h-auto bg-background outline-none',
         wrapper: 'items-end z-[9999]',
         backdrop: 'z-[9998]',
         closeButton:
           'top-6 right-6 z-50 p-2 active:bg-default-100 rounded-full outline-none',
       }}
     >
-      <DrawerContent>
+      <ModalContent>
         {(onClose) => (
-          <DrawerBody className="px-4 py-12 pb-8 outline-none relative overflow-y-auto">
+          <ModalBody className="px-4 py-8 pb-safe relative flex-none text-foreground">
             <div className="absolute top-4 left-1/2 -translate-x-1/2 w-12 h-1 bg-default-300 rounded-full" />
 
             <div className="flex flex-col gap-1 items-stretch mt-4">
@@ -99,9 +112,9 @@ export function MobileDrawer({ isOpen, onOpenChange }: MobileDrawerProps) {
                 <ThemeToggleButton />
               </div>
             </div>
-          </DrawerBody>
+          </ModalBody>
         )}
-      </DrawerContent>
-    </Drawer>
+      </ModalContent>
+    </Modal>
   );
 }
