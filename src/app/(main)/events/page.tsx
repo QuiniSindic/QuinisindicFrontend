@@ -1,5 +1,5 @@
+import FilterBar from '@/src/components/filters/FilterBar';
 import EventsList from '@/src/components/home/events/EventsList';
-import FilterBar from '@/src/components/results/FilterBar';
 
 export default function EventsPage() {
   return (

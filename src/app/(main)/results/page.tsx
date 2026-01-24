@@ -1,17 +1,19 @@
+import FilterBar from '@/src/components/filters/FilterBar';
 import EventsList from '@/src/components/home/events/EventsList';
-import FilterBar from '@/src/components/results/FilterBar';
 
 export default function ResultsPage() {
   return (
-    <div className="mb-4 mx-4 sm:mx-8 md:mx-8 lg:mx-12 xl:mx-12 min-h-screen">
-      <div className="container sm:max-w-none sm:p-0 sm:flex sm:gap-4 sm:w-full">
-        <main className="mt-2 sm:mt-0 sm:flex-auto">
-          <h1 className="text-2xl font-bold text-center bg-secondary text-white rounded-lg p-2 mb-4">
-            Resultados
-          </h1>
+    <div className="min-h-screen pb-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+        <div className="flex flex-col gap-6">
+          <h1 className="text-3xl font-bold text-foreground">Resultados</h1>
+
           <FilterBar mode="results" />
-          <EventsList full mode="results" />
-        </main>
+
+          <main>
+            <EventsList full mode="results" />
+          </main>
+        </div>
       </div>
     </div>
   );

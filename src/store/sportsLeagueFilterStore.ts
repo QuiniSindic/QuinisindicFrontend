@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { sportsList } from '../constants/mappers';
+import { SPORTS_LIST_ITEMS } from '../utils/sports.utils';
 
 interface SportsFilter {
   selectedSport: string | null;
@@ -34,7 +34,7 @@ export const useSportsFilter = create<SportsFilter>((set) => ({
         return { selectedLeague: null, selectedSport: null };
       }
       // Si se selecciona una liga diferente, se busca el deporte correspondiente
-      const foundSport = sportsList.find(
+      const foundSport = SPORTS_LIST_ITEMS.find(
         (sport) => league !== null && sport.leagues.includes(league),
       )?.name;
       return {

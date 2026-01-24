@@ -1,4 +1,4 @@
-import { leaguesIdMap, sportsList } from '@/src/constants/mappers';
+import { leaguesIdMap } from '@/src/constants/mappers';
 
 import dayjs from 'dayjs';
 import {
@@ -9,6 +9,7 @@ import {
   MatchStatus,
   ParsedMinute,
 } from '../types/events/events.types';
+import { SPORTS_LIST_ITEMS } from './sports.utils';
 
 export const NOT_LIVE: MatchStatus[] = ['NS', 'FT', 'Canc.'];
 export const CANCELED: MatchStatus[] = ['Canc.'];
@@ -46,7 +47,7 @@ export const concatenateAndSortEvents = ({
 export const competitionIdsForSport = (sportName?: string): Set<number> => {
   if (!sportName) return new Set<number>();
 
-  const sport = sportsList.find((s) => s.name === sportName);
+  const sport = SPORTS_LIST_ITEMS.find((s) => s.name === sportName);
   if (!sport) return new Set<number>();
 
   const ids = sport.leagues

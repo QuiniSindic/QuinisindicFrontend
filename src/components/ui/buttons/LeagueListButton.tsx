@@ -4,6 +4,7 @@ type LeagueListButtonProps = {
   onClick: () => void;
   disabled?: boolean;
   roleType?: 'tab' | 'toggle';
+  className?: string;
 };
 
 export const LeagueListButton = ({
@@ -11,12 +12,22 @@ export const LeagueListButton = ({
   isSelected,
   onClick,
   disabled = false,
-  roleType = 'tab', // suele ser un tab en listas de ligas
+  roleType = 'tab',
+  className = '',
 }: LeagueListButtonProps) => {
   const ariaProps =
     roleType === 'tab'
       ? { role: 'tab', 'aria-selected': isSelected }
       : { 'aria-pressed': isSelected };
+
+  const baseClasses =
+    'h-10 px-4 rounded-lg whitespace-nowrap text-sm font-medium snap-center transition-all duration-200 active:scale-95';
+
+  const stateClasses = isSelected
+    ? 'bg-focus text-secondary shadow-md'
+    : 'bg-secondary text-white border border-white/10 hover:bg-secondary/80';
+
+  const disabledClasses = disabled ? 'opacity-50 cursor-not-allowed' : '';
 
   return (
     <button
@@ -25,27 +36,7 @@ export const LeagueListButton = ({
       disabled={disabled}
       title={league}
       {...ariaProps}
-      className={[
-        // layout
-        'snap-center h-10 px-3 rounded-lg whitespace-nowrap text-sm font-medium',
-        // color states
-        isSelected
-          ? 'bg-focus text-secondary'
-          : 'bg-secondary text-white border border-white/10',
-        // transitions separadas
-        'transition-colors duration-300',
-        'transition-transform duration-150',
-        // hover/active (suave)
-        'sm:hover:shadow-lg sm:hover:scale-[1.02]',
-        'active:scale-[0.98] sm:active:scale-100',
-        // focus accesible
-        'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-focus/70',
-        'ring-offset-background',
-        // respeta reduced motion
-        'motion-reduce:transition-none motion-reduce:transform-none',
-        // disabled
-        disabled ? 'opacity-50 cursor-not-allowed' : '',
-      ].join(' ')}
+      className={`${baseClasses} ${stateClasses} ${disabledClasses} ${className}`}
     >
       {league}
     </button>

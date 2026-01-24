@@ -1,7 +1,8 @@
 import { LeagueListButton } from '@/src/components/ui/buttons/LeagueListButton';
 import { OptionsListButton } from '@/src/components/ui/buttons/OptionsListButton';
-import { SportListButton } from '@/src/components/ui/buttons/SportsListButton';
-import { sportsList } from '@/src/constants/mappers';
+import { SPORTS_LIST_ITEMS } from '@/src/utils/sports.utils';
+import { SportsFilter } from '../../filters/SportsFilter';
+import { CarouselScrollContainer } from '../../ui/CarouselScrollContainer';
 
 interface SportsListMobileProps {
   selectedSport: string | null;
@@ -16,39 +17,44 @@ export const SportsListMobile = ({
   toggleSport,
   handleLeagueSelect,
 }: SportsListMobileProps) => {
+  const currentSport = SPORTS_LIST_ITEMS.find(
+    (sport) => sport.name === selectedSport,
+  );
+
   return (
     <div className="block lg:hidden">
-      <div className="overflow-x-auto flex gap-3 scrollbar-hide sm:mb-2 px-1 snap-x snap-mandatory">
-        {sportsList.map((sport) => (
-          <SportListButton
-            key={sport.name}
-            sport={sport}
-            isSelected={selectedSport === sport.name}
-            onClick={() => toggleSport(sport.name)}
-          />
-        ))}
-      </div>
+      <SportsFilter
+        selectedSport={selectedSport}
+        onSelect={(sport) => {
+          if (sport) toggleSport(sport);
+        }}
+        showAllOption={false}
+      />
 
-      {selectedSport && (
-        <div className="my-2 text-center text-white rounded-lg overflow-x-auto flex gap-2 scrollbar-hide px-1 snap-x">
-          {sportsList
-            .find((s) => s.name === selectedSport)
-            ?.leagues.map((league) => (
+      {selectedSport && currentSport && (
+        <CarouselScrollContainer
+          className="animate-appearance-in"
+          contentClassName="gap-2"
+        >
+          {currentSport.leagues.map((league) => (
+            <div key={league} className="snap-center shrink-0">
               <LeagueListButton
-                key={league}
                 league={league}
                 isSelected={selectedLeague === league}
                 onClick={() => handleLeagueSelect(league)}
               />
-            ))}
-        </div>
+            </div>
+          ))}
+        </CarouselScrollContainer>
       )}
 
       {/* clasificación en mobile (+ results?) */}
       {selectedSport && selectedLeague && (
-        <div className="my-2 text-center text-foreground-50 rounded-lg overflow-x-auto flex gap-2 scrollbar-hide px-1 snap-x">
+        <CarouselScrollContainer
+          className="animate-appearance-in"
+          contentClassName="gap-2"
+        >
           <OptionsListButton
-            key="standing"
             title="Clasificación"
             isSelected={false}
             onClick={() =>
@@ -57,14 +63,13 @@ export const SportsListMobile = ({
           />
 
           <OptionsListButton
-            key="results"
             title="Resultados"
             isSelected={false}
             onClick={() =>
               window.dispatchEvent(new CustomEvent('open-results'))
             }
           />
-        </div>
+        </CarouselScrollContainer>
       )}
     </div>
   );

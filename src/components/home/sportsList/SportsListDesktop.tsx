@@ -1,4 +1,4 @@
-import { sportsList } from '@/src/constants/mappers';
+import { SPORTS_LIST_ITEMS } from '@/src/utils/sports.utils';
 
 interface SportsListDesktopProps {
   selectedSport: string | null;
@@ -20,7 +20,7 @@ export const SportsListDesktop = ({
           Deportes
         </h1>
 
-        {sportsList.map((sport) => (
+        {SPORTS_LIST_ITEMS.map((sport) => (
           <div key={sport.name} className="mb-4">
             <button
               onClick={() => toggleSport(sport.name)}

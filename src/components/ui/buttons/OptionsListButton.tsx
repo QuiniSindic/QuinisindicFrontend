@@ -45,21 +45,23 @@ export const OptionsListButton = ({
     variant === 'outline-solid' ? outlineUnselected : solidUnselected;
 
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      disabled={disabled}
-      title={title}
-      {...ariaProps}
-      className={[
-        base,
-        stateHover,
-        sizeCls,
-        isSelected ? selected : unselected,
-        disabled ? 'opacity-50 cursor-not-allowed' : '',
-      ].join(' ')}
-    >
-      {title}
-    </button>
+    <div className="snap-center shrink-0">
+      <button
+        type="button"
+        onClick={onClick}
+        disabled={disabled}
+        title={title}
+        {...ariaProps}
+        className={[
+          base,
+          stateHover,
+          sizeCls,
+          isSelected ? selected : unselected,
+          disabled ? 'opacity-50 cursor-not-allowed' : '',
+        ].join(' ')}
+      >
+        {title}
+      </button>
+    </div>
   );
 };
