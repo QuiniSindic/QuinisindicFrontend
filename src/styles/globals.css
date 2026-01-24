@@ -1,5 +1,7 @@
 @import 'tailwindcss';
 
+@source "../../node_modules/@heroui/react/dist/**/*.{js,ts,jsx,tsx}";
+
 @config "../../tailwind.config.ts";
 
 @layer base {
@@ -9,6 +11,10 @@
   ::backdrop,
   ::file-selector-button {
     border-color: var(--color-gray-200, currentcolor);
+  }
+
+  body {
+    @apply overflow-x-hidden;
   }
 }
 

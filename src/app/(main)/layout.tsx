@@ -1,5 +1,5 @@
 import Header from '@/src/components/layout/Header';
-import { MobileBottomNav } from '@/src/components/layout/MobileBottomNav';
+import { MobileNavigation } from '@/src/components/layout/MobileNavigation';
 
 export default function MainLayout({
   children,
@@ -10,7 +10,7 @@ export default function MainLayout({
     <div className="relative flex flex-col min-h-screen">
       <Header />
       <main className="grow pb-16 md:pb-0">{children}</main>
-      <MobileBottomNav />
+      <MobileNavigation />
     </div>
   );
 }

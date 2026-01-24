@@ -16,7 +16,7 @@ import { ThemeToggleButton } from '../ui/theme/ThemeToggleButton';
 
 interface MobileDrawerProps {
   isOpen: boolean;
-  onOpenChange: () => void;
+  onOpenChange: (open: boolean) => void;
 }
 
 export function MobileDrawer({ isOpen, onOpenChange }: MobileDrawerProps) {
@@ -31,8 +31,11 @@ export function MobileDrawer({ isOpen, onOpenChange }: MobileDrawerProps) {
       placement="bottom"
       backdrop="blur"
       size="2xl"
+      className="z-9999"
       classNames={{
-        base: 'rounded-t-2xl bg-background pb-safe max-h-[85vh] outline-none',
+        base: 'rounded-t-2xl mb-0 sm:mb-0 max-h-[85vh] bg-background outline-none',
+        wrapper: 'items-end z-[9999]',
+        backdrop: 'z-[9998]',
         closeButton:
           'top-6 right-6 z-50 p-2 active:bg-default-100 rounded-full outline-none',
       }}
