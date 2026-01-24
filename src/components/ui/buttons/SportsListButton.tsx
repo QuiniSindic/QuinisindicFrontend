@@ -22,8 +22,16 @@ export const SportListButton = memo(function SportListButton({
       ? { role: 'tab', 'aria-selected': isSelected }
       : { 'aria-pressed': isSelected };
 
-  const baseClasses =
-    'flex-1 snap-center h-11 px-4 rounded-lg font-semibold transition-colors duration-300 transition-transform duration-150 sm:hover:shadow-lg sm:hover:scale-[1.02] active:scale-[0.98] sm:active:scale-100 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-focus/70 ring-offset-background motion-reduce:transition-none motion-reduce:transform-none cursor-pointer';
+  const baseClasses = `flex-1 snap-center h-11 px-4
+    rounded-lg font-semibold 
+    transition-colors duration-300 
+    transition-transform duration-150 
+    sm:hover:shadow-lg sm:hover:scale-[1.02] 
+    active:scale-[0.98] sm:active:scale-100 
+    focus-visible:outline-hidden focus-visible:ring-2 
+    focus-visible:ring-offset-2 focus-visible:ring-focus/70 
+    ring-offset-background cursor-pointer
+    motion-reduce:transition-none motion-reduce:transform-none `;
 
   const colorClasses = isSelected
     ? 'bg-focus text-secondary'

@@ -20,8 +20,9 @@ export const LeagueListButton = ({
       ? { role: 'tab', 'aria-selected': isSelected }
       : { 'aria-pressed': isSelected };
 
-  const baseClasses =
-    'h-10 px-4 rounded-lg whitespace-nowrap text-sm font-medium snap-center transition-all duration-200 active:scale-95';
+  const baseClasses = `h-10 px-4 rounded-lg whitespace-nowrap 
+  text-sm font-medium snap-center 
+  transition-all duration-200 active:scale-95`;
 
   const stateClasses = isSelected
     ? 'bg-focus text-secondary shadow-md'

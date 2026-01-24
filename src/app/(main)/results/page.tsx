@@ -4,8 +4,8 @@ import EventsList from '@/src/components/home/events/EventsList';
 export default function ResultsPage() {
   return (
     <div className="min-h-screen pb-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
-        <div className="flex flex-col gap-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
+        <div className="flex flex-col gap-3">
           <h1 className="text-3xl font-bold text-foreground">Resultados</h1>
 
           <FilterBar mode="results" />
