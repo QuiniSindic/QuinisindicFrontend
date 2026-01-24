@@ -14,7 +14,7 @@ export const Brand = ({ showText = true }: BrandProps) => {
       </Link>
       {showText && (
         <Link href="/">
-          <span className="text-lg font-bold text-foreground">QuiniSindic</span>
+          <span className="text-lg font-bold text-text">QuiniSindic</span>
         </Link>
       )}
     </NavbarBrand>

@@ -9,7 +9,7 @@ export default function Header() {
   return (
     <Navbar
       maxWidth="full"
-      className="h-16 bg-background/80 backdrop-blur-md border-b border-divider"
+      className="h-16 bg-background/80 backdrop-blur-md border-b border-border"
       classNames={{
         wrapper: 'relative px-4', // 'relative' es clave para el centrado absoluto
       }}

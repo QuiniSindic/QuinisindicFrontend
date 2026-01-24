@@ -16,7 +16,7 @@ export const LeaguesFilter = ({
 }: LeaguesFilterProps) => (
   <div className="w-full animate-appearance-in">
     {showLabel && (
-      <p className="text-xs text-default-500 font-bold uppercase tracking-wider mb-2 px-1">
+      <p className="text-xs text-muted font-bold uppercase tracking-wider mb-2 px-1">
         Ligas disponibles
       </p>
     )}

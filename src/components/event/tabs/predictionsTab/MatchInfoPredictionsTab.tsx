@@ -16,12 +16,11 @@ export const MatchInfoPredictionsTab: React.FC<
 > = ({ predictions, loadingAllPreds }) => {
   if (loadingAllPreds) {
     return (
-      <div className="flex justify-center items-center py-12">
+      <div className="flex justify-center items-center py-12 text-text">
         <Spinner
           classNames={{ label: 'text-foreground mt-4' }}
           label="Cargando predicciones de usuarios..."
           variant="wave"
-          color="secondary"
         />
       </div>
     );

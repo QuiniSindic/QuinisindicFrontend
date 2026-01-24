@@ -12,6 +12,19 @@ export default function ScoreInput({
   const strValue = value === undefined || value === null ? '' : String(value);
   const isEmpty = strValue === '';
 
+  const baseCls = `
+    no-arrows w-16 h-16 rounded-2xl text-center text-2xl font-bold tabular-nums
+    transition-all duration-200 outline-none
+    focus-visible:ring-2 focus-visible:ring-ring
+    focus-visible:ring-offset-2 focus-visible:ring-offset-background
+  `;
+
+  const stateCls = disabled
+    ? 'bg-background text-muted border border-border opacity-60 cursor-not-allowed'
+    : isEmpty
+      ? 'bg-surface border border-border text-text'
+      : 'bg-brand text-brand-contrast shadow-sm';
+
   return (
     <input
       disabled={disabled}
@@ -21,18 +34,7 @@ export default function ScoreInput({
       step={1}
       value={strValue}
       onChange={(e) => onChange(e.target.value)}
-      className={`
-        no-arrows w-16 h-16 rounded-2xl text-center text-2xl font-bold tabular-nums
-        transition-all duration-200 outline-hidden
-        ${
-          disabled
-            ? 'bg-gray-200 dark:bg-gray-700 text-gray-400'
-            : isEmpty
-              ? 'bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-800 dark:text-gray-100'
-              : 'bg-secondary text-white shadow-md'
-        }
-        focus:ring-secondary/70 focus:border-secondary
-      `}
+      className={`${baseCls} ${stateCls}`}
     />
   );
 }

@@ -15,12 +15,11 @@ const UsersPredictions = ({ predictions }: UsersPredictionsProps) => {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center py-12">
+      <div className="flex justify-center items-center py-12 text-text">
         <Spinner
-          classNames={{ label: 'text-foreground mt-4' }}
+          classNames={{ label: 'text-text mt-4' }}
           label="Cargando predicciones de usuarios..."
           variant="wave"
-          color="secondary"
         />
       </div>
     );
@@ -38,12 +37,12 @@ const UsersPredictions = ({ predictions }: UsersPredictionsProps) => {
   return (
     <div
       className="
-        rounded-xl border bg-white/70 dark:bg-black/20
-        border-secondary dark:border-secondary
-        backdrop-blur-sm p-2 sm:p-3
+        rounded-xl border border-border
+        bg-surface/80 backdrop-blur-sm
+        p-2 sm:p-3
       "
     >
-      <ul className="divide-y divide-gray-200/70 dark:divide-white/10">
+      <ul className="divide-y divide-border">
         {predictions.map((prediction) => {
           const user = users[prediction.userId];
           const name = user?.username ?? 'Usuario';
@@ -54,8 +53,8 @@ const UsersPredictions = ({ predictions }: UsersPredictionsProps) => {
                 <Avatar
                   src={undefined} // TODO hacer algo con una foto de perfil
                   classNames={{
-                    base: 'bg-secondary flex items-center justify-center',
-                    icon: 'text-white',
+                    base: 'bg-brand text-brand-contrast flex items-center justify-center',
+                    icon: 'text-brand-contrast',
                   }}
                   showFallback
                   alt={user?.username}
@@ -65,7 +64,7 @@ const UsersPredictions = ({ predictions }: UsersPredictionsProps) => {
 
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center justify-between gap-3">
-                    <p className="truncate text-sm sm:text-base font-medium text-gray-900 dark:text-white">
+                    <p className="truncate text-sm sm:text-base font-medium text-text">
                       {name}
                     </p>
 
@@ -75,7 +74,7 @@ const UsersPredictions = ({ predictions }: UsersPredictionsProps) => {
                     />
                   </div>
 
-                  <p className="mt-0.5 text-xs text-gray-500 dark:text-white/60">
+                  <p className="mt-0.5 text-xs text-muted">
                     {new Date(prediction.createdAt).toLocaleString()}
                   </p>
                 </div>

@@ -21,18 +21,23 @@ export default function PredictionButton({
 
   const label = hasPrediction ? 'Actualizar predicción' : 'Guardar predicción';
 
+  const enabled = 'bg-brand text-brand-contrast hover:opacity-90';
+  const disabled = 'bg-muted text-background cursor-not-allowed';
+
   return (
     <>
       {/* Mobile: botón fijo */}
       <div className="fixed bottom-0 inset-x-0 z-40 lg:hidden mb-4">
-        <div className="px-3 pb-[env(safe-area-inset-bottom)] bg-background/80 backdrop-blur-sm border-t border-white/10">
+        <div className="px-3 pb-[env(safe-area-inset-bottom)] bg-background/80 backdrop-blur-sm border-t border-border">
           {isLoggedIn ? (
             <Button
               type="submit"
               isLoading={saving}
               disabled={!isValid || saving}
-              className={`w-full h-12 text-white font-semibold rounded-xl mt-2
-                ${!isValid ? 'bg-gray-400 cursor-not-allowed' : 'bg-secondary hover:bg-secondary/90'}`}
+              className={`
+                w-full h-12 font-semibold rounded-xl mt-2
+                ${!isValid ? enabled : disabled}
+              `}
             >
               {label}
             </Button>
@@ -51,8 +56,9 @@ export default function PredictionButton({
             type="submit"
             isLoading={saving}
             disabled={!isValid || saving}
-            className={`px-6 h-10 text-white font-medium rounded-lg
-              ${!isValid ? 'bg-gray-400 cursor-not-allowed' : 'bg-secondary hover:bg-secondary/90'}`}
+            className={`
+              px-6 h-10 font-medium rounded-lg
+              ${!isValid ? enabled : disabled}`}
           >
             {label}
           </Button>

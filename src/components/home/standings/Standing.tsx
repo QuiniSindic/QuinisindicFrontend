@@ -19,7 +19,7 @@ export default function StandingsTable({ competition }: StandingsTableProps) {
 
   if (!standing) {
     return (
-      <p className="text-center text-gray-500">
+      <p className="text-center text-muted py-4">
         Clasificación no disponible para esta liga.
       </p>
     );
@@ -27,7 +27,7 @@ export default function StandingsTable({ competition }: StandingsTableProps) {
 
   if (isLoading) {
     return (
-      <p className="text-center text-gray-500">
+      <p className="text-center text-muted py-4">
         Cargando clasificación de <strong>{competition}</strong>...
       </p>
     );
@@ -35,7 +35,7 @@ export default function StandingsTable({ competition }: StandingsTableProps) {
 
   if (isError) {
     return (
-      <p className="text-center text-red-500">
+      <p className="text-center text-red-500 py-4">
         Error: {(error as Error).message}
       </p>
     );
@@ -43,15 +43,15 @@ export default function StandingsTable({ competition }: StandingsTableProps) {
 
   if (!standing || standing.length === 0) {
     return (
-      <p className="text-center text-gray-500">
+      <p className="text-center text-muted py-4">
         Clasificación no disponible para esta liga.
       </p>
     );
   }
 
   return (
-    <table className="w-full text-[13px] sm:text-sm text-left">
-      <thead className="text-[11px] sm:text-xs uppercase bg-gray-100 dark:bg-[#1f1f1f] text-gray-600 dark:text-gray-400">
+    <table className="w-full text-[13px] sm:text-sm text-left text-text">
+      <thead className="text-[11px] sm:text-xs uppercase bg-background text-muted border-b border-border">
         <tr>
           <th className="px-2 py-2 text-center w-8">#</th>
           <th className="px-2 py-2">Equipo</th>
@@ -66,12 +66,13 @@ export default function StandingsTable({ competition }: StandingsTableProps) {
         {standing.map((team: TeamStandingData) => (
           <tr
             key={team.position}
-            className="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-[#333]"
+            className="border-b border-border hover:bg-background transition-colors"
           >
             <td className="px-2 py-1 text-center font-bold">{team.position}</td>
-            <td className="px-2 py-1 flex items-center">
+
+            <td className="px-2 py-1 flex items-center min-w-0">
               <Image
-                className="size-6 mr-2"
+                className="size-6 mr-2 shrink-0"
                 src={API_LOGO_COMPETITION_URL_LOW + team.badge}
                 alt={team.name}
                 width={24}
@@ -79,10 +80,12 @@ export default function StandingsTable({ competition }: StandingsTableProps) {
               />
               <span className="truncate">{team.name}</span>
             </td>
+
             <td className="px-2 py-1 text-center">{team.played}</td>
             <td className="px-2 py-1 text-center">{team.wins}</td>
             <td className="px-2 py-1 text-center">{team.draws}</td>
             <td className="px-2 py-1 text-center">{team.losses}</td>
+
             <td className="px-2 py-1 text-center font-semibold">
               {team.points}
             </td>

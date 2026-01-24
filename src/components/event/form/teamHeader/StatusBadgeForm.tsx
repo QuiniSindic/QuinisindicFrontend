@@ -1,6 +1,7 @@
 import { MatchData } from '@/src/types/events/events.types';
 import { formatKickoffBadge } from '@/src/utils/date.utils';
 
+//CHECK: refactor paleta de colores si es necesario
 export const StatusBadgeForm = ({ event }: { event: MatchData }) => {
   const s = event.status ?? '';
   const isNS = s === 'NS';

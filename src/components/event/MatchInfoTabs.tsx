@@ -27,7 +27,7 @@ export const MatchInfoTabs: React.FC<MatchInfoTabsProps> = ({
 
   return (
     <>
-      <div className="flex border-b mb-4">
+      <div className="flex border-border mb-4">
         <Tab
           isActive={activeTab === 'match'}
           onClick={() => setActiveTab('match')}

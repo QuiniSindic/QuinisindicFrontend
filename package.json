@@ -19,7 +19,6 @@
     "@types/bcrypt": "^5.0.2",
     "axios": "^1.7.9",
     "bcrypt": "^5.1.1",
-    "clsx": "^2.1.1",
     "cookie": "^1.0.2",
     "dayjs": "^1.11.13",
     "framer-motion": "^12.5.0",

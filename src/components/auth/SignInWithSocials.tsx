@@ -6,39 +6,34 @@ interface SignInWithSocialsProps {
   isLogin?: boolean;
 }
 
+const baseButtonClasses =
+  'flex items-center justify-center gap-4 px-6 py-3 rounded-lg border border-border ' +
+  'bg-surface text-text shadow-sm transition-colors ' +
+  'hover:bg-background focus-visible:outline-none focus-visible:ring-2 ' +
+  'focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background';
+
 const SignInWithSocials = ({ isLogin }: SignInWithSocialsProps) => {
-  return isLogin ? (
+  const googleLabel = isLogin
+    ? 'Iniciar sesión con Google'
+    : 'Registrarse con Google';
+
+  const appleLabel = isLogin
+    ? 'Iniciar sesión con Apple'
+    : 'Registrarse con Apple';
+
+  return (
     <div className="flex flex-col space-y-4 justify-center">
-      <button
-        onClick={() => handleGoogleAuth()}
-        className="flex items-center justify-center gap-4 px-6 py-3 border rounded-lg shadow-xs text-gray-700 bg-white hover:bg-gray-50"
-      >
-        <GoogleIcon className="h-6 w-6" />
-        <span>Iniciar sesión con Google</span>
+      <button onClick={() => handleGoogleAuth()} className={baseButtonClasses}>
+        <GoogleIcon className="h-6 w-6 shrink-0" />
+        <span>{googleLabel}</span>
       </button>
+
       <button
         // onClick={handleAppleSubmit}
-        className="flex items-center justify-center gap-4 px-6 py-3 border rounded-lg shadow-xs text-gray-700 bg-white hover:bg-gray-50"
+        className={baseButtonClasses}
       >
-        <AppleIcon className="h-6 w-6 text-black" />
-        <span>Iniciar sesión con Apple</span>
-      </button>
-    </div>
-  ) : (
-    <div className="flex flex-col space-y-4 justify-center">
-      <button
-        onClick={() => handleGoogleAuth()}
-        className="flex items-center justify-center gap-4 px-6 py-3 border rounded-lg shadow-xs text-gray-700 bg-white hover:bg-gray-50"
-      >
-        <GoogleIcon className="h-6 w-6" />
-        <span>Registrarse con Google</span>
-      </button>
-      <button
-        // onClick={handleAppleSubmit}
-        className="flex items-center justify-center gap-4 px-6 py-3 border rounded-lg shadow-xs text-gray-700 bg-white hover:bg-gray-50"
-      >
-        <AppleIcon className="h-6 w-6 text-black" />
-        <span>Registrarse con Apple</span>
+        <AppleIcon className="h-6 w-6 shrink-0 text-text" />
+        <span>{appleLabel}</span>
       </button>
     </div>
   );

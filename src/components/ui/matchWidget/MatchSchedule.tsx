@@ -16,6 +16,8 @@ export const MatchSchedule = ({
 }: MatchScheduleProps) => {
   const dateFormatted = formatMatchWidget(date);
 
+  const baseTextCls = 'text-muted text-sm md:text-base text-center';
+
   // regex minutos ("65'", "45+2", "90+3'", "105+1", etc.)
   const minuteMatch = event.status.match(/^(\d+)(?:\+(\d+))?'?$/);
   const isMinute = !!minuteMatch;
@@ -51,44 +53,24 @@ export const MatchSchedule = ({
   if (isLive) {
     if (isMinute) {
       return (
-        <p className="text-gray-500 dark:text-white text-sm md:text-base text-center">
+        <p className={baseTextCls}>
           {phaseLabel} {displayMinute}
         </p>
       );
     }
     switch (event.status) {
       case 'HT':
-        return (
-          <p className="text-gray-500 dark:text-white text-sm md:text-base text-center">
-            Descanso
-          </p>
-        );
+        return <p className={baseTextCls}>Descanso</p>;
       case 'Canc.':
-        return (
-          <p className="text-gray-500 dark:text-white text-sm md:text-base text-center">
-            Cancelado
-          </p>
-        );
+        return <p className={baseTextCls}>Cancelado</p>;
       default:
-        return (
-          <p className="text-gray-500 dark:text-white text-sm md:text-base text-center">
-            {dateFormatted}
-          </p>
-        );
+        return <p className={baseTextCls}>{dateFormatted}</p>;
     }
   }
 
   if (isFinished) {
-    return (
-      <p className="text-gray-500 dark:text-white text-sm md:text-base text-center">
-        Finalizado
-      </p>
-    );
+    return <p className={baseTextCls}>Finalizado</p>;
   }
 
-  return (
-    <p className="text-gray-500 dark:text-white text-sm md:text-base text-center">
-      {dateFormatted}
-    </p>
-  );
+  return <p className={baseTextCls}>{dateFormatted}</p>;
 };

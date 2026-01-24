@@ -29,7 +29,7 @@ export default function PredictionInputsContainer({
 
   if (isFT) {
     return (
-      <p className="my-6 text-gray-500 text-center">
+      <p className="my-6 text-muted text-center">
         El partido ya finalizó.
         {!hasPrediction &&
           ' No tenías ninguna predicción activa para este partido.'}
@@ -40,7 +40,7 @@ export default function PredictionInputsContainer({
 
   if (isLive && !hasPrediction) {
     return (
-      <p className="my-6 text-gray-500 text-center">
+      <p className="my-6 text-muted text-center">
         No tenías ninguna predicción activa para este partido.
       </p>
     );

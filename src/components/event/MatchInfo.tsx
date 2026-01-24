@@ -18,7 +18,7 @@ import {
   PredictionPayload,
   PredictionUpdatePayload,
 } from '@/src/types/prediction.types';
-import { Divider, Spinner } from '@heroui/react';
+import { Spinner } from '@heroui/react';
 import toast, { Toaster } from 'react-hot-toast';
 import EventNavigation from './EventNavigation';
 import { MatchInfoTabs } from './MatchInfoTabs';
@@ -97,11 +97,9 @@ const MatchInfo: React.FC<MatchInfoProps> = ({
       <>
         <EventNavigation currentId={event.id} events={events} />
         <div className="flex justify-center text-center items-center min-h-screen">
-          <Spinner
-            label="Cargando partido..."
-            variant="wave"
-            color="secondary"
-          />
+          <div className="text-text">
+            <Spinner label="Cargando partido..." variant="wave" />
+          </div>
         </div>
       </>
     );
@@ -115,7 +113,7 @@ const MatchInfo: React.FC<MatchInfoProps> = ({
         <EventNavigation currentId={event.id} events={events} />
       )}
 
-      <div className="match-info-container flex flex-col min-h-screen px-3 sm:px-4">
+      <div className="match-info-container flex flex-col min-h-screen px-3 sm:px-4 bg-background text-text">
         <NoPredictionWarn status={event.status} prediction={userPred} />
 
         <PredictionForm
@@ -130,7 +128,7 @@ const MatchInfo: React.FC<MatchInfoProps> = ({
           onSubmit={userPred ? handleUpdate : handleSave}
         />
 
-        <Divider className="my-4" />
+        <div className="my-4 h-px w-full bg-border" />
 
         <MatchInfoTabs
           event={liveEvent}

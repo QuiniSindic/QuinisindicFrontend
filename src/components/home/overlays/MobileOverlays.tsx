@@ -39,13 +39,13 @@ export function MobileOverlays() {
         {selectedLeague ? (
           <StandingsTable competition={selectedLeague} />
         ) : (
-          <p className="text-center text-gray-500">Selecciona una liga.</p>
+          <p className="text-center text-muted py-6">Selecciona una liga.</p>
         )}
       </BottomSheet>
 
       <BottomSheet open={view === 'results'} onClose={close} title="Resultados">
         {/* Reemplaza por tu lista real de resultados */}
-        <p className="text-center text-gray-500">
+        <p className="text-center text-muted py-6">
           Pronto: resultados de la liga.
         </p>
         {/* <ResultsList results={[]} league={selectedLeague} sport={selectedSport} /> pasarle deporte y liga pra pillar results dentro y asi no pillarlos en /home */}

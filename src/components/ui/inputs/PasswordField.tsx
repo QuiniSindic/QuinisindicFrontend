@@ -1,6 +1,5 @@
 'use client';
 
-import clsx from 'clsx';
 import { EyeIcon } from 'lucide-react';
 import { forwardRef, useId, useState } from 'react';
 import TextField, { TextFieldProps } from './TextField';
@@ -31,12 +30,16 @@ const PasswordField = forwardRef<HTMLInputElement, PasswordFieldProps>(
             aria-label={visible ? 'Ocultar contraseña' : 'Mostrar contraseña'}
             aria-pressed={visible}
             className="
-              grid place-items-center h-9 w-9
-              rounded-lg text-default-400 hover:text-default-500
-              focus:outline-hidden focus-visible:ring-2 focus-visible:ring-secondary
+              grid place-items-center h-9 w-9 rounded-lg
+              text-muted hover:text-text
+              focus-visible:outline-none focus-visible:ring-2
+              focus-visible:ring-ring focus-visible:ring-offset-2
+              focus-visible:ring-offset-background
             "
           >
-            <EyeIcon className={clsx('h-5 w-5', visible && 'opacity-90')} />
+            <EyeIcon
+              className={`h-5 w-5 transition-opacity ${visible ? 'opacity-90' : 'opacity-60'}`}
+            />
           </button>
         }
         {...props}

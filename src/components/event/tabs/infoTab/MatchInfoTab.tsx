@@ -25,12 +25,10 @@ export const MatchInfoTab: React.FC<MatchInfoProps> = ({ event }) => {
   if (isEmpty) {
     return (
       <div className="px-4 py-2">
-        <h1 className="text-2xl font-bold text-center mb-2">
+        <h1 className="text-2xl font-bold text-center mb-2 text-text">
           Acciones de partido
         </h1>
-        <p className="text-center text-gray-500">
-          No hay acciones registradas.
-        </p>
+        <p className="text-center text-muted">No hay acciones registradas.</p>
       </div>
     );
   }

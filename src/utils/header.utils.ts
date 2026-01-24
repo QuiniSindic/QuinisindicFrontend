@@ -21,4 +21,5 @@ export const PC_HEADER_ITEMS: HeaderMenuItem[] = [
   { label: 'Quiniela', href: '/quiniela' },
   { label: 'Ranking', href: '/leaderboard' },
   { label: 'Resultados', href: '/results' },
+  { label: 'Perfil', href: '/profile' },
 ];

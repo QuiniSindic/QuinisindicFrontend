@@ -10,11 +10,12 @@ export const PredictionScoreBadge: React.FC<PredictionScoreBadgeProps> = ({
   return (
     <span
       className="
-      inline-flex items-center justify-center rounded-full px-2.5 h-7
-      text-sm font-semibold tabular-nums
-      bg-gray-100 text-gray-800 border border-gray-200
-      dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700
-    "
+        inline-flex items-center justify-center
+        h-7 px-2.5 rounded-full
+        text-sm font-semibold tabular-nums
+        bg-surface text-text
+        border border-border
+      "
       title={`${home} - ${away}`}
     >
       {home} – {away}

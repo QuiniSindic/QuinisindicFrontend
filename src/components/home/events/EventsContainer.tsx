@@ -1,4 +1,3 @@
-// EventsContainer.tsx
 import { useSportsFilter } from '@/src/store/sportsLeagueFilterStore';
 import EventsList from './EventsList';
 
@@ -17,12 +16,12 @@ export default function EventsContainer({ isLoading }: EventsContainerProps) {
     >
       <main className="mt-2 sm:mt-0 lg:mt-0 sm:flex-auto">
         {/* mobile hasta 640px */}
-        <h2 className="text-2xl font-semibold text-foreground px-1 mb-2 sm:hidden">
+        <h2 className="text-2xl font-semibold text-text px-1 mb-2 sm:hidden">
           Eventos
         </h2>
 
         {/* large a partir de 640px */}
-        <h1 className="hidden sm:block text-2xl font-bold text-center bg-secondary text-white rounded-lg p-2 mb-4">
+        <h1 className="hidden sm:block text-2xl font-bold text-center bg-surface text-text border border-border rounded-lg p-2 mb-4">
           Eventos
         </h1>
 

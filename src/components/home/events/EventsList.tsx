@@ -77,9 +77,9 @@ export default function EventsList({
   return (
     <div className="space-y-2">
       {isLoading ? (
-        <p className="text-center text-gray-500 py-8">Cargando eventos...</p>
+        <p className="text-center text-muted py-8">Cargando eventos...</p>
       ) : displayedEvents.length === 0 ? (
-        <p className="text-center text-gray-500 py-8">
+        <p className="text-center text-muted py-8">
           No hay eventos en este momento.
         </p>
       ) : (
@@ -100,8 +100,13 @@ export default function EventsList({
             );
           })}
           {!full && filtered.length > 6 && (
-            <div className="text-center text-gray-500 py-2">
-              <Link href="/events">Ver todos los eventos</Link>
+            <div className="text-center py-2">
+              <Link
+                href="/events"
+                className="text-brand font-semibold hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded"
+              >
+                Ver todos los eventos
+              </Link>
             </div>
           )}
         </>

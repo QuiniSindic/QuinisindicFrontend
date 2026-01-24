@@ -11,7 +11,7 @@ export const DateFilterInput = ({
 }: DateFilterInputProps) => {
   return (
     <div className="flex flex-col gap-1.5">
-      <label className="text-[10px] uppercase font-bold text-white/50 ml-1">
+      <label className="text-[10px] uppercase font-bold text-muted ml-1">
         {label}
       </label>
 
@@ -20,7 +20,14 @@ export const DateFilterInput = ({
         value={value || ''}
         onChange={(e) => onChange(e.target.value)}
         // Estilos centralizados aquí
-        className="bg-default-100 text-foreground text-xs border border-default-200 rounded-lg p-2 outline-none focus:ring-1 focus:ring-focus w-full h-9 transition-all hover:border-default-300"
+        className="
+          bg-surface text-text text-xs
+          border border-border rounded-lg
+          px-2 py-1 h-9 w-full
+          outline-none transition-colors
+          hover:border-brand/40
+          focus-visible:ring-2 focus-visible:ring-ring
+          focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
         style={{ colorScheme: 'dark' }} // Mantiene el icono del calendario blanco/oscuro según el tema
       />
     </div>

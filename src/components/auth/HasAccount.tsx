@@ -5,24 +5,23 @@ interface HasAccountProps {
 }
 
 const HasAccount = ({ isLogin }: HasAccountProps) => {
-  return isLogin ? (
-    <p className="text-center text-sm text-gray-600 dark:text-gray-400">
-      ¿No tienes cuenta?{' '}
+  return (
+    <p className="text-center text-sm text-muted">
+      {isLogin ? '¿No tienes cuenta?' : '¿Ya tienes cuenta?'}{' '}
       <Link
-        href="/sign-up"
-        className="font-medium text-secondary hover:text-secondary/80 transition-colors duration-200"
+        href={isLogin ? '/sign-up' : '/login'}
+        className="
+          font-medium text-brand transition-colors duration-200
+          hover:opacity-90
+          focus-visible:outline-none
+          focus-visible:ring-2
+          focus-visible:ring-ring
+          focus-visible:ring-offset-2
+          focus-visible:ring-offset-background
+          rounded
+        "
       >
-        Regístrate aquí
-      </Link>
-    </p>
-  ) : (
-    <p className="text-center text-sm text-gray-600 dark:text-gray-400">
-      ¿Ya tienes cuenta?{' '}
-      <Link
-        href="/login"
-        className="font-medium text-secondary hover:text-secondary/80 transition-colors duration-200"
-      >
-        Inicia sesión
+        {isLogin ? 'Regístrate aquí' : 'Inicia sesión'}
       </Link>
     </p>
   );

@@ -65,16 +65,19 @@ export const DateFilterContent = ({ closeWrapper }: DateFilterContentProps) => {
       </div>
 
       {/* footer buttons */}
-      <div className="flex justify-between items-center pt-2 border-t border-white/10">
+      <div className="flex justify-between items-center pt-2 border-t border-border">
         <button
           onClick={clearDates}
-          className="text-xs text-danger hover:text-danger-400 flex items-center gap-1"
+          className="
+            text-xs text-muted flex items-center gap-1
+            hover:text-text transition-colors
+          "
         >
           <RotateCcw size={12} /> Limpiar
         </button>
         <button
           onClick={closeWrapper}
-          className="text-xs font-bold text-focus hover:underline"
+          className="text-xs font-bold text-brand hover:underline"
         >
           Listo
         </button>

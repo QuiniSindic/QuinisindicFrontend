@@ -16,9 +16,10 @@ export default function DesktopNavbar() {
           <NavbarItem key={link.href} isActive={isActive}>
             <Link
               href={link.href}
-              className={`text-sm font-medium transition-opacity hover:opacity-70 ${
-                isActive ? 'text-secondary font-bold' : 'text-default-500'
-              }`}
+              className={`
+                text-sm font-medium transition-opacity
+                hover:opacity-80 
+                ${isActive ? 'text-brand font-semibold' : 'text-text'}`}
             >
               {link.label}
             </Link>

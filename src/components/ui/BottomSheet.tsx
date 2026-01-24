@@ -25,12 +25,23 @@ export function BottomSheet({
       backdrop="opaque" // "transparent" | "blur-sm"
       // shouldBlockScroll={true} // ya viene true por defecto
       classNames={{
-        base: 'rounded-t-2xl', // esquinas superiores redondeadas
-        header: 'border-b border-black/5 dark:border-white/10',
+        base:
+          'rounded-t-2xl bg-surface text-text border border-border shadow-lg ' +
+          'focus:outline-none',
+        header: 'border-b border-border px-4 py-3',
+        body: 'px-2 pb-4',
+        backdrop: 'bg-background/80 backdrop-blur-sm', // optional but nice
+        closeButton:
+          'text-muted hover:text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface rounded-md',
       }}
     >
       <DrawerContent>
-        <DrawerHeader>{title}</DrawerHeader>
+        {title ? (
+          <DrawerHeader className="text-base font-semibold">
+            {title}
+          </DrawerHeader>
+        ) : null}
+
         <DrawerBody className="p-2">{children}</DrawerBody>
       </DrawerContent>
     </Drawer>

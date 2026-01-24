@@ -16,7 +16,10 @@ export const TeamBadgeForm = ({ team }: TeamBadgeFormProps) => {
         height={72}
         className="size-18"
       />
-      <h2 className="text-center max-w-[140px] truncate" title={team.name}>
+      <h2
+        className="text-center max-w-35 truncate font-medium text-text"
+        title={team.name}
+      >
         {team.name}
       </h2>
     </div>

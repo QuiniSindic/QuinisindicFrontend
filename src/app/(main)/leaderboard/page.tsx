@@ -1,13 +1,16 @@
 export default function Leaderboard() {
   return (
-    <div className="mb-4 mx-4 sm:mx-8 md:mx-8 lg:mx-12 xl:mx-12 min-h-screen">
-      <div className="container sm:max-w-none sm:p-0 sm:flex sm:gap-4 sm:w-full">
-        <main className="mt-2 sm:mt-0 sm:flex-auto">
-          <h1 className="text-2xl font-bold text-center bg-secondary text-white rounded-lg p-2 mb-4">
-            Leaderboard
-          </h1>
-          {/* <LeaderboardList /> */}
-        </main>
+    <div className="min-h-screen pb-12 bg-background">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
+        <div className="flex flex-col gap-3">
+          <h1 className="text-3xl font-bold text-text">Ranking</h1>
+
+          {/* <FilterBar mode="results" />
+
+          <main>
+            <LeaderboardList />
+          </main> */}
+        </div>
       </div>
     </div>
   );

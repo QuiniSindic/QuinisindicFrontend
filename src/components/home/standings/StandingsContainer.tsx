@@ -9,8 +9,8 @@ export default function StandingsContainer() {
   if (!selectedLeague) return null;
 
   return (
-    <aside className="hidden lg:block lg:w-2/5 bg-white dark:bg-quinisindic-grey rounded-lg h-fit">
-      <h1 className="text-2xl font-bold text-center bg-secondary text-white rounded-lg p-2 mb-4">
+    <aside className="hidden lg:block lg:w-2/5 bg-surface border border-border rounded-lg h-fit">
+      <h1 className="text-2xl font-bold text-center text-text border-b border-border p-2 mb-4">
         Clasificación
       </h1>
       <StandingsTable competition={selectedLeague} />

@@ -20,13 +20,18 @@ export const LeagueListButton = ({
       ? { role: 'tab', 'aria-selected': isSelected }
       : { 'aria-pressed': isSelected };
 
-  const baseClasses = `h-10 px-4 rounded-lg whitespace-nowrap 
-  text-sm font-medium snap-center 
-  transition-all duration-200 active:scale-95`;
+  const baseClasses = `
+    h-10 px-4 rounded-lg whitespace-nowrap text-sm 
+    font-medium snap-center cursor-pointer
+    transition-colors duration-200 active:scale-95
+    focus-visible:outline-none focus-visible:ring-2
+    focus-visible:ring-ring focus-visible:ring-offset-2
+    focus-visible:ring-offset-background
+  `;
 
   const stateClasses = isSelected
-    ? 'bg-focus text-secondary shadow-md'
-    : 'bg-secondary text-white border border-white/10 hover:bg-secondary/80';
+    ? 'bg-surface text-brand border border-brand shadow-sm'
+    : 'bg-surface text-text border border-border hover:bg-background';
 
   const disabledClasses = disabled ? 'opacity-50 cursor-not-allowed' : '';
 

@@ -11,10 +11,16 @@ export default {
     extend: {
       colors: {
         background: 'var(--background)',
-        foreground: 'var(--foreground)',
-        primary: 'var(--primary)',
-        secondary: 'var(--secondary)',
-        focus: 'var(--focus)',
+
+        surface: 'var(--surface)',
+        text: 'var(--text)',
+        muted: 'var(--muted)',
+        border: 'var(--border)',
+
+        brand: 'var(--brand)',
+        'brand-contrast': 'var(--brand-contrast)',
+        ring: 'var(--ring)',
+
         'quinisindic-grey': 'var(--grey-background)',
       },
     },
@@ -25,16 +31,14 @@ export default {
       themes: {
         light: {
           colors: {
-            primary: '#fff',
-            secondary: '#5502a6',
-            focus: '#00bcd4',
+            background: '#fbf6ff',
+            foreground: '#14081f',
           },
         },
         dark: {
           colors: {
-            primary: '#121212',
-            secondary: '#bb86fc',
-            focus: '#03dac5',
+            background: '#08000f',
+            foreground: '#f3ecff',
           },
         },
       },

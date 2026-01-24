@@ -71,25 +71,28 @@ export const DateFilter = () => {
   return (
     <>
       {/* --- VERSIÓN MÓVIL (Acordeón) --- */}
-      <div className="md:hidden w-full bg-secondary/50 rounded-lg border border-white/5 overflow-hidden">
+      <div className="md:hidden w-full bg-surface border border-border rounded-lg overflow-hidden">
         <button
           onClick={() => setIsMobileOpen(!isMobileOpen)}
-          className="w-full flex items-center justify-between p-3 hover:bg-white/5 transition-colors"
+          className="w-full flex items-center justify-between p-3 hover:bg-background transition-colors"
         >
-          <div className="flex items-center gap-2 text-white/90 overflow-hidden">
+          <div className="flex items-center gap-2 text-text overflow-hidden">
             <CalendarDays size={16} className="shrink-0" />
             <span className="text-sm font-semibold truncate">
               {hasActiveFilters ? summaryLabel : 'Filtrar por fecha'}
             </span>
           </div>
+
           <ChevronDown
             size={16}
-            className={`transition-transform shrink-0 ${isMobileOpen ? 'rotate-180' : ''}`}
+            className={`transition-transform shrink-0 text-muted ${
+              isMobileOpen ? 'rotate-180' : ''
+            }`}
           />
         </button>
 
         {isMobileOpen && (
-          <div className="p-3 pt-0 border-t border-white/5 ">
+          <div className="p-3 pt-0 border-t border-border">
             <DateFilterContent closeWrapper={() => setIsMobileOpen(false)} />
           </div>
         )}
@@ -105,20 +108,22 @@ export const DateFilter = () => {
           offset={10}
           classNames={{
             content:
-              'bg-[#2a0e45]/95 backdrop-blur-md border border-white/10 p-4 outline-none rounded-lg',
+              'bg-surface text-text border border-border p-4 outline-none rounded-lg shadow-lg',
           }}
         >
           <PopoverTrigger>
             <button
               className={`
-              flex items-center gap-2 h-10 px-3 rounded-lg text-sm font-medium transition-all cursor-pointer select-none
-              max-w-40 
-              ${
-                hasActiveFilters || isPopoverOpen
-                  ? 'bg-focus text-secondary shadow-md'
-                  : 'bg-secondary text-white border border-white/10 hover:bg-secondary/80'
-              }
-            `}
+                flex items-center gap-2 h-10 px-3 rounded-lg text-sm font-medium
+                transition-colors cursor-pointer select-none max-w-40
+                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
+                focus-visible:ring-offset-2 focus-visible:ring-offset-background
+                ${
+                  hasActiveFilters || isPopoverOpen
+                    ? 'bg-brand text-brand-contrast'
+                    : 'bg-surface text-text border border-border hover:bg-background'
+                }
+              `}
             >
               <CalendarDays size={16} className="shrink-0" />
 
@@ -134,12 +139,14 @@ export const DateFilter = () => {
                     e.stopPropagation();
                     clearDates();
                   }}
-                  className="shrink-0 ml-1 p-0.5 rounded-full hover:bg-black/20"
+                  className="shrink-0 ml-1 p-0.5 rounded-full hover:bg-background"
+                  aria-label="Limpiar fechas"
+                  title="Limpiar fechas"
                 >
                   <X size={12} />
                 </div>
               ) : (
-                <ChevronDown size={14} className="shrink-0 opacity-50" />
+                <ChevronDown size={14} className="shrink-0 text-muted" />
               )}
             </button>
           </PopoverTrigger>

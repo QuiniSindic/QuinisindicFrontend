@@ -30,7 +30,7 @@ export const ActionsContainer: React.FC<ActionsContainerProps> = ({
 
   return (
     <div className="px-4 py-2 lg:px-8">
-      <h2 className="text-2xl font-bold text-center mb-4">
+      <h2 className="text-2xl font-bold text-center mb-4 text-text">
         Acciones del partido
       </h2>
 

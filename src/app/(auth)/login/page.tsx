@@ -7,7 +7,6 @@ import SignInWithSocialsDivider from '@/src/components/auth/SignWithSocialsDivid
 const LoginPage = () => {
   return (
     <div className="w-full space-y-4">
-      {/* El logo se mueve al layout para que sea consistente en login y sign-up */}
       <SignInWithSocials isLogin={true} />
       <SignInWithSocialsDivider />
       <FormAuth isLogin={true} />

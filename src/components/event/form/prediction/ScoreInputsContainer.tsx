@@ -25,7 +25,7 @@ export const ScoreInputsContainer = ({
           onChange={(v) => setValue('home', clamp(v))}
           disabled={disabled}
         />
-        <span className="mt-2 text-sm opacity-80">Local</span>
+        <span className="mt-2 text-sm text-muted">Local</span>
       </div>
 
       <div className="flex flex-col items-center">
@@ -34,7 +34,7 @@ export const ScoreInputsContainer = ({
           onChange={(v) => setValue('away', clamp(v))}
           disabled={disabled}
         />
-        <span className="mt-2 text-sm opacity-80">Visitante</span>
+        <span className="mt-2 text-sm text-muted">Visitante</span>
       </div>
     </div>
   );

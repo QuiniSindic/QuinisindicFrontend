@@ -21,10 +21,11 @@ export default function EventTeamsData({
     <>
       {/* Vista para PC (pantallas grandes) */}
       <div className="hidden sm:grid grid-cols-[1fr_40px_80px_40px_1fr] items-center mt-4">
-        <span className="text-base font-medium text-right mt-2">
+        <span className="text-base font-medium text-right mt-2 text-text">
           {/* TODO: fix el name */}
           {event.homeTeam.name}
         </span>
+
         <Image
           src={
             `${API_LOGO_COMPETITION_URL}${event.homeTeam.img as string}` ||
@@ -35,7 +36,10 @@ export default function EventTeamsData({
           height={28}
           className="justify-self-end"
         />
-        <div className="text-center">
+
+        <div
+          className={`text-center text-sm md:text-base ${showScore ? 'text-text font-semibold' : 'text-muted font-medium'}`}
+        >
           {/* TODO: fix la manera en que el back deveuelve el resultado */}
           {/* {showScore ? `${event.home_score} - ${event.away_score}` : 'vs'} */}
           {showScore ? `${event.result}` : 'vs'}
@@ -50,7 +54,7 @@ export default function EventTeamsData({
           height={28}
           className=" justify-self-start"
         />
-        <span className="text-base font-medium text-left mt-2">
+        <span className="text-base font-medium text-left mt-2 text-text">
           {event.awayTeam.name}
         </span>
       </div>
@@ -68,8 +72,12 @@ export default function EventTeamsData({
           height={20}
           // className="w-6 h-6"
         />
-        <span className="text-sm font-medium">{event.homeTeam.name}</span>
-        <span className="text-sm font-medium text-right">
+
+        <span className="text-sm font-medium text-text truncate">
+          {event.homeTeam.name}
+        </span>
+
+        <span className="text-sm font-semibold text-right text-text">
           {/* TODO: fix la manera en que el back deveuelve el resultado */}
           {showScore ? homeScore : ''}
         </span>
@@ -85,8 +93,11 @@ export default function EventTeamsData({
           height={20}
           // className="w-6 h-6"
         />
-        <span className="text-sm font-medium">{event.awayTeam.name}</span>
-        <span className="text-sm font-medium text-right">
+        <span className="text-sm font-medium text-text truncate">
+          {event.awayTeam.name}
+        </span>
+
+        <span className="text-sm font-semibold text-right text-text">
           {/* TODO: fix la manera en que el back deveuelve el resultado */}
           {showScore ? awayScore : ''}
         </span>

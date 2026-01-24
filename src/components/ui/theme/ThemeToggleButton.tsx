@@ -9,7 +9,12 @@ export function ThemeToggleButton() {
 
   if (!mounted) {
     return (
-      <Button isIconOnly variant="light" radius="full" className="opacity-0">
+      <Button
+        isIconOnly
+        variant="light"
+        radius="full"
+        className="opacity-0 pointer-events-none"
+      >
         <div className="w-5 h-5" />
       </Button>
     );
@@ -22,12 +27,12 @@ export function ThemeToggleButton() {
       radius="full"
       aria-label="Toggle theme"
       onPress={toggleTheme}
-      className="outline-none text-default-500 hover:bg-gray-200/50 dark:hover:bg-quinisindic-grey/50"
+      className="outline-none bg-surface text-muted"
     >
       {isDark ? (
-        <Sun size={20} className="transition-all" />
+        <Sun size={20} className="transition-transform" />
       ) : (
-        <Moon size={20} className="transition-all" />
+        <Moon size={20} className="transition-transform" />
       )}
     </Button>
   );

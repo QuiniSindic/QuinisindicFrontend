@@ -23,7 +23,7 @@ export const MatchInfoOddsTab: React.FC<MatchInfoOddsTabProps> = ({
 
   if (loadingAllOdds) {
     return (
-      <div className="flex items-center justify-center py-12">
+      <div className="flex items-center justify-center py-12 text-text">
         <Spinner />
       </div>
     );
@@ -47,13 +47,7 @@ export const MatchInfoOddsTab: React.FC<MatchInfoOddsTabProps> = ({
   ).key;
 
   return (
-    <div
-      className="
-      rounded-xl border bg-white/70 dark:bg-black/20
-      border-gray-200/70 dark:border-white/10
-      backdrop-blur-sm p-4 sm:p-6 shadow-xs
-    "
-    >
+    <div className="rounded-xl border border-border bg-surface/80 backdrop-blur-sm p-4 sm:p-6 shadow-sm">
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         {entries.map(({ label, odd, key }) => {
           const isFavourite = key === favouriteKey;
@@ -61,28 +55,26 @@ export const MatchInfoOddsTab: React.FC<MatchInfoOddsTabProps> = ({
           return (
             <div
               key={key}
-              className={[
-                // Card base (light/dark neutra)
-                'group rounded-lg p-4 transition',
-                'border bg-white/80 dark:bg-black/30',
-                'border-gray-200 dark:border-white/10',
-                // Hover/focus
-                'hover:bg-white dark:hover:bg-black/40 hover:border-gray-300 dark:hover:border-white/20',
-                'focus-within:ring-2 focus-within:ring-secondary/40',
-                isFavourite ? 'ring-1 ring-secondary dark:ring-secondary' : '',
-              ].join(' ')}
+              className={`
+                group rounded-lg p-4 transition
+                border border-border bg-surface
+                hover:bg-background
+                focus-within:ring-2 focus-within:ring-ring
+                focus-within:ring-offset-2 focus-within:ring-offset-background
+                ${isFavourite ? 'border-brand/30 bg-brand/10' : ''}
+              `}
             >
               <div className="mb-1.5 flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-900 dark:text-white/90 truncate">
+                <span className="text-sm font-medium text-text truncate">
                   {label}
                 </span>
 
                 {isFavourite && (
                   <span
                     className="
-                      rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide
-                      bg-secondary text-primary
-                      dark:bg-secondary dark:text-white
+                      rounded-full px-2 py-0.5 text-[10px]
+                      font-semibold uppercase tracking-wide
+                      bg-brand text-brand-contrast
                     "
                   >
                     Favorito
@@ -91,7 +83,7 @@ export const MatchInfoOddsTab: React.FC<MatchInfoOddsTabProps> = ({
               </div>
 
               <div className="flex items-baseline gap-2">
-                <span className="text-2xl font-bold leading-none tabular-nums text-gray-900 dark:text-white">
+                <span className="text-2xl font-bold leading-none tabular-nums text-text">
                   {formatOdd(odd)}
                 </span>
               </div>

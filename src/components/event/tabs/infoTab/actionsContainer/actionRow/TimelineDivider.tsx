@@ -16,13 +16,13 @@ export const TimelineDivider: React.FC<TimelineDividerProps> = ({
 }) => {
   const Line = (
     <div className="flex items-center my-4">
-      <div className="grow border-t border-gray-300 dark:border-gray-700" />
+      <div className="grow h-px bg-border" />
       {title && (
-        <span className="mx-2 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+        <span className="mx-2 text-xs font-semibold uppercase tracking-wide text-muted">
           {title}
         </span>
       )}
-      <div className="grow border-t border-gray-300 dark:border-gray-700" />
+      <div className="grow h-px bg-border" />
     </div>
   );
 
