@@ -53,7 +53,7 @@ export const DateFilter = () => {
   // Helper para acortar el texto de la fecha (DD/MM) y ahorrar espacio
   const formatDateShort = (dateStr: string) => {
     if (!dateStr) return '';
-    const [y, m, d] = dateStr.split('-');
+    const [_, m, d] = dateStr.split('-');
     return `${d}/${m}`;
   };
 
