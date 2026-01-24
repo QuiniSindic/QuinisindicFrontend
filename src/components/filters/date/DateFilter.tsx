@@ -89,7 +89,7 @@ export const DateFilter = () => {
         </button>
 
         {isMobileOpen && (
-          <div className="p-3 pt-0 border-t border-white/5 mt-2">
+          <div className="p-3 pt-0 border-t border-white/5 ">
             <DateFilterContent closeWrapper={() => setIsMobileOpen(false)} />
           </div>
         )}

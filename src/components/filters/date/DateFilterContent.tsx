@@ -25,7 +25,7 @@ export const DateFilterContent = ({ closeWrapper }: DateFilterContentProps) => {
 
   return (
     <div className="flex flex-col gap-4 w-full md:w-[320px]">
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-3 mt-2">
         <DateFilterInput
           label="Desde"
           value={selectedFrom}
