@@ -1,6 +1,7 @@
 'use client';
 
 import { Drawer, DrawerBody, DrawerContent, DrawerHeader } from '@heroui/react';
+import { X } from 'lucide-react';
 
 type BottomSheetProps = {
   open: boolean;
@@ -22,25 +23,35 @@ export function BottomSheet({
       onClose={onClose}
       placement="bottom"
       size="3xl" // o full
+      hideCloseButton
       backdrop="opaque" // "transparent" | "blur-sm"
-      // shouldBlockScroll={true} // ya viene true por defecto
       classNames={{
-        base:
-          'rounded-t-2xl bg-surface text-text border border-border shadow-lg ' +
-          'focus:outline-none',
-        header: 'border-b border-border px-4 py-3',
-        body: 'px-2 pb-4',
-        backdrop: 'bg-background/80 backdrop-blur-sm', // optional but nice
-        closeButton:
-          'text-muted hover:text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface rounded-md',
+        base: 'rounded-t-2xl bg-surface text-text border border-border shadow-lg focus:outline-none',
+        body: 'px-2 pb-4 relative',
+        backdrop: 'bg-background/80 backdrop-blur-sm',
       }}
     >
       <DrawerContent>
-        {title ? (
-          <DrawerHeader className="text-base font-semibold">
-            {title}
-          </DrawerHeader>
-        ) : null}
+        <DrawerHeader className="flex items-center justify-between border-b border-border px-4 py-3 shrink-0">
+          <div className="text-base font-semibold truncate pr-4">
+            {title ? (
+              title
+            ) : (
+              // Un placeholder invisible para mantener la altura si no hay título
+              <span className="invisible">&nbsp;</span>
+            )}
+          </div>
+
+          <button
+            onClick={onClose}
+            // Estilos similares a tus otros botones (puedes ajustarlos)
+            className="shrink-0 p-1.5 text-muted hover:text-text bg-transparent hover:bg-white/10 rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-focus"
+            aria-label="Cerrar"
+            type="button"
+          >
+            <X size={20} />
+          </button>
+        </DrawerHeader>
 
         <DrawerBody className="p-2">{children}</DrawerBody>
       </DrawerContent>

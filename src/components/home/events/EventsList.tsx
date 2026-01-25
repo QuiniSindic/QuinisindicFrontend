@@ -2,38 +2,37 @@
 
 import MatchWidget from '@/src/components/ui/matchWidget/MatchWidget';
 import { leaguesIdMap } from '@/src/constants/mappers';
-import { useMatchesStore } from '@/src/store/matchesStore';
-import { useResultsStore } from '@/src/store/resultsStore';
 import { useSportsFilter } from '@/src/store/sportsLeagueFilterStore';
-import { parseKickoff } from '@/src/utils/date.utils';
+import { MatchData } from '@/src/types/events/events.types';
 import {
   competitionIdsForSport,
   isFinished,
   isLive,
 } from '@/src/utils/events.utils';
+import dayjs from 'dayjs';
 import Link from 'next/link';
 
 interface EventsListProps {
   full?: boolean;
   isLoading?: boolean;
   mode?: 'events' | 'results';
+  data: MatchData[];
 }
 
 export default function EventsList({
   full = false,
   isLoading = false,
   mode = 'events',
+  data = [],
 }: EventsListProps) {
-  const { events } = useMatchesStore();
-  const { results } = useResultsStore();
   const { selectedSport, selectedLeague, selectedFrom, selectedTo } =
     useSportsFilter();
 
   const base =
     mode === 'results'
-      ? results
-      : Array.isArray(events)
-        ? events.filter((e) => e && !isFinished(e.status))
+      ? data
+      : Array.isArray(data)
+        ? data.filter((event) => event && !isFinished(event.status))
         : [];
 
   const leagueId = selectedLeague ? leaguesIdMap[selectedLeague] : undefined;
@@ -46,29 +45,20 @@ export default function EventsList({
     const sportIds = competitionIdsForSport(selectedSport);
     filtered = base.filter((event) => sportIds.has(event.competitionid));
   }
-
   if (mode === 'results' && (selectedFrom || selectedTo)) {
     filtered = filtered.filter((event) => {
-      const d = parseKickoff(event.kickoff); // Date
+      const eventDate = dayjs(event.kickoff);
 
-      if (!d) return null;
+      if (!eventDate.isValid()) return false;
 
-      if (Number.isNaN(d.getTime())) return false;
-
-      const y = d.getFullYear();
-      const m = d.getMonth();
-      const day = d.getDate();
-      const start = new Date(y, m, day, 0, 0, 0);
-      const end = new Date(y, m, day, 23, 59, 59);
-
-      const fromOk = selectedFrom
-        ? end >= new Date(`${selectedFrom}T00:00:00`)
+      const isAfterFrom = selectedFrom
+        ? !eventDate.isBefore(selectedFrom, 'day')
         : true;
-      const toOk = selectedTo
-        ? start <= new Date(`${selectedTo}T23:59:59`)
+      const isBeforeTo = selectedTo
+        ? !eventDate.isAfter(selectedTo, 'day')
         : true;
 
-      return fromOk && toOk;
+      return isAfterFrom && isBeforeTo;
     });
   }
 
