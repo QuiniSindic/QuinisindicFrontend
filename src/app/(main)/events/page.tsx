@@ -1,7 +1,12 @@
+'use client';
+
 import FilterBar from '@/src/components/filters/FilterBar';
 import EventsList from '@/src/components/home/events/EventsList';
+import { useFilteredEvents } from '@/src/hooks/useHomeData';
 
 export default function EventsPage() {
+  const { events, isLoading } = useFilteredEvents();
+
   return (
     <div className="min-h-screen pb-12 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
@@ -11,7 +16,12 @@ export default function EventsPage() {
           <FilterBar mode="events" />
 
           <main>
-            <EventsList full mode="events" />
+            <EventsList
+              data={events}
+              isLoading={isLoading}
+              full
+              mode="events"
+            />
           </main>
         </div>
       </div>
