@@ -1,4 +1,4 @@
-import { MatchData } from '@/src/types/events/events.types';
+import { MatchData } from '@/types/events/events.types';
 
 interface NoPredictionWarnProps {
   status: MatchData['status'];

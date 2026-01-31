@@ -1,11 +1,11 @@
-import { getMe } from '@/src/services/auth.service';
+import { getMeV2 } from '@/services/auth.service';
 import { useQuery } from '@tanstack/react-query';
 
 export const useAuth = () => {
   return useQuery({
     queryKey: ['user'],
     queryFn: async () => {
-      const response = await getMe();
+      const response = await getMeV2();
 
       if (!response.ok) {
         console.error('Error al obtener el usuario:', response.error);

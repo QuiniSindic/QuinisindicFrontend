@@ -1,10 +1,10 @@
-import { SPORTS_LIST_ITEMS } from '@/src/utils/sports.utils';
+import { LeagueName, SportName, SPORTS_LIST_ITEMS } from '@/utils/sports.utils';
 
 interface SportsListDesktopProps {
-  selectedSport: string | null;
-  selectedLeague: string | null;
-  toggleSport: (sport: string) => void;
-  handleLeagueSelect: (league: string) => void;
+  selectedSport: SportName | null;
+  selectedLeague: LeagueName | null;
+  toggleSport: (sport: SportName) => void;
+  handleLeagueSelect: (league: LeagueName) => void;
 }
 
 export const SportsListDesktop = ({

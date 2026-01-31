@@ -1,10 +1,10 @@
-import { SportListButton } from '@/src/components/ui/buttons/SportsListButton';
-import { SPORTS_LIST_ITEMS } from '@/src/utils/sports.utils';
+import { SportListButton } from '@/components/ui/buttons/SportsListButton';
+import { SportName, SPORTS_LIST_ITEMS } from '@/utils/sports.utils';
 import { CarouselScrollContainer } from '../ui/CarouselScrollContainer';
 
 interface SportsFilterProps {
-  selectedSport: string | null;
-  onSelect: (sport: string | null) => void;
+  selectedSport: SportName | null;
+  onSelect: (sport: SportName | null) => void;
   showAllOption?: boolean;
 }
 

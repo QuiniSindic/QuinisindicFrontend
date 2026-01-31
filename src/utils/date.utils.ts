@@ -1,94 +1,53 @@
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import 'dayjs/locale/es';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
 
-// REMOVE solo se utiliza en quiniela
-export function formattedDate(eventDate: Date): string {
-  return eventDate
-    .toLocaleDateString('es-ES', {
-      weekday: 'long',
-      day: '2-digit',
-      month: '2-digit',
-    })
-    .replace(',', '')
-    .replace(' de', '/')
-    .replace(/^\w/, (c) => c.toUpperCase());
-}
+dayjs.extend(customParseFormat);
 
 export function formatMatchWidget(dateStr: string): string {
-  // regex HH:mm DD/MM/YYYY
-  const m = dateStr.match(/^(\d{2}):(\d{2}) (\d{2})\/(\d{2})\/(\d{4})$/);
-  let djs;
-  if (m) {
-    const [, hh, mm, dd, MM, yyyy] = m.map(Number);
-    // date obj
-    const dateObj = new Date(yyyy, MM - 1, dd, hh, mm);
-    // conversion
-    djs = dayjs(dateObj);
-  } else {
-    // fallback si no cuadra el formato
-    djs = dayjs(dateStr);
-  }
+  const djs = dayjs(dateStr, 'HH:mm DD/MM/YYYY', 'es', true).isValid()
+    ? dayjs(dateStr, 'HH:mm DD/MM/YYYY')
+    : dayjs(dateStr);
 
-  // formato final -> "Domingo 24 de Agosto a las 17:30h"
-  return (
-    djs
-      .locale('es')
-      .format('dddd DD [de] MMMM [a las] HH:mm[h]')
-      // capitalizo día y mes
-      .replace(/^./, (c) => c.toUpperCase())
-      .replace(
-        / de ([a-záéíóúñü]+)/,
-        (_, m) => ' de ' + m.charAt(0).toUpperCase() + m.slice(1),
-      )
-  );
+  const formatted = djs
+    .locale('es')
+    .format('dddd DD [de] MMMM [a las] HH:mm[h]');
+
+  // Corregido: Capitaliza la primera letra de la frase y
+  // la primera letra que va DESPUÉS de " de "
+  return formatted
+    .replace(/^\w/, (c) => c.toUpperCase()) // Primera letra (Domingo)
+    .replace(/ de (\w)/g, (match, p1) => ` de ${p1.toUpperCase()}`); // Letra tras " de " (Febrero)
 }
 
-export const parseKickoff = (kickoff?: string | Date | number): Date | null => {
+export const parseKickoff = (
+  kickoff?: string | number | Dayjs,
+): Dayjs | null => {
   if (kickoff === null || kickoff === undefined) return null;
 
-  // checks para parsear guay
-  if (kickoff instanceof Date) {
-    return isNaN(kickoff.getTime()) ? null : kickoff;
+  let d: Dayjs;
+
+  // 1. Si ya es un objeto Dayjs
+  if (dayjs.isDayjs(kickoff)) {
+    d = kickoff;
   }
-  if (typeof kickoff === 'number') {
-    const d = new Date(kickoff);
-    return isNaN(d.getTime()) ? null : d;
+  // 2. Si es un formato específico 'HH:mm DD/MM/YYYY'
+  else if (
+    typeof kickoff === 'string' &&
+    /^\d{2}:\d{2} \d{2}\/\d{2}\/\d{4}$/.test(kickoff.trim())
+  ) {
+    d = dayjs(kickoff.trim(), 'HH:mm DD/MM/YYYY');
   }
-
-  const s = String(kickoff).trim();
-  if (!s) return null;
-
-  if (s.includes('T')) {
-    const d = new Date(s);
-    return isNaN(d.getTime()) ? null : d;
-  }
-
-  // Formato 'HH:mm DD/MM/YYYY'
-  const parts = s.split(' ');
-  if (parts.length === 2) {
-    const [time, date] = parts;
-    const [hour, minute] = time.split(':').map(Number);
-    const [day, month, year] = date.split('/').map(Number);
-
-    if (
-      Number.isFinite(hour) &&
-      Number.isFinite(minute) &&
-      Number.isFinite(day) &&
-      Number.isFinite(month) &&
-      Number.isFinite(year)
-    ) {
-      const d = new Date(year, month - 1, day, hour, minute, 0);
-      return isNaN(d.getTime()) ? null : d;
-    }
+  // 3. Fallback para ISO strings, números (timestamps) o Date nativo
+  else {
+    d = dayjs(kickoff);
   }
 
-  // por si falla
-  const d = new Date(s);
-  return isNaN(d.getTime()) ? null : d;
+  return d.isValid() ? d : null;
 };
 
 export function formatKickoffBadge(
-  kickoff?: string | Date | number,
+  kickoff?: string | Dayjs | number,
 ): string | null {
   const d = parseKickoff(kickoff);
   if (!d) return null;

@@ -1,7 +1,7 @@
 'use client';
 
-import { useAuth } from '@/src/hooks/useAuth';
-import { logout } from '@/src/services/auth.service';
+import { useAuth } from '@/hooks/useAuth';
+import { logout } from '@/services/auth.service';
 import {
   Avatar,
   Button,

@@ -1,6 +1,6 @@
 'use client';
 
-import { useSportsFilter } from '@/src/store/sportsLeagueFilterStore';
+import { useSportsFilter } from '@/store/sportsLeagueFilterStore';
 import StandingsTable from './Standing';
 
 export default function StandingsContainer() {

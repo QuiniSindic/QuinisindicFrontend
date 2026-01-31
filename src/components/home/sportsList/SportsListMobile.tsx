@@ -1,14 +1,14 @@
-import { LeagueListButton } from '@/src/components/ui/buttons/LeagueListButton';
-import { OptionsListButton } from '@/src/components/ui/buttons/OptionsListButton';
-import { SPORTS_LIST_ITEMS } from '@/src/utils/sports.utils';
+import { LeagueListButton } from '@/components/ui/buttons/LeagueListButton';
+import { OptionsListButton } from '@/components/ui/buttons/OptionsListButton';
+import { LeagueName, SportName, SPORTS_LIST_ITEMS } from '@/utils/sports.utils';
 import { SportsFilter } from '../../filters/SportsFilter';
 import { CarouselScrollContainer } from '../../ui/CarouselScrollContainer';
 
 interface SportsListMobileProps {
-  selectedSport: string | null;
-  selectedLeague: string | null;
-  toggleSport: (sport: string) => void;
-  handleLeagueSelect: (league: string) => void;
+  selectedSport: SportName | null;
+  selectedLeague: LeagueName | null;
+  toggleSport: (sport: SportName) => void;
+  handleLeagueSelect: (league: LeagueName) => void;
 }
 
 export const SportsListMobile = ({

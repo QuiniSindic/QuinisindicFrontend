@@ -1,4 +1,4 @@
-import { handleGoogleAuth } from '@/src/services/auth.service';
+import { handleGoogleAuth } from '@/services/auth.service';
 import AppleIcon from '../ui/icons/AppleIcon';
 import GoogleIcon from '../ui/icons/GoogleIcon';
 

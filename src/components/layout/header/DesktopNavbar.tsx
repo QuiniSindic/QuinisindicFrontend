@@ -1,6 +1,6 @@
 'use client';
 
-import { PC_HEADER_ITEMS } from '@/src/utils/header.utils';
+import { PC_HEADER_ITEMS } from '@/utils/header.utils';
 import { NavbarContent, NavbarItem } from '@heroui/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';

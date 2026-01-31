@@ -1,6 +1,6 @@
 'use client';
 
-import { useSportsFilter } from '@/src/store/sportsLeagueFilterStore';
+import { useSportsFilter } from '@/store/sportsLeagueFilterStore';
 import { Popover, PopoverContent, PopoverTrigger } from '@heroui/react';
 import { CalendarDays, ChevronDown, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';

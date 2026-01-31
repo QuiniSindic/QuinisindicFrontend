@@ -1,7 +1,7 @@
 'use client';
 
-import { NoDataToDisplay } from '@/src/components/ui/feedback/NoDataToDisplay';
-import { Prediction } from '@/src/types/database/table.types';
+import { NoDataToDisplay } from '@/components/ui/feedback/NoDataToDisplay';
+import { Prediction } from '@/types/database/table.types';
 import { Spinner } from '@heroui/react';
 import React from 'react';
 import UsersPredictions from './UserPredictions';

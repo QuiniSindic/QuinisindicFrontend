@@ -1,5 +1,6 @@
 'use client';
-import { useSportsFilter } from '@/src/store/sportsLeagueFilterStore';
+import { useSportsFilter } from '@/store/sportsLeagueFilterStore';
+import { LeagueName, SportName } from '@/utils/sports.utils';
 import { SportsListDesktop } from './SportsListDesktop';
 import { SportsListMobile } from './SportsListMobile';
 
@@ -7,11 +8,11 @@ export default function SportsList() {
   const { selectedSport, setSelectedSport, selectedLeague, setSelectedLeague } =
     useSportsFilter();
 
-  const handleLeagueSelect = (league: string) => {
+  const handleLeagueSelect = (league: LeagueName) => {
     setSelectedLeague(league);
   };
 
-  const toggleSport = (sport: string) => {
+  const toggleSport = (sport: SportName) => {
     setSelectedSport(sport);
   };
 

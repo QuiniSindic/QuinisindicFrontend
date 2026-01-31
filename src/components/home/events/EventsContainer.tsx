@@ -1,5 +1,5 @@
-import { useSportsFilter } from '@/src/store/sportsLeagueFilterStore';
-import { MatchData } from '@/src/types/events/events.types';
+import { useSportsFilter } from '@/store/sportsLeagueFilterStore';
+import { MatchData } from '@/types/events/events.types';
 import EventsList from './EventsList';
 
 interface EventsContainerProps {

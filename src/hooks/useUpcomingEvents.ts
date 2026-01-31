@@ -1,18 +1,27 @@
-import {
-  getLive,
-  getMatchData,
-  getResults,
-  getUpcoming,
-} from '@/src/services/matches.service';
+import { getLive, getResults } from '@/services/matches.service';
+import { getLiveMatches, getMatchDataV2 } from '@/services/new_matches.service';
 import { useQuery } from '@tanstack/react-query';
 
-export const useUpcomingEventsQuery = (
-  sport?: string,
+// export const useUpcomingEventsQuery = (
+//   sport?: string,
+//   competitionId?: number,
+// ) => {
+//   return useQuery({
+//     queryKey: ['events', sport, competitionId],
+//     queryFn: () => getUpcoming(sport, competitionId),
+//     refetchOnMount: false,
+//     refetchOnWindowFocus: false,
+//     staleTime: 1000 * 60 * 5, // 5 minutos
+//   });
+// };
+
+export const useUpcomingEventsQueryV2 = (
+  sport?: number,
   competitionId?: number,
 ) => {
   return useQuery({
     queryKey: ['events', sport, competitionId],
-    queryFn: () => getUpcoming(sport, competitionId),
+    queryFn: () => getLiveMatches(sport, competitionId),
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     staleTime: 1000 * 60 * 5, // 5 minutos
@@ -46,10 +55,22 @@ export const useResultsEventsQuery = (
   });
 };
 
-export const useGetMatchQuery = (matchId: number) => {
+// export const useGetMatchQuery = (matchId: number) => {
+//   return useQuery({
+//     queryKey: ['event', matchId],
+//     queryFn: () => getMatchData(matchId),
+//     enabled: Boolean(matchId),
+//     refetchOnMount: 'always',
+//     refetchOnWindowFocus: false,
+//     refetchInterval: 1000 * 30, // 30 segundos
+//     staleTime: 0,
+//   });
+// };
+
+export const useGetMatchQueryV2 = (matchId: number) => {
   return useQuery({
     queryKey: ['event', matchId],
-    queryFn: () => getMatchData(matchId),
+    queryFn: () => getMatchDataV2(matchId),
     enabled: Boolean(matchId),
     refetchOnMount: 'always',
     refetchOnWindowFocus: false,

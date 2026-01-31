@@ -1,6 +1,6 @@
 'use client';
-import { MatchData, MatchEvent } from '@/src/types/events/events.types';
-import { parseMinute } from '@/src/utils/events.utils';
+import { MatchData, MatchEvent } from '@/types/events/events.types';
+import { parseMinute } from '@/utils/events.utils';
 import React from 'react';
 import { EventIcons } from '../../EventIcons';
 import { ActionData } from './ActionData';

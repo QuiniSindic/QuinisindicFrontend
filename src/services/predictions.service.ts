@@ -1,10 +1,11 @@
-import { BACKEND_URL } from '@/core/config';
-import { Prediction } from '@/src/types/database/table.types';
+import { Prediction } from '@/types/database/table.types';
 import {
   PredictionPayload,
   PredictionUpdatePayload,
-} from '@/src/types/prediction.types';
-import { IResponse } from '@/src/types/response.types';
+} from '@/types/prediction.types';
+import { IResponse } from '@/types/response.types';
+import { createClient } from '@/utils/supabase/client';
+import { BACKEND_URL } from 'core/config';
 
 export async function getEventPredictions(
   eventId: number,
@@ -92,4 +93,99 @@ export async function getUserMatchPrediction(eventId: number) {
   }
 
   return result.data;
+}
+
+//________SUPABASE
+
+export async function getEventPredictionsV2(
+  eventId: number,
+): Promise<Prediction[]> {
+  const supabase = createClient();
+
+  const { data, error } = await supabase
+    .from('predictions')
+    .select('*')
+    .eq('match_id', eventId);
+
+  if (error) {
+    console.error('Error fetching predictions:', error);
+    return [];
+  }
+
+  return data || [];
+}
+
+export async function getUserMatchPredictionV2(eventId: number) {
+  const supabase = createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return null;
+
+  const { data, error } = await supabase
+    .from('predictions')
+    .select('*')
+    .eq('match_id', eventId)
+    .eq('user_id', user.id)
+    .single();
+
+  if (error && error.code !== 'PGRST116') {
+    // PGRST116 es "no rows found" (normal si no ha predicho)
+    console.error('Error fetching user prediction:', error);
+  }
+
+  return data;
+}
+
+export async function saveEventPredictionV2(payload: PredictionPayload) {
+  const supabase = createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw new Error('User not authenticated');
+
+  const { data, error } = await supabase
+    .from('predictions')
+    .insert({
+      match_id: payload.event_id,
+      user_id: user.id, // Aseguramos que sea el usuario actual
+      home_score: payload.home_score,
+      away_score: payload.away_score,
+      // ... otros campos si los tienes
+    })
+    .select()
+    .single();
+
+  if (error) throw new Error(error.message);
+  return { ok: true, data };
+}
+
+// 4. Actualizar predicción existente
+export async function updateEventPredictionV2(
+  eventId: number,
+  updatePayload: PredictionUpdatePayload,
+) {
+  const supabase = createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw new Error('User not authenticated');
+
+  // Asumimos que updatePayload trae los scores
+  const { data, error } = await supabase
+    .from('predictions')
+    .update({
+      home_score: updatePayload.home_score,
+      away_score: updatePayload.away_score,
+    })
+    .eq('match_id', eventId)
+    .eq('user_id', user.id) // Seguridad extra: solo actualizar la suya
+    .select()
+    .single();
+
+  if (error) throw new Error(error.message);
+  return { ok: true, data };
 }

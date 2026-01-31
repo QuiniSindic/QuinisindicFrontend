@@ -1,5 +1,4 @@
-import { API_LOGO_COMPETITION_URL } from '@/core/config';
-import { MatchData } from '@/src/types/events/events.types';
+import { MatchData } from '@/types/events/events.types';
 import Image from 'next/image';
 
 interface EventTeamsProps {
@@ -11,7 +10,7 @@ export default function EventTeamsData({
   event,
   showScore = false,
 }: EventTeamsProps) {
-  const resultParts = event.result.split(' - ');
+  const resultParts = event.result.split('-');
   const hasResult = resultParts.length === 2;
 
   const homeScore = hasResult ? parseInt(resultParts[0], 10) : null;
@@ -27,10 +26,7 @@ export default function EventTeamsData({
         </span>
 
         <Image
-          src={
-            `${API_LOGO_COMPETITION_URL}${event.homeTeam.img as string}` ||
-            '/globe.svg'
-          }
+          src={`${event.homeTeam.img as string}` || '/globe.svg'}
           alt={event.homeTeam.abbr}
           width={28}
           height={28}
@@ -45,10 +41,7 @@ export default function EventTeamsData({
           {showScore ? `${event.result}` : 'vs'}
         </div>
         <Image
-          src={
-            `${API_LOGO_COMPETITION_URL}${event.awayTeam.img as string}` ||
-            '/globe.svg'
-          }
+          src={`${event.awayTeam.img as string}` || '/globe.svg'}
           alt={event.awayTeam.abbr}
           width={28}
           height={28}
@@ -63,10 +56,7 @@ export default function EventTeamsData({
       <div className="sm:hidden w-2/3 grid grid-cols-[auto_1fr_auto] gap-x-2 gap-y-4 items-center mr-1 mt-4">
         {/* Fila del equipo local */}
         <Image
-          src={
-            `${API_LOGO_COMPETITION_URL}${event.homeTeam.img as string}` ||
-            '/globe.svg'
-          }
+          src={`${event.homeTeam.img as string}` || '/globe.svg'}
           alt={event.homeTeam.abbr}
           width={20}
           height={20}
@@ -84,10 +74,7 @@ export default function EventTeamsData({
 
         {/* Fila del equipo visitante */}
         <Image
-          src={
-            `${API_LOGO_COMPETITION_URL}${event.awayTeam.img as string}` ||
-            '/globe.svg'
-          }
+          src={`${event.awayTeam.img as string}` || '/globe.svg'}
           alt={event.awayTeam.name}
           width={20}
           height={20}

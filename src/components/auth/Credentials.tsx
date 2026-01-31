@@ -1,4 +1,4 @@
-import { FormData } from '@/src/types/auth/auth.types';
+import { FormData } from '@/types/auth/auth.types';
 import { FieldErrors, UseFormRegister } from 'react-hook-form';
 import PasswordField from '../ui/inputs/PasswordField';
 import TextField from '../ui/inputs/TextField';

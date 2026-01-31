@@ -1,7 +1,7 @@
 'use client';
 
-import { BottomSheet } from '@/src/components/ui/BottomSheet';
-import { useSportsFilter } from '@/src/store/sportsLeagueFilterStore';
+import { BottomSheet } from '@/components/ui/BottomSheet';
+import { useSportsFilter } from '@/store/sportsLeagueFilterStore';
 import { useEffect, useState } from 'react';
 import StandingsTable from '../standings/Standing';
 // Si tienes un componente de resultados, impórtalo aquí

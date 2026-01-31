@@ -1,8 +1,8 @@
 'use client';
 
-import { API_LOGO_COMPETITION_URL_LOW } from '@/core/config';
-import { useStandingsQuery } from '@/src/hooks/useStandingLeague';
-import { TeamStandingData } from '@/src/types/standings/standings.types';
+import { useStandingsQueryV2 } from '@/hooks/useStandingLeague';
+import { TeamStandingData } from '@/types/standings/standings.types';
+import { FOTMOB_IMAGES_URL } from 'core/config';
 import Image from 'next/image';
 
 interface StandingsTableProps {
@@ -15,7 +15,7 @@ export default function StandingsTable({ competition }: StandingsTableProps) {
     isLoading,
     isError,
     error,
-  } = useStandingsQuery(competition);
+  } = useStandingsQueryV2(competition);
 
   if (!standing) {
     return (
@@ -73,7 +73,7 @@ export default function StandingsTable({ competition }: StandingsTableProps) {
             <td className="px-2 py-1 flex items-center min-w-0">
               <Image
                 className="size-6 mr-2 shrink-0"
-                src={API_LOGO_COMPETITION_URL_LOW + team.badge}
+                src={`${FOTMOB_IMAGES_URL}teamlogo/${team.badge}`}
                 alt={team.name}
                 width={24}
                 height={24}

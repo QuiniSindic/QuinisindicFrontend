@@ -1,9 +1,9 @@
 'use client';
 
-import EventsContainer from '@/src/components/home/events/EventsContainer';
-import SportsList from '@/src/components/home/sportsList/SportsList';
-import StandingsContainer from '@/src/components/home/standings/StandingsContainer';
-import { useFilteredEvents } from '@/src/hooks/useHomeData';
+import EventsContainer from '@/components/home/events/EventsContainer';
+import SportsList from '@/components/home/sportsList/SportsList';
+import StandingsContainer from '@/components/home/standings/StandingsContainer';
+import { useFilteredEvents } from '@/hooks/useFilteredEvents';
 
 export default function Home() {
   const { events, isLoading } = useFilteredEvents();

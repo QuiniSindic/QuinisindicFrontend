@@ -22,8 +22,8 @@ export const UserSchema = z.object({
   password: z.string().min(6).max(100),
   provider: z.enum(['local', 'google']),
   googleId: z.string().uuid().optional(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
+  createdAt: z.date().optional(),
+  updatedAt: z.date().optional(),
 });
 export type User = z.infer<typeof UserSchema>;
 

@@ -8,6 +8,7 @@
     ],
     "allowJs": true,
     "skipLibCheck": true,
+    "types": ["node", "react", "react-dom", "estree", "bcrypt"],
     "strict": true,
     "noImplicitReturns": true,
     "noUnusedLocals": true,
@@ -24,9 +25,10 @@
         "name": "next"
       }
     ],
+    "baseUrl": ".",
     "paths": {
       "@/*": [
-        "./*"
+        "./src/*"
       ]
     }
   },

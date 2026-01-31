@@ -1,11 +1,11 @@
+import { LeagueName, SportName, SPORTS_LIST_ITEMS } from '@/utils/sports.utils';
 import { create } from 'zustand';
-import { SPORTS_LIST_ITEMS } from '../utils/sports.utils';
 
 interface SportsFilter {
-  selectedSport: string | null;
-  selectedLeague: string | null;
-  setSelectedSport: (sport: string | null) => void;
-  setSelectedLeague: (league: string | null) => void;
+  selectedSport: SportName | null;
+  selectedLeague: LeagueName | null;
+  setSelectedSport: (sport: SportName | null) => void;
+  setSelectedLeague: (league: LeagueName | null) => void;
 
   selectedFrom?: string | null;
   selectedTo?: string | null;
@@ -18,6 +18,7 @@ interface SportsFilter {
 export const useSportsFilter = create<SportsFilter>((set) => ({
   selectedSport: null,
   selectedLeague: null,
+
   setSelectedSport: (sport) =>
     set((state) => {
       // Si el deporte ya está seleccionado, se hace toggle a null
@@ -35,7 +36,9 @@ export const useSportsFilter = create<SportsFilter>((set) => ({
       }
       // Si se selecciona una liga diferente, se busca el deporte correspondiente
       const foundSport = SPORTS_LIST_ITEMS.find(
-        (sport) => league !== null && sport.leagues.includes(league),
+        (sport) =>
+          league !== null &&
+          (sport.leagues as readonly string[]).includes(league),
       )?.name;
       return {
         selectedSport: foundSport || state.selectedSport,
@@ -45,7 +48,9 @@ export const useSportsFilter = create<SportsFilter>((set) => ({
 
   selectedFrom: null,
   selectedTo: null,
+
   setSelectedFrom: (d) => set({ selectedFrom: d }),
   setSelectedTo: (d) => set({ selectedTo: d }),
+
   clearDates: () => set({ selectedFrom: null, selectedTo: null }),
 }));

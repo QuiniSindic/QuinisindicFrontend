@@ -1,5 +1,3 @@
-import { leaguesIdMap } from '@/src/constants/mappers';
-
 import dayjs from 'dayjs';
 import {
   ActionGroups,
@@ -9,7 +7,7 @@ import {
   MatchStatus,
   ParsedMinute,
 } from '../types/events/events.types';
-import { SPORTS_LIST_ITEMS } from './sports.utils';
+import { COMPETITIONS_ID_MAP, SPORTS_LIST_ITEMS } from './sports.utils';
 
 export const NOT_LIVE: MatchStatus[] = ['NS', 'FT', 'Canc.'];
 export const CANCELED: MatchStatus[] = ['Canc.'];
@@ -51,7 +49,7 @@ export const competitionIdsForSport = (sportName?: string): Set<number> => {
   if (!sport) return new Set<number>();
 
   const ids = sport.leagues
-    .map((lg) => leaguesIdMap[lg])
+    .map((lg) => COMPETITIONS_ID_MAP[lg])
     .filter((id): id is number => typeof id === 'number');
 
   return new Set(ids);

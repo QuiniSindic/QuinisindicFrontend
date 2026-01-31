@@ -1,5 +1,5 @@
-import QuinisindicLogo from '@/src/components/ui/icons/QuinisindicLogo';
-import { ThemeToggleButton } from '@/src/components/ui/theme/ThemeToggleButton';
+import QuinisindicLogo from '@/components/ui/icons/QuinisindicLogo';
+import { ThemeToggleButton } from '@/components/ui/theme/ThemeToggleButton';
 import Link from 'next/link';
 
 export default function AuthLayout({

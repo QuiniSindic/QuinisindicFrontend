@@ -1,6 +1,6 @@
 'use client';
 
-import { useThemeMode } from '@/src/hooks/useThemeMode';
+import { useThemeMode } from '@/hooks/useThemeMode';
 import { Button } from '@heroui/react';
 import { Moon, Sun } from 'lucide-react';
 

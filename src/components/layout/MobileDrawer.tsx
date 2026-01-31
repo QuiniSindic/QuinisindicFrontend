@@ -1,8 +1,8 @@
 'use client';
 
-import { useAuth } from '@/src/hooks/useAuth';
-import { useThemeMode } from '@/src/hooks/useThemeMode';
-import { PC_HEADER_ITEMS } from '@/src/utils/header.utils';
+import { useAuth } from '@/hooks/useAuth';
+import { useThemeMode } from '@/hooks/useThemeMode';
+import { PC_HEADER_ITEMS } from '@/utils/header.utils';
 import { Avatar, Modal, ModalBody, ModalContent } from '@heroui/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';

@@ -1,5 +1,5 @@
-import { BACKEND_URL } from '@/core/config';
-import { User } from '@/src/types/auth/auth.types';
+import { User } from '@/types/auth/auth.types';
+import { BACKEND_URL } from 'core/config';
 
 export const getUserUsernames = async (
   userIds: string[],

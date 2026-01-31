@@ -84,10 +84,11 @@ export interface MatchData {
   homeId: number;
   awayId: number;
   competitionid: number;
+  minute?: string;
   homeTeam: TeamInfo;
   awayTeam: TeamInfo;
   country: string;
-  Odds: Odds;
+  Odds?: Odds;
 }
 
 export type TeamInfo = {

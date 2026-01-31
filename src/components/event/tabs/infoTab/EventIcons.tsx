@@ -1,8 +1,8 @@
 'use client';
-import FootballBall from '@/src/components/ui/icons/FootballBallIcon';
-import PenaltyIcon from '@/src/components/ui/icons/PenaltyIcon';
-import PenaltyMissedIcon from '@/src/components/ui/icons/PenaltyMissedIcon';
-import { MatchEventType } from '@/src/types/events/events.types';
+import FootballBall from '@/components/ui/icons/FootballBallIcon';
+import PenaltyIcon from '@/components/ui/icons/PenaltyIcon';
+import PenaltyMissedIcon from '@/components/ui/icons/PenaltyMissedIcon';
+import { MatchEventType } from '@/types/events/events.types';
 import { CircleDot, Flag, Pause, RotateCcw } from 'lucide-react';
 
 export function EventIcons({ type }: { type: MatchEventType }) {

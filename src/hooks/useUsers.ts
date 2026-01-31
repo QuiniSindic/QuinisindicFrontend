@@ -1,4 +1,4 @@
-import { getUserUsernames } from '@/src/services/users.service';
+import { getUserUsernames } from '@/services/users.service';
 import { useQuery } from '@tanstack/react-query';
 
 export const useGetUsersUsernames = (userIds: string[]) => {

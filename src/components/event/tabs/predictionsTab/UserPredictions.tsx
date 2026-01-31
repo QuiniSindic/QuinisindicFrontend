@@ -1,8 +1,9 @@
 'use client';
 
-import { useGetUsersUsernames } from '@/src/hooks/useUsers';
-import { Prediction } from '@/src/types/database/table.types';
+import { useGetUsersUsernames } from '@/hooks/useUsers';
+import { Prediction } from '@/types/database/table.types';
 import { Avatar, Spinner } from '@heroui/react';
+import dayjs from 'dayjs';
 import { PredictionScoreBadge } from './PredictionScoreBadge';
 
 interface UsersPredictionsProps {
@@ -75,7 +76,7 @@ const UsersPredictions = ({ predictions }: UsersPredictionsProps) => {
                   </div>
 
                   <p className="mt-0.5 text-xs text-muted">
-                    {new Date(prediction.createdAt).toLocaleString()}
+                    {dayjs(prediction.createdAt).format('DD/MM/YYYY HH:mm')}
                   </p>
                 </div>
               </div>

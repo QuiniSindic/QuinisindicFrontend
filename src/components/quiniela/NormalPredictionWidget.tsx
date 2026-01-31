@@ -1,5 +1,4 @@
-// import { Partido } from "@/utils/types/quiniela.types";
-import { Partido } from '@/src/types/quiniela.types';
+import { Partido } from '@/types/quiniela.types';
 import NormalPredictionButtons from './NormalPredictionButtons';
 
 interface NormalPredictionWidgetProps {

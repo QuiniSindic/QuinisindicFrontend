@@ -3,7 +3,7 @@ import {
   FINAL_STATUSES,
   MatchData,
   MatchEvent,
-} from '@/src/types/events/events.types';
+} from '@/types/events/events.types';
 import { ActionRow } from './actionRow/ActionRow';
 import { TimelineDivider } from './actionRow/TimelineDivider';
 

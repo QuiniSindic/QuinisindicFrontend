@@ -1,23 +1,23 @@
 'use client';
 
-import { useGetMatchQuery } from '@/src/hooks/useUpcomingEvents';
+import { useGetMatchQueryV2 } from '@/hooks/useUpcomingEvents';
 import {
-  useGetEventPredictions,
+  useGetEventPredictionsV2,
   useMyPrediction,
-} from '@/src/hooks/useUserPrediction';
+} from '@/hooks/useUserPrediction';
 import {
   saveEventPrediction,
   updateEventPrediction,
-} from '@/src/services/predictions.service';
+} from '@/services/predictions.service';
 
-import { useAuth } from '@/src/hooks/useAuth';
-import { useFilteredEvents } from '@/src/hooks/useHomeData';
-import { Prediction } from '@/src/types/database/table.types';
-import { MatchData } from '@/src/types/events/events.types';
+import { useAuth } from '@/hooks/useAuth';
+import { useFilteredEvents } from '@/hooks/useFilteredEvents';
+import { Prediction } from '@/types/database/table.types';
+import { MatchData } from '@/types/events/events.types';
 import {
   PredictionPayload,
   PredictionUpdatePayload,
-} from '@/src/types/prediction.types';
+} from '@/types/prediction.types';
 import { Spinner } from '@heroui/react';
 import toast, { Toaster } from 'react-hot-toast';
 import EventNavigation from './EventNavigation';
@@ -39,7 +39,7 @@ const MatchInfo: React.FC<MatchInfoProps> = ({
 
   const { events } = useFilteredEvents();
 
-  const { data: matchData } = useGetMatchQuery(event.id);
+  const { data: matchData } = useGetMatchQueryV2(event.id);
 
   const liveEvent = matchData ?? event;
 
@@ -60,7 +60,7 @@ const MatchInfo: React.FC<MatchInfoProps> = ({
     data: allPredictions,
     refetch: refetchAllPreds,
     isLoading: loadingAllPreds,
-  } = useGetEventPredictions(event.id, initialPreds);
+  } = useGetEventPredictionsV2(event.id, initialPreds);
 
   const handleSave = async (values: { home: string; away: string }) => {
     const payload: PredictionPayload = {

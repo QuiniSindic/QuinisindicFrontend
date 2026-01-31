@@ -1,16 +1,17 @@
 'use client';
 
-import MatchWidget from '@/src/components/ui/matchWidget/MatchWidget';
-import { leaguesIdMap } from '@/src/constants/mappers';
-import { useSportsFilter } from '@/src/store/sportsLeagueFilterStore';
-import { MatchData } from '@/src/types/events/events.types';
+import MatchWidget from '@/components/ui/matchWidget/MatchWidget';
+import { useSportsFilter } from '@/store/sportsLeagueFilterStore';
+import { MatchData } from '@/types/events/events.types';
 import {
   competitionIdsForSport,
   isFinished,
   isLive,
-} from '@/src/utils/events.utils';
+} from '@/utils/events.utils';
+import { COMPETITIONS_ID_MAP } from '@/utils/sports.utils';
 import dayjs from 'dayjs';
 import Link from 'next/link';
+import { useMemo } from 'react';
 
 interface EventsListProps {
   full?: boolean;
@@ -28,78 +29,108 @@ export default function EventsList({
   const { selectedSport, selectedLeague, selectedFrom, selectedTo } =
     useSportsFilter();
 
-  const base =
-    mode === 'results'
-      ? data
-      : Array.isArray(data)
-        ? data.filter((event) => event && !isFinished(event.status))
-        : [];
+  // 1. Filtrado Memoizado
+  const displayedEvents = useMemo(() => {
+    if (!data) return [];
 
-  const leagueId = selectedLeague ? leaguesIdMap[selectedLeague] : undefined;
+    // A. Filtro base: ¿Mostrar terminados o futuros?
+    let filtered =
+      mode === 'results'
+        ? data.filter((event) => event && isFinished(event.status))
+        : data.filter((event) => event && !isFinished(event.status));
 
-  let filtered = base;
+    // B. Filtro por Liga o Deporte
+    const leagueId = selectedLeague
+      ? COMPETITIONS_ID_MAP[selectedLeague]
+      : undefined;
 
-  if (leagueId) {
-    filtered = base.filter((event) => event.competitionid === leagueId);
-  } else if (selectedSport) {
-    const sportIds = competitionIdsForSport(selectedSport);
-    filtered = base.filter((event) => sportIds.has(event.competitionid));
+    if (leagueId) {
+      filtered = filtered.filter((event) => event.competitionid === leagueId);
+    } else if (selectedSport) {
+      const sportIds = competitionIdsForSport(selectedSport);
+      filtered = filtered.filter((event) => sportIds.has(event.competitionid));
+    }
+
+    // C. Filtro por Fechas (Solo modo resultados)
+    if (mode === 'results' && (selectedFrom || selectedTo)) {
+      filtered = filtered.filter((event) => {
+        const eventDate = dayjs(event.kickoff);
+        if (!eventDate.isValid()) return false;
+
+        const isAfter = selectedFrom
+          ? !eventDate.isBefore(dayjs(selectedFrom), 'day')
+          : true;
+        const isBefore = selectedTo
+          ? !eventDate.isAfter(dayjs(selectedTo), 'day')
+          : true;
+
+        return isAfter && isBefore;
+      });
+    }
+
+    // D. Slice si no es vista completa
+    return full ? filtered : filtered.slice(0, 6);
+  }, [
+    data,
+    mode,
+    selectedSport,
+    selectedLeague,
+    selectedFrom,
+    selectedTo,
+    full,
+  ]);
+
+  if (isLoading) {
+    // Skeleton simple o texto
+    return (
+      <div className="text-center text-muted py-8 animate-pulse">
+        Cargando eventos...
+      </div>
+    );
   }
-  if (mode === 'results' && (selectedFrom || selectedTo)) {
-    filtered = filtered.filter((event) => {
-      const eventDate = dayjs(event.kickoff);
 
-      if (!eventDate.isValid()) return false;
-
-      const isAfterFrom = selectedFrom
-        ? !eventDate.isBefore(selectedFrom, 'day')
-        : true;
-      const isBeforeTo = selectedTo
-        ? !eventDate.isAfter(selectedTo, 'day')
-        : true;
-
-      return isAfterFrom && isBeforeTo;
-    });
+  if (displayedEvents.length === 0) {
+    return (
+      <div className="text-center py-12 bg-surface rounded-lg border border-border/50">
+        <p className="text-muted">No se encontraron eventos.</p>
+        {mode === 'results' && (
+          <p className="text-xs text-muted/60 mt-1">
+            Prueba cambiando los filtros de fecha.
+          </p>
+        )}
+      </div>
+    );
   }
-
-  const displayedEvents = full ? filtered : filtered.slice(0, 6);
 
   return (
-    <div className="space-y-2">
-      {isLoading ? (
-        <p className="text-center text-muted py-8">Cargando eventos...</p>
-      ) : displayedEvents.length === 0 ? (
-        <p className="text-center text-muted py-8">
-          No hay eventos en este momento.
-        </p>
-      ) : (
-        <>
-          {displayedEvents.map((event) => {
-            const status = event.status;
-            const live = isLive(status);
-            const finished = isFinished(status);
+    <div className="space-y-3">
+      {displayedEvents.map((event) => {
+        const live = isLive(event.status);
+        const finished = isFinished(event.status);
 
-            return (
-              <Link prefetch href={`/event/${event.id}`} key={event.id}>
-                <MatchWidget
-                  event={event}
-                  isLive={live}
-                  isFinished={finished}
-                />
-              </Link>
-            );
-          })}
-          {!full && filtered.length > 6 && (
-            <div className="text-center py-2">
-              <Link
-                href="/events"
-                className="text-brand font-semibold hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded"
-              >
-                Ver todos los eventos
-              </Link>
-            </div>
-          )}
-        </>
+        return (
+          <Link
+            // Prefetch false para ahorrar ancho de banda en listas largas,
+            // a menos que sea muy probable que el usuario haga click
+            prefetch={false}
+            href={`/event/${event.id}`}
+            key={event.id}
+            className="block" // Asegura que el Link se comporte como bloque
+          >
+            <MatchWidget event={event} isLive={live} isFinished={finished} />
+          </Link>
+        );
+      })}
+
+      {!full && data.length > 6 && (
+        <div className="text-center pt-2">
+          <Link
+            href="/events"
+            className="inline-block px-4 py-2 text-sm font-semibold text-brand bg-brand/10 hover:bg-brand/20 rounded-full transition-colors"
+          >
+            Ver todos los eventos
+          </Link>
+        </div>
       )}
     </div>
   );

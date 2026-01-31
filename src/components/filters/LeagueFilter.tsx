@@ -1,10 +1,11 @@
-import { LeagueListButton } from '@/src/components/ui/buttons/LeagueListButton';
+import { LeagueListButton } from '@/components/ui/buttons/LeagueListButton';
+import { LeagueName } from '@/utils/sports.utils';
 import { CarouselScrollContainer } from '../ui/CarouselScrollContainer';
 
 interface LeaguesFilterProps {
-  leagues: string[];
-  selectedLeague: string | null;
-  onSelect: (league: string | null) => void;
+  leagues: readonly string[] | string[];
+  selectedLeague: LeagueName | null;
+  onSelect: (league: LeagueName | null) => void;
   showLabel?: boolean;
 }
 
@@ -34,7 +35,7 @@ export const LeaguesFilter = ({
           <LeagueListButton
             league={league}
             isSelected={selectedLeague === league}
-            onClick={() => onSelect(league)}
+            onClick={() => onSelect(league as LeagueName)}
             className="flex-1 min-w-fit shrink-0"
           />
         </div>

@@ -1,4 +1,4 @@
-import { MatchData } from '@/src/types/events/events.types';
+import { MatchData } from '@/types/events/events.types';
 import Link from 'next/link';
 import ArrowLeft from '../ui/icons/ArrowLeft';
 import ArrowRight from '../ui/icons/ArrowRight';

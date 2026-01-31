@@ -1,5 +1,5 @@
-import { useDateFilters } from '@/src/hooks/useDateFilters';
-import { useSportsFilter } from '@/src/store/sportsLeagueFilterStore';
+import { useDateFilters } from '@/hooks/useDateFilters';
+import { useSportsFilter } from '@/store/sportsLeagueFilterStore';
 import { RotateCcw } from 'lucide-react';
 import { CarouselScrollContainer } from '../../ui/CarouselScrollContainer';
 import { DateFilterActions } from './DateFilterActions';

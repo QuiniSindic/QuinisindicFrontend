@@ -1,8 +1,8 @@
 'use client';
 
-import FilterBar from '@/src/components/filters/FilterBar';
-import EventsList from '@/src/components/home/events/EventsList';
-import { useFilteredEvents } from '@/src/hooks/useHomeData';
+import FilterBar from '@/components/filters/FilterBar';
+import EventsList from '@/components/home/events/EventsList';
+import { useFilteredEvents } from '@/hooks/useFilteredEvents';
 
 export default function EventsPage() {
   const { events, isLoading } = useFilteredEvents();

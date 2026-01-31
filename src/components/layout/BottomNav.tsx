@@ -1,6 +1,6 @@
 'use client';
 
-import { BOTTOM_NAV_ITEMS } from '@/src/utils/header.utils';
+import { BOTTOM_NAV_ITEMS } from '@/utils/header.utils';
 import { Menu } from 'lucide-react';
 import Link from 'next/link';
 
