@@ -18,13 +18,16 @@ import { useQuery } from '@tanstack/react-query';
 export const useUpcomingEventsQueryV2 = (
   sport?: number,
   competitionId?: number,
+  options?: { refetchInterval?: number }, // Añadimos opciones
 ) => {
   return useQuery({
     queryKey: ['events', sport, competitionId],
     queryFn: () => getLiveMatches(sport, competitionId),
     refetchOnMount: false,
-    refetchOnWindowFocus: false,
+    refetchInterval: 1000 * 60, // 30 segundos
+    refetchOnWindowFocus: true,
     staleTime: 1000 * 60 * 5, // 5 minutos
+    ...options,
   });
 };
 

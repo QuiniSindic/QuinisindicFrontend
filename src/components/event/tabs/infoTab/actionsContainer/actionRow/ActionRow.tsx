@@ -22,59 +22,72 @@ export const ActionRow: React.FC<ActionRowProps> = ({
   event,
   isPenalties = false,
 }) => {
-  // 1. MINUTO: Usamos timeStr ("45+2") o el minuto numérico
-  // Ya no pasamos 'extraMinute' porque no existe en el tipo
-  const rawMinute = matchEvent.timeStr || matchEvent.minute;
-  const minute = parseMinute(rawMinute);
+  const isAddedTime = matchEvent.type === 'AddedTime';
 
-  // 2. EQUIPO:
-  // Con el nuevo backend, 'isHome' debería venir siempre.
-  // Si viniera undefined, por defecto asumimos local (o maneja el caso según prefieras)
-  // Eliminamos el fallback a 'matchEvent.team' porque esa propiedad ya no existe.
+  // 1. TIEMPO: Priorizamos el label para el tiempo añadido
+  const displayTime = isAddedTime
+    ? matchEvent.label
+    : parseMinute(matchEvent.timeStr || matchEvent.minute).label;
+
+  // 2. EQUIPO: No mostramos equipo en tiempo añadido (opcional, según prefieras)
   const isHome = matchEvent.isHome ?? true;
+  const teamName = isAddedTime
+    ? undefined
+    : isHome
+      ? event.homeTeam.name
+      : event.awayTeam.name;
 
-  const teamName = isHome ? event.homeTeam.name : event.awayTeam.name;
-
-  // 3. ASISTENCIA: Usamos solo 'assist'
-  const assistText = matchEvent.assist;
-  const hasAssist = !!assistText && assistText !== '-';
-
-  // 4. JUGADOR: Usamos solo 'player'
-  const playerName = matchEvent.player;
-
-  // 5. CAMBIO: Detectamos si es sustitución
+  // 3. JUGADOR Y CAMBIOS
   const isSub =
     matchEvent.type === MatchEventType.Substitution ||
     matchEvent.type === 'Substitution';
-  const subIn = matchEvent.playerIn;
-  const subOut = matchEvent.playerOut;
+
+  // Determinamos el nombre a mostrar:
+  // Si es tiempo añadido -> vacío
+  // Si es cambio -> lógica de In/Out
+  // Si es normal -> matchEvent.player
+  const finalPlayerName = isAddedTime
+    ? ''
+    : isSub && matchEvent.playerIn
+      ? `${matchEvent.playerIn} (entra) por ${matchEvent.playerOut}`
+      : matchEvent.player;
+
+  const hasAssist = !!matchEvent.assist && matchEvent.assist !== '-';
 
   return (
     <div
       className={`
-        grid items-center gap-3 rounded-xl
-        px-4 py-3 shadow-sm mb-3
+        grid items-center gap-3 rounded-xl px-4 py-3 shadow-sm mb-3
         border border-border bg-surface/80 backdrop-blur-sm
         hover:bg-background hover:shadow-md transition
         ${isPenalties ? 'grid-cols-[auto_1fr_auto]' : 'grid-cols-[auto_auto_1fr_auto]'} 
+        ${isAddedTime ? 'opacity-90' : ''} 
       `}
     >
-      {!isPenalties && <MinuteBadge label={minute.label} />}
+      {!isPenalties && <MinuteBadge label={displayTime as string} />}
 
-      <div className="shrink-0 flex items-center justify-center">
-        <div className="w-7 h-7 flex items-center justify-center rounded-full bg-background border border-border text-text overflow-hidden">
-          <EventIcons type={matchEvent.type} />
+      {/* Solo renderizamos el contenedor del icono si NO es tiempo añadido */}
+      {!isAddedTime ? (
+        <div className="shrink-0 flex items-center justify-center">
+          <div className="w-7 h-7 flex items-center justify-center rounded-full bg-background border border-border text-text overflow-hidden">
+            <EventIcons type={matchEvent.type} cardType={matchEvent.cardType} />
+          </div>
         </div>
-      </div>
+      ) : (
+        /* Div vacío para mantener el hueco del grid si prefieres, 
+           o puedes ajustar el grid-cols dinámicamente */
+        <div className="w-0" />
+      )}
 
-      <ActionData
-        // Lógica de visualización para cambios
-        playerName={
-          isSub && subIn ? `${subIn} (entra) por ${subOut}` : playerName
-        }
-        teamName={teamName}
-        assist={hasAssist ? assistText : undefined}
-      />
+      <div
+        className={`${isAddedTime ? 'flex justify-center text-center' : ''} min-w-0 flex-1`}
+      >
+        <ActionData
+          playerName={finalPlayerName}
+          teamName={teamName}
+          assist={!isAddedTime && hasAssist ? matchEvent.assist : undefined}
+        />
+      </div>
 
       <ScoreBadge score={matchEvent.score} />
     </div>

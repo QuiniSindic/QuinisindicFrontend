@@ -1,6 +1,15 @@
 import React from 'react';
 
-export const ScoreBadge: React.FC<{ score?: string }> = ({ score }) => {
+interface ScoreBadgeProps {
+  score?: {
+    home: number;
+    away: number;
+  };
+}
+
+export const ScoreBadge: React.FC<ScoreBadgeProps> = ({ score }) => {
+  const scoreText = `${score?.home}-${score?.away}`;
+
   if (score) {
     return (
       <span
@@ -9,9 +18,9 @@ export const ScoreBadge: React.FC<{ score?: string }> = ({ score }) => {
           rounded-full px-2 text-xs font-semibold tabular-nums
           border border-border bg-surface text-text
         "
-        title={score}
+        title={scoreText}
       >
-        {score}
+        {scoreText}
       </span>
     );
   }

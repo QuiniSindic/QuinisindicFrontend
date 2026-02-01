@@ -8,9 +8,11 @@ import { usePathname } from 'next/navigation';
 export default function DesktopNavbar() {
   const pathname = usePathname();
 
+  const navItems = PC_HEADER_ITEMS.filter((item) => item.href !== '/profile');
+
   return (
     <NavbarContent className="hidden md:flex gap-6" justify="start">
-      {PC_HEADER_ITEMS.map((link) => {
+      {navItems.map((link) => {
         const isActive = pathname === link.href;
         return (
           <NavbarItem key={link.href} isActive={isActive}>

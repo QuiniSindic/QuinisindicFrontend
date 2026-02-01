@@ -1,20 +1,20 @@
 'use client';
 
-import EventsContainer from '@/components/home/events/EventsContainer';
+import EventsSection from '@/components/home/events/EventsSection';
 import SportsList from '@/components/home/sportsList/SportsList';
 import StandingsContainer from '@/components/home/standings/StandingsContainer';
-import { useFilteredEvents } from '@/hooks/useFilteredEvents';
+import { useEventsQuery } from '@/hooks/useEventsQuery';
 
 export default function Home() {
-  const { events, isLoading } = useFilteredEvents();
+  const { events, isLoading } = useEventsQuery();
 
   return (
     <div className="mb-4 mx-4 sm:mx-8 md:mx-8 lg:mx-12 xl:mx-12 ">
       <>
-        <div className="flex flex-col lg:flex-row lg:gap-4 mt-4">
+        <div className="flex flex-col gap-3 lg:flex-row lg:gap-4 mt-4">
           <SportsList />
           <div className="flex flex-col lg:flex-row lg:gap-4 flex-1">
-            <EventsContainer events={events} isLoading={isLoading} />
+            <EventsSection data={events} isLoading={isLoading} mode="events" />
             <StandingsContainer />
           </div>
         </div>

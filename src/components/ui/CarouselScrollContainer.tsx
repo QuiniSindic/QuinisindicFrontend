@@ -14,7 +14,7 @@ export const CarouselScrollContainer = ({
   return (
     <div className={`w-full ${className}`}>
       <div
-        className={`flex items-center overflow-x-auto pb-2 scrollbar-hide snap-x sm:px-1 lg:px-0 touch-pan-x ${contentClassName}`}
+        className={`flex items-center overflow-x-auto pb-3 scrollbar-hide snap-x sm:px-1 lg:px-0 touch-pan-x ${contentClassName}`}
       >
         {children}
       </div>

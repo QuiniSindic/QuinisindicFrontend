@@ -7,9 +7,10 @@ import { ArrowRightLeft, Ban, Circle } from 'lucide-react';
 
 interface EventIconsProps {
   type: string | number;
+  cardType?: 'Yellow' | 'Red' | string; // Añadimos esta prop
 }
 
-export const EventIcons: React.FC<EventIconsProps> = ({ type }) => {
+export const EventIcons: React.FC<EventIconsProps> = ({ type, cardType }) => {
   // Convertimos a string para asegurar comparación
   const typeStr = String(type);
 
@@ -27,20 +28,19 @@ export const EventIcons: React.FC<EventIconsProps> = ({ type }) => {
       return <PenaltyMissedIcon className="w-4 h-4 text-red-500" />;
 
     case MatchEventType.Card:
-    case 'Card':
-    case 'Yellow': // Por si acaso
-    case 'YellowCard':
-      // Si el backend no distingue aquí, pintamos amarilla por defecto.
-      // Idealmente pasarías 'cardType' como prop extra si quisieras distinguir color exacto.
+      const isRed = cardType === 'Red';
       return (
-        <span className="inline-block w-3 h-4 rounded-xs bg-yellow-400 border border-yellow-600" />
+        <span
+          className={`inline-block w-3 h-4 rounded-xs border ${
+            isRed
+              ? 'bg-red-500 border-red-700'
+              : 'bg-yellow-400 border-yellow-600'
+          }`}
+        />
       );
 
-    case 'Red': // Por si acaso
-    case 'RedCard':
-      return (
-        <span className="inline-block w-3 h-4 rounded-xs bg-red-500 border border-red-700" />
-      );
+    case 'AddedTime':
+      return null;
 
     case MatchEventType.Substitution:
     case 'Substitution':
@@ -53,6 +53,7 @@ export const EventIcons: React.FC<EventIconsProps> = ({ type }) => {
       return <Circle className="w-2 h-2 text-muted" />;
   }
 };
+
 export function SidePill({ score }: { score?: string }) {
   if (!score) return null;
   return (

@@ -18,16 +18,22 @@ export const EVENT_TYPE_LABELS: Record<string, string> = {
 };
 export interface MatchEvent {
   type: MatchEventType | string; // Flexible para strings
-  minute?: number;
-  timeStr?: string; // Ej: "45+2"
-  isHome?: boolean;
-  score?: string;
+  minute: number;
+  timeStr?: string | number; // Ej: "45+2"
+  isHome: boolean | null;
+
+  score?: {
+    home: number;
+    away: number;
+  };
+
+  isPenaltyShootout?: boolean;
 
   // Campos específicos según tipo
   player?: string; // Gol o Tarjeta
   playerId?: number;
   assist?: string; // Gol
-  ownGoal?: boolean; // Gol
+  ownGoal?: boolean | null; // Gol
   isPenalty?: boolean; // Gol
 
   cardType?: 'Yellow' | 'Red'; // Tarjeta
@@ -127,10 +133,10 @@ export interface EventsSportsResponse {
 export interface ActionGroups {
   firstHalf: MatchEvent[];
   secondHalf: MatchEvent[];
-  breaks?: MatchEvent[];
-  finals?: MatchEvent[];
-  overtime?: MatchEvent[];
-  penalties?: MatchEvent[]; // tanda de penaltis
+  breaks: MatchEvent[];
+  finals: MatchEvent[];
+  overtime: MatchEvent[];
+  penalties: MatchEvent[]; // tanda de penaltis
 }
 
 export type FormValues = { home: string; away: string };

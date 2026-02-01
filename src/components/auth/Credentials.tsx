@@ -1,11 +1,13 @@
-import { FormData } from '@/types/auth/auth.types';
+'use client';
+
+import { AuthFormData } from '@/types/auth/auth.types';
 import { FieldErrors, UseFormRegister } from 'react-hook-form';
 import PasswordField from '../ui/inputs/PasswordField';
 import TextField from '../ui/inputs/TextField';
 
 interface CredentialsProps {
-  register: UseFormRegister<FormData>;
-  errors: FieldErrors<FormData>;
+  register: UseFormRegister<AuthFormData>;
+  errors: FieldErrors<AuthFormData>;
   isLogin: boolean;
 }
 

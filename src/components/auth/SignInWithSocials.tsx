@@ -1,4 +1,6 @@
-import { handleGoogleAuth } from '@/services/auth.service';
+'use client';
+
+import { loginWithGoogle } from '@/actions/auth';
 import AppleIcon from '../ui/icons/AppleIcon';
 import GoogleIcon from '../ui/icons/GoogleIcon';
 
@@ -8,7 +10,7 @@ interface SignInWithSocialsProps {
 
 const baseButtonClasses =
   'flex items-center justify-center gap-4 px-6 py-3 rounded-lg border border-border ' +
-  'bg-surface text-text shadow-sm transition-colors ' +
+  'bg-surface text-text shadow-sm transition-colors cursor-pointer ' +
   'hover:bg-background focus-visible:outline-none focus-visible:ring-2 ' +
   'focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background';
 
@@ -21,14 +23,23 @@ const SignInWithSocials = ({ isLogin }: SignInWithSocialsProps) => {
     ? 'Iniciar sesión con Apple'
     : 'Registrarse con Apple';
 
+  const handleGoogleLogin = async () => {
+    await loginWithGoogle();
+  };
+
   return (
     <div className="flex flex-col space-y-4 justify-center">
-      <button onClick={() => handleGoogleAuth()} className={baseButtonClasses}>
+      <button
+        type="button"
+        onClick={() => handleGoogleLogin()}
+        className={baseButtonClasses}
+      >
         <GoogleIcon className="h-6 w-6 shrink-0" />
         <span>{googleLabel}</span>
       </button>
 
       <button
+        type="button"
         // onClick={handleAppleSubmit}
         className={baseButtonClasses}
       >

@@ -1,4 +1,3 @@
-import dayjs from 'dayjs';
 import {
   ActionGroups,
   MatchData,
@@ -6,7 +5,8 @@ import {
   MatchEventType,
   MatchStatus,
   ParsedMinute,
-} from '../types/events/events.types';
+} from '@/types/events/events.types';
+import dayjs from 'dayjs';
 import { COMPETITIONS_ID_MAP, SPORTS_LIST_ITEMS } from './sports.utils';
 
 export const NOT_LIVE: MatchStatus[] = ['NS', 'FT', 'Canc.', 'Susp.'];
@@ -84,89 +84,47 @@ export function parseMinute(
   };
 }
 
-const safeTotal = (ev: MatchEvent): number => {
-  // Usamos timeStr si existe, si no el minute
-  const val = ev.timeStr ?? ev.minute;
-
-  if (val == null) return -1; // Al fondo si no tiene minuto
-
-  // Delegamos en parseMinute (sin pasar extraMinute, que ya no existe)
-  const { total } = parseMinute(val);
-  return total;
-};
-
-export function makeActionGroupsForMatch(
-  actions: MatchEvent[] = [],
-): ActionGroups {
-  if (!actions || actions.length === 0) {
-    return {
-      firstHalf: [],
-      secondHalf: [],
-      breaks: [],
-      finals: [],
-      overtime: [],
-      penalties: [],
-    };
-  }
-
-  // 1. Localizar marcadores de fase (HT, FT)
-  const idxHT = actions.findIndex(
-    (a) => a.type === MatchEventType.Half && a.label === 'HT',
-  );
-  const idxFT = actions.findIndex(
-    (a) => a.type === MatchEventType.Half && a.label === 'FT',
-  );
-
-  // 2. Cortar el array
-  const beforeHT = idxHT >= 0 ? actions.slice(0, idxHT) : actions.slice();
-
-  const betweenHTFT =
-    idxHT >= 0 && idxFT >= 0
-      ? actions.slice(idxHT + 1, idxFT)
-      : idxHT >= 0
-        ? actions.slice(idxHT + 1)
-        : [];
-
-  const afterFT = idxFT >= 0 ? actions.slice(idxFT + 1) : [];
-
-  // 3. Filtrar eventos relevantes
-  const isRelevant = (e: MatchEvent) =>
-    e.type === MatchEventType.Goal ||
-    e.type === MatchEventType.Card ||
-    e.type === MatchEventType.Substitution ||
-    e.type === MatchEventType.PenaltyGoal ||
-    e.type === MatchEventType.FailedPenalty;
-
-  // 4. Ordenar descendente
-  const sortByDesc = (arr: MatchEvent[]) =>
-    arr.filter(isRelevant).sort((a, b) => safeTotal(b) - safeTotal(a));
-
-  const firstHalf = sortByDesc(beforeHT);
-  const secondHalf = sortByDesc(betweenHTFT);
-  const overtimeSorted = sortByDesc(afterFT);
-
-  // 5. Penaltis
-  const penalties = afterFT.filter(
-    (e) =>
-      e.isPenalty ||
-      e.type === MatchEventType.PenaltyGoal ||
-      e.type === MatchEventType.FailedPenalty,
-  );
-
-  // Marcadores
-  const breaks = actions.filter(
-    (a) => a.type === MatchEventType.Half && a.label === 'HT',
-  );
-  const finals = actions.filter(
-    (a) => a.type === MatchEventType.Half && a.label === 'FT',
-  );
-
-  return {
-    firstHalf,
-    secondHalf,
-    breaks,
-    finals,
-    overtime: overtimeSorted,
-    penalties,
+export const makeActionGroupsForMatch = (
+  events: MatchEvent[],
+): ActionGroups => {
+  const groups: ActionGroups = {
+    firstHalf: [],
+    secondHalf: [],
+    overtime: [],
+    penalties: [],
+    breaks: [],
+    finals: [],
   };
-}
+
+  if (!events || events.length === 0) return groups;
+
+  // 1. Ordenamos por minuto de menor a mayor para procesar lógicamente
+  const sortedEvents = [...events].sort((a, b) => a?.minute - b.minute);
+
+  sortedEvents.forEach((event) => {
+    const min = event.minute;
+
+    // 1. Clasificación por tipo de evento
+    if (event.type === 'Half' || event.type === MatchEventType.Half) {
+      groups.breaks.push(event);
+      return;
+    }
+
+    if (event.isPenaltyShootout) {
+      groups.penalties.push(event);
+      return;
+    }
+
+    // 2. Clasificación por tiempo (Minutos corregidos según tu log)
+    // Usamos > 45 para asegurar que el inicio de la 2H (min 46) entre en su grupo
+    if (min > 90) {
+      groups.overtime.push(event);
+    } else if (min > 45) {
+      groups.secondHalf.push(event);
+    } else {
+      groups.firstHalf.push(event);
+    }
+  });
+
+  return groups;
+};

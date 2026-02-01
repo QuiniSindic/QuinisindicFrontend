@@ -1,7 +1,7 @@
 'use client';
 
+import { logout } from '@/actions/auth';
 import { useAuth } from '@/hooks/useAuth';
-import { logout } from '@/services/auth.service';
 import {
   Avatar,
   Button,
@@ -46,10 +46,10 @@ export default function AvatarUser() {
   const handleLogout = async () => {
     try {
       await logout();
-      // Limpiamos la caché de React Query inmediatamente
+
       queryClient.setQueryData(['user'], null);
       await queryClient.invalidateQueries({ queryKey: ['user'] });
-      router.push('/login');
+
       router.refresh();
     } catch (error) {
       console.error('Error al cerrar sesión:', error);

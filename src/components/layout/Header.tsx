@@ -1,6 +1,7 @@
 'use client';
 
 import { Navbar, NavbarBrand, NavbarContent } from '@heroui/react';
+import { ThemeToggleButton } from '../ui/theme/ThemeToggleButton';
 import AvatarUser from './header/AvatarUser';
 import { Brand } from './header/Brand';
 import DesktopNavbar from './header/DesktopNavbar';
@@ -29,7 +30,11 @@ export default function Header() {
         <Brand showText={false} />
       </div>
 
-      <NavbarContent justify="end">
+      <NavbarContent justify="end" className="gap-4">
+        <div className="hidden md:flex items-center">
+          <ThemeToggleButton />
+        </div>
+
         <div className="hidden md:flex">
           <AvatarUser />
         </div>

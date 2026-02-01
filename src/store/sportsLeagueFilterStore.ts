@@ -1,24 +1,29 @@
 import { LeagueName, SportName, SPORTS_LIST_ITEMS } from '@/utils/sports.utils';
 import { create } from 'zustand';
 
+export type MatchStatusFilter = 'all' | 'live' | 'upcoming';
+
 interface SportsFilter {
   selectedSport: SportName | null;
-  selectedLeague: LeagueName | null;
   setSelectedSport: (sport: SportName | null) => void;
+
+  selectedLeague: LeagueName | null;
   setSelectedLeague: (league: LeagueName | null) => void;
 
   selectedFrom?: string | null;
-  selectedTo?: string | null;
   setSelectedFrom: (d?: string | null) => void;
+
+  selectedTo?: string | null;
   setSelectedTo: (d?: string | null) => void;
+
+  statusFilter: MatchStatusFilter;
+  setStatusFilter: (filter: MatchStatusFilter) => void;
 
   clearDates: () => void;
 }
 
 export const useSportsFilter = create<SportsFilter>((set) => ({
   selectedSport: null,
-  selectedLeague: null,
-
   setSelectedSport: (sport) =>
     set((state) => {
       // Si el deporte ya está seleccionado, se hace toggle a null
@@ -28,6 +33,8 @@ export const useSportsFilter = create<SportsFilter>((set) => ({
       // Si se selecciona un deporte diferente, se guarda el nuevo deporte y se resetea la liga
       return { selectedSport: sport, selectedLeague: null };
     }),
+
+  selectedLeague: null,
   setSelectedLeague: (league) =>
     set((state) => {
       // Si la liga ya está seleccionada, se hace toggle a null
@@ -47,10 +54,17 @@ export const useSportsFilter = create<SportsFilter>((set) => ({
     }),
 
   selectedFrom: null,
-  selectedTo: null,
+  setSelectedFrom: (date) => set({ selectedFrom: date }),
 
-  setSelectedFrom: (d) => set({ selectedFrom: d }),
-  setSelectedTo: (d) => set({ selectedTo: d }),
+  selectedTo: null,
+  setSelectedTo: (date) => set({ selectedTo: date }),
+
+  statusFilter: 'all',
+  setStatusFilter: (status) =>
+    set((state) => ({
+      // Si el status que llega es igual al que ya está, volvemos a 'all' (desmarcar)
+      statusFilter: state.statusFilter === status ? 'all' : status,
+    })),
 
   clearDates: () => set({ selectedFrom: null, selectedTo: null }),
 }));

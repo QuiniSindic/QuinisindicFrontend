@@ -7,7 +7,7 @@ import {
 } from '@/utils/sports.utils';
 import { useMemo } from 'react';
 
-export const useFilteredEvents = () => {
+export const useEventsQuery = () => {
   const { selectedSport, selectedLeague } = useSportsFilter();
 
   const sportSlug = selectedSport ? SPORTS_MAP[selectedSport] : undefined;

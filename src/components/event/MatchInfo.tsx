@@ -11,7 +11,7 @@ import {
 } from '@/services/predictions.service';
 
 import { useAuth } from '@/hooks/useAuth';
-import { useFilteredEvents } from '@/hooks/useFilteredEvents';
+import { useEventsQuery } from '@/hooks/useEventsQuery';
 import { Prediction } from '@/types/database/table.types';
 import { MatchData } from '@/types/events/events.types';
 import {
@@ -37,7 +37,7 @@ const MatchInfo: React.FC<MatchInfoProps> = ({
   const { data: user, isLoading: authLoading } = useAuth();
   const userId = user?.id ?? '';
 
-  const { events } = useFilteredEvents();
+  const { events } = useEventsQuery();
 
   const { data: matchData } = useGetMatchQueryV2(event.id);
 

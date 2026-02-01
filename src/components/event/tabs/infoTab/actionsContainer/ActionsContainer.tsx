@@ -27,24 +27,22 @@ export const ActionsContainer: React.FC<ActionsContainerProps> = ({
   groups,
 }) => {
   const status = event.status;
-  const { firstHalf, secondHalf, overtime, penalties } = groups;
+  const { firstHalf, secondHalf, overtime, penalties, breaks } = groups;
 
-  // Filtro para ignorar marcadores de tiempo en la lista visual
-  const isGameAction = (ev: MatchEvent) =>
-    ev.type !== MatchEventType.Half && ev.type !== MatchEventType.AddedTime;
+  const isGameAction = (ev: MatchEvent) => ev.type !== MatchEventType.Half;
 
-  // ______ LOGICA DE DIVISORES ______
+  const renderActions = (actions: MatchEvent[], prefix: string) => {
+    return [...actions]
+      .filter(isGameAction)
+      .reverse() // Para que el minuto más alto salga arriba
+      .map((ev, i) => (
+        <ActionRow key={`${prefix}-${i}`} matchEvent={ev} event={event} />
+      ));
+  };
 
-  const showFinalDivider = FINAL_STATUSES.includes(status as any);
-
-  // Mostrar descanso si hay acciones en la 2ª parte o si el estado es posterior al descanso
-  const showHalftimeDivider =
-    secondHalf.some(isGameAction) || isPastHalftime(status);
-
-  // Mostrar prórroga si hay eventos de OT o Penaltis
-  const showOvertimeDivider =
-    (overtime && overtime.some(isGameAction)) ||
-    (penalties && penalties.length > 0);
+  // Helper para buscar un break específico (HT, FT)
+  const getBreakLabel = (label: string) =>
+    breaks.find((b) => b.label === label);
 
   return (
     <div className="px-4 py-2 lg:px-8">
@@ -53,55 +51,44 @@ export const ActionsContainer: React.FC<ActionsContainerProps> = ({
       </h2>
 
       <div className="flex flex-col gap-0">
-        {/* --- FINAL --- */}
-        {showFinalDivider && <TimelineDivider title="Final" />}
+        {/* 1. FINAL (Si existe el evento o el estado es final) */}
+        {(getBreakLabel('FT') || FINAL_STATUSES.includes(status as any)) && (
+          <TimelineDivider title="Final" />
+        )}
 
-        {/* --- PENALTIS --- */}
+        {/* 2. PENALTIS */}
         {penalties && penalties.length > 0 && (
-          <TimelineDivider title="Penaltis" position="footer">
+          <div className="flex flex-col-reverse">
             {penalties.map((ev, i) => (
               <ActionRow
                 key={`pen-${i}`}
                 matchEvent={ev}
                 event={event}
-                isPenalties={true}
+                isPenalties
               />
             ))}
-          </TimelineDivider>
+            <TimelineDivider title="Penaltis" />
+          </div>
         )}
 
-        {/* --- PRÓRROGA --- */}
+        {/* 3. PRÓRROGA */}
+        {renderActions(overtime || [], 'ot')}
         {overtime && overtime.length > 0 && (
-          <>
-            {showOvertimeDivider && <TimelineDivider title="Prórroga" />}
-            {overtime.filter(isGameAction).map((ev, i) => (
-              <ActionRow key={`ot-${i}`} matchEvent={ev} event={event} />
-            ))}
-          </>
+          <TimelineDivider title="Prórroga" />
         )}
 
-        {/* --- SEGUNDA PARTE --- */}
-        {secondHalf.length > 0 && (
-          <div className="contents">
-            {secondHalf.filter(isGameAction).map((ev, i) => (
-              <ActionRow key={`sh-${i}`} matchEvent={ev} event={event} />
-            ))}
-          </div>
+        {/* 4. SEGUNDA PARTE */}
+        {renderActions(secondHalf, 'sh')}
+
+        {/* 5. DESCANSO (Ahora usamos el dato de groups.breaks) */}
+        {(getBreakLabel('HT') || isPastHalftime(status)) && (
+          <TimelineDivider title="Descanso" />
         )}
 
-        {/* --- DESCANSO --- */}
-        {showHalftimeDivider && <TimelineDivider title="Descanso" />}
+        {/* 6. PRIMERA PARTE */}
+        {renderActions(firstHalf, 'fh')}
 
-        {/* --- PRIMERA PARTE --- */}
-        {firstHalf.length > 0 && (
-          <div className="contents">
-            {firstHalf.filter(isGameAction).map((ev, i) => (
-              <ActionRow key={`fh-${i}`} matchEvent={ev} event={event} />
-            ))}
-          </div>
-        )}
-
-        {/* --- INICIO --- */}
+        {/* 7. INICIO */}
         <TimelineDivider title="Inicio" />
       </div>
     </div>

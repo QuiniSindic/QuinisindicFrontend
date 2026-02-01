@@ -1,17 +1,11 @@
 'use client';
 
+import { StatusFilter } from '@/components/filters/StatusFilter';
 import MatchWidget from '@/components/ui/matchWidget/MatchWidget';
-import { useSportsFilter } from '@/store/sportsLeagueFilterStore';
+import { useLocalEventFilters } from '@/hooks/useLocalEventFilters';
 import { MatchData } from '@/types/events/events.types';
-import {
-  competitionIdsForSport,
-  isFinished,
-  isLive,
-} from '@/utils/events.utils';
-import { COMPETITIONS_ID_MAP } from '@/utils/sports.utils';
-import dayjs from 'dayjs';
+import { isFinished, isLive } from '@/utils/events.utils';
 import Link from 'next/link';
-import { useMemo } from 'react';
 
 interface EventsListProps {
   full?: boolean;
@@ -26,59 +20,7 @@ export default function EventsList({
   mode = 'events',
   data = [],
 }: EventsListProps) {
-  const { selectedSport, selectedLeague, selectedFrom, selectedTo } =
-    useSportsFilter();
-
-  // 1. Filtrado Memoizado
-  const displayedEvents = useMemo(() => {
-    if (!data) return [];
-
-    // A. Filtro base: ¿Mostrar terminados o futuros?
-    let filtered =
-      mode === 'results'
-        ? data.filter((event) => event && isFinished(event.status))
-        : data.filter((event) => event && !isFinished(event.status));
-
-    // B. Filtro por Liga o Deporte
-    const leagueId = selectedLeague
-      ? COMPETITIONS_ID_MAP[selectedLeague]
-      : undefined;
-
-    if (leagueId) {
-      filtered = filtered.filter((event) => event.competitionid === leagueId);
-    } else if (selectedSport) {
-      const sportIds = competitionIdsForSport(selectedSport);
-      filtered = filtered.filter((event) => sportIds.has(event.competitionid));
-    }
-
-    // C. Filtro por Fechas (Solo modo resultados)
-    if (mode === 'results' && (selectedFrom || selectedTo)) {
-      filtered = filtered.filter((event) => {
-        const eventDate = dayjs(event.kickoff);
-        if (!eventDate.isValid()) return false;
-
-        const isAfter = selectedFrom
-          ? !eventDate.isBefore(dayjs(selectedFrom), 'day')
-          : true;
-        const isBefore = selectedTo
-          ? !eventDate.isAfter(dayjs(selectedTo), 'day')
-          : true;
-
-        return isAfter && isBefore;
-      });
-    }
-
-    // D. Slice si no es vista completa
-    return full ? filtered : filtered.slice(0, 6);
-  }, [
-    data,
-    mode,
-    selectedSport,
-    selectedLeague,
-    selectedFrom,
-    selectedTo,
-    full,
-  ]);
+  const displayedEvents = useLocalEventFilters({ data, mode, full });
 
   if (isLoading) {
     // Skeleton simple o texto
@@ -104,6 +46,8 @@ export default function EventsList({
 
   return (
     <div className="space-y-3">
+      {mode === 'events' && <StatusFilter />}
+
       {displayedEvents.map((event) => {
         const live = isLive(event.status);
         const finished = isFinished(event.status);

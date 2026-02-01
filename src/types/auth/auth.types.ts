@@ -27,7 +27,7 @@ export const UserSchema = z.object({
 });
 export type User = z.infer<typeof UserSchema>;
 
-export interface FormData {
+export interface AuthFormData {
   username?: string;
   email: string;
   password: string;

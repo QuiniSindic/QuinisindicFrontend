@@ -25,12 +25,12 @@ export default function FilterBar({ mode }: FilterBarProps) {
   const hasLeagues = selectedSport && availableLeagues.length > 0;
 
   return (
-    <div className="flex flex-col gap-3 w-full mb-2">
+    <div className="flex flex-col w-full">
       <SportsFilter selectedSport={selectedSport} onSelect={setSelectedSport} />
 
       <div
         className={`
-        flex flex-col gap-3
+        flex flex-col
         lg:flex-row lg:items-start 
         ${hasLeagues ? 'lg:justify-between' : 'lg:justify-start'} 
       `}

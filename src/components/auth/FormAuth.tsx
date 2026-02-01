@@ -1,7 +1,7 @@
 'use client';
 
-import { login, signup } from '@/services/auth.service';
-import { FormData } from '@/types/auth/auth.types';
+import { login, signup } from '@/actions/auth';
+import { AuthFormData } from '@/types/auth/auth.types';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import React from 'react';
@@ -17,55 +17,52 @@ interface FormAuthProps {
 }
 
 const FormAuth = ({ isLogin = false }: FormAuthProps) => {
-  const router = useRouter();
   const [error, setError] = React.useState<string | undefined>();
-  const [loading, setLoading] = React.useState(false);
+  const [isPending, startTransition] = React.useTransition();
+
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   const {
     register,
     handleSubmit,
     formState: { errors, isValid },
-  } = useForm<FormData>({
+  } = useForm<AuthFormData>({
     mode: 'onChange',
     defaultValues: { email: '', password: '', username: '' },
   });
 
-  const onSubmit: SubmitHandler<FormData> = async (data) => {
+  const onSubmit: SubmitHandler<AuthFormData> = async (data) => {
     setError(undefined);
-    setLoading(true);
 
     const { email, password, username } = data;
 
-    try {
-      if (isLogin) {
-        const res = await login({ email, password });
+    const formData = new FormData();
+    formData.append('email', email);
+    formData.append('password', password);
 
-        if (!res.ok) {
-          setError(res.error);
-          return;
-        }
-
-        const user = res.data;
-
-        queryClient.setQueryData(['user'], user ?? null);
-      } else {
-        const res = await signup({ email, password, username: username ?? '' });
-        if (!res.ok) {
-          setError(res.error);
-          return;
-        }
-        const user = res.data;
-
-        queryClient.setQueryData(['user'], user ?? null);
-      }
-      router.push('/');
-    } catch (err) {
-      setError('Error de red. Por favor, inténtalo de nuevo.');
-      console.error(err);
-    } finally {
-      setLoading(false);
+    if (!isLogin && username) {
+      formData.append('username', username);
     }
+
+    startTransition(async () => {
+      const action = isLogin ? login : signup;
+
+      try {
+        const result = await action(formData);
+
+        // Si hay error, lo mostramos. Si hay éxito, la acción redirige sola.
+        if (result?.error) {
+          setError(result.error);
+        }
+
+        await queryClient.invalidateQueries({ queryKey: ['user'] });
+        router.push('/home');
+        router.refresh();
+      } catch (err) {
+        setError('Ocurrió un error inesperado. Inténtalo de nuevo.');
+      }
+    });
   };
 
   return (
@@ -92,7 +89,7 @@ const FormAuth = ({ isLogin = false }: FormAuthProps) => {
 
       <AuthErrorText message={error} />
 
-      <SubmitButton isLoading={loading} disabled={!isValid || loading}>
+      <SubmitButton isLoading={isPending} disabled={!isValid || isPending}>
         {isLogin ? 'Inicia sesión' : 'Registrarse'}
       </SubmitButton>
 
