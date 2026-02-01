@@ -126,6 +126,6 @@ export const getMatchDataV2 = async (id: number): Promise<MatchData | null> => {
     competitionid: match.competitions?.id,
     country: match.competitions?.country || '',
 
-    events: [], // Si tienes eventos (tarjetas, goles) en otra tabla, cárgalos aquí
+    events: match.events,
   };
 };

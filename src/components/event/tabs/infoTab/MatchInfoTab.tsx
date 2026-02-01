@@ -14,11 +14,7 @@ interface MatchInfoProps {
 
 export const MatchInfoTab: React.FC<MatchInfoProps> = ({ event }) => {
   const actions = event?.events;
-  const isEmpty =
-    actions?.length === 0 ||
-    actions === undefined ||
-    actions === null ||
-    !actions;
+  const isEmpty = !actions || actions.length === 0;
 
   const groups = makeActionGroupsForMatch(actions as MatchEvent[]);
 

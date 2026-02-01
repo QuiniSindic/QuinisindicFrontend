@@ -1,78 +1,43 @@
 export enum MatchEventType {
-  Goal = 36,
-  FailedPenalty = 40,
-  PenaltyGoal = 41,
-  YellowCard = 43,
-  // Segunda Amarilla y roja? = 44
-  RedCard = 45,
-  HalfTime = 46,
-  FinalTime = 47,
-  Overtime = 48,
-  None,
-  // TODO COMPROBAR ESTO SI ES CIERTO XD
-  // Sustitución
-  // jugador entrante
-  // PlayerIn = 5,
-  // jugador saliente
-  // PlayerOut = 4,
+  Goal = 'Goal',
+  Card = 'Card',
+  Substitution = 'Substitution',
+  Half = 'Half',
+  AddedTime = 'AddedTime',
+  // Dejamos estos por si acaso, pero el back manda los de arriba
+  PenaltyGoal = 'PenaltyGoal',
+  FailedPenalty = 'FailedPenalty',
 }
-// ejemplo de cambio
-/**
- * {
-				"Min": 66,
-				"Nm": 2,
-				"Sor": 1,
-				"Incs": [
-					{
-						"Min": 66,
-						"Nm": 2,
-						"Aid": "91166",
-						"ID": "91166",
-						"Fn": "Emmanuel Ofori",
-						"Ln": "Agyemang",
-						"Pnt": "emmanuel-ofori-agyemang",
-						"Pn": "Emmanuel Agyemang",
-						"IDo": "1349",
-						"AIDo": "1349",
-						"IT": 5,
-						"Sor": 1
-					},
-					{
-						"Min": 66,
-						"Nm": 2,
-						"Aid": "1349",
-						"ID": "1349",
-						"Fn": "Simon",
-						"Ln": "Piesinger",
-						"Pnt": "simon-piesinger",
-						"Pn": "Simon Piesinger",
-						"IDo": "91166",
-						"AIDo": "91166",
-						"IT": 4,
-						"Sor": 0
-					}
- */
 
-export const eventTypeLabels: Record<MatchEventType, string> = {
+export const EVENT_TYPE_LABELS: Record<string, string> = {
   [MatchEventType.Goal]: 'Gol',
-  [MatchEventType.PenaltyGoal]: 'Gol de penalti',
-  [MatchEventType.FailedPenalty]: 'Penalti fallado',
-  [MatchEventType.YellowCard]: 'Tarjeta amarilla',
-  [MatchEventType.RedCard]: 'Tarjeta roja',
-  [MatchEventType.HalfTime]: 'Descanso',
-  [MatchEventType.FinalTime]: 'Final',
-  [MatchEventType.Overtime]: 'Prórroga',
-  [MatchEventType.None]: '',
+  [MatchEventType.Card]: 'Tarjeta',
+  [MatchEventType.Substitution]: 'Cambio',
+  [MatchEventType.Half]: 'Parte',
+  [MatchEventType.AddedTime]: 'Tiempo añadido',
 };
-
 export interface MatchEvent {
-  type: MatchEventType;
-  minute?: number | string;
-  extraMinute?: number;
-  team?: number;
-  playerName?: string;
+  type: MatchEventType | string; // Flexible para strings
+  minute?: number;
+  timeStr?: string; // Ej: "45+2"
+  isHome?: boolean;
   score?: string;
-  extra?: string;
+
+  // Campos específicos según tipo
+  player?: string; // Gol o Tarjeta
+  playerId?: number;
+  assist?: string; // Gol
+  ownGoal?: boolean; // Gol
+  isPenalty?: boolean; // Gol
+
+  cardType?: 'Yellow' | 'Red'; // Tarjeta
+
+  playerIn?: string; // Cambio
+  playerOut?: string; // Cambio
+  playerInId?: number;
+  playerOutId?: number;
+
+  label?: string; // "HT", "FT" para eventos tipo Half
 }
 
 export interface MatchData {
@@ -120,6 +85,10 @@ export const MATCH_STATUSES = [
   'AET', // After Extra Time
   'AP', // After Penalties
   'Canc.', // Cancelled
+  '1H',
+  '2H',
+  'Susp.',
+  'Pen',
 ] as const;
 
 export const FINAL_STATUSES: MatchStatus[] = ['FT', 'AET', 'AP', 'Canc.'];

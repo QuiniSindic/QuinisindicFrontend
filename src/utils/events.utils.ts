@@ -9,17 +9,19 @@ import {
 } from '../types/events/events.types';
 import { COMPETITIONS_ID_MAP, SPORTS_LIST_ITEMS } from './sports.utils';
 
-export const NOT_LIVE: MatchStatus[] = ['NS', 'FT', 'Canc.'];
-export const CANCELED: MatchStatus[] = ['Canc.'];
-export const IS_LIVE: MatchStatus[] = ['HT', 'OT'];
-export const IS_FINISHED: MatchStatus[] = ['FT', 'AET', 'AP'];
+export const NOT_LIVE: MatchStatus[] = ['NS', 'FT', 'Canc.', 'Susp.'];
+export const CANCELED: MatchStatus[] = ['Canc.', 'Susp.'];
+export const IS_LIVE: MatchStatus[] = ['HT', 'OT', '1H', '2H', 'Pen'];
+export const IS_FINISHED: MatchStatus[] = ['FT', 'AET', 'AP', 'Canc.', 'Susp.'];
 
 export function isLive(status: MatchStatus) {
-  return !(status === 'NS' || isFinished(status));
+  const s = String(status);
+  return !(s === 'NS' || isFinished(status));
 }
 
 export function isFinished(status: MatchStatus) {
-  return IS_FINISHED.includes(status) || CANCELED.includes(status);
+  const s = String(status);
+  return IS_FINISHED.includes(s as any) || CANCELED.includes(s as any);
 }
 
 export const concatenateAndSortEvents = ({
@@ -36,9 +38,9 @@ export const concatenateAndSortEvents = ({
     const bLive = isLive(b.status);
     if (aLive !== bLive) return aLive ? -1 : 1;
 
-    const ak = dayjs(a.kickoff, 'HH:mm DD/MM/YYYY').valueOf();
-    const bk = dayjs(b.kickoff, 'HH:mm DD/MM/YYYY').valueOf();
-    return ak - bk;
+    const aDate = dayjs(a.kickoff);
+    const bDate = dayjs(b.kickoff);
+    return aDate.valueOf() - bDate.valueOf();
   });
 };
 
@@ -55,31 +57,16 @@ export const competitionIdsForSport = (sportName?: string): Set<number> => {
   return new Set(ids);
 };
 
-export function isEndOfHalf(t: MatchEventType) {
-  return (
-    t === MatchEventType.HalfTime ||
-    t === MatchEventType.FinalTime ||
-    t === MatchEventType.Overtime
-  );
-}
-
+// --- FIX PRINCIPAL: parseMinute ya no acepta segundo argumento ---
 export function parseMinute(
   minute: number | string | null | undefined,
-  extra?: number | null,
 ): ParsedMinute {
   if (minute == null) return { min: 0, extra: 0, total: 0, label: '' };
 
-  if (typeof minute === 'number') {
-    const ex = extra ?? 0;
-    return {
-      min: minute,
-      extra: ex,
-      total: minute + ex,
-      label: ex > 0 ? `${minute}+${ex}'` : `${minute}'`,
-    };
-  }
-
+  // Convertimos SIEMPRE a string primero para parsear
   const s = String(minute).trim().replace("'", '');
+
+  // Caso: "90+4"
   if (s.includes('+')) {
     const [mm, ee] = s.split('+');
     const min = Number(mm) || 0;
@@ -87,17 +74,24 @@ export function parseMinute(
     return { min, extra: ex, total: min + ex, label: `${min}+${ex}'` };
   }
 
+  // Caso normal: "45" o 45
   const min = Number(s) || 0;
-  return { min, extra: 0, total: min, label: `${min}'` };
+  return {
+    min,
+    extra: 0,
+    total: min,
+    label: `${min}'`,
+  };
 }
 
-const isNumericMinute = (m: unknown): m is number =>
-  typeof m === 'number' && !Number.isNaN(m);
-
 const safeTotal = (ev: MatchEvent): number => {
-  // Si no hay minuto numérico, devolvemos -Infinity para que queden al final
-  if (!isNumericMinute(ev.minute)) return Number.NEGATIVE_INFINITY;
-  const { total } = parseMinute(ev.minute, ev.extraMinute);
+  // Usamos timeStr si existe, si no el minute
+  const val = ev.timeStr ?? ev.minute;
+
+  if (val == null) return -1; // Al fondo si no tiene minuto
+
+  // Delegamos en parseMinute (sin pasar extraMinute, que ya no existe)
+  const { total } = parseMinute(val);
   return total;
 };
 
@@ -115,44 +109,57 @@ export function makeActionGroupsForMatch(
     };
   }
 
-  // Localiza marcadores de fase
-  const idxHT = actions.findIndex((a) => a.type === MatchEventType.HalfTime);
-  const idxFT = actions.findIndex((a) => a.type === MatchEventType.FinalTime);
-  const idxOT = actions.findIndex((a) => a.type === MatchEventType.Overtime);
+  // 1. Localizar marcadores de fase (HT, FT)
+  const idxHT = actions.findIndex(
+    (a) => a.type === MatchEventType.Half && a.label === 'HT',
+  );
+  const idxFT = actions.findIndex(
+    (a) => a.type === MatchEventType.Half && a.label === 'FT',
+  );
 
-  // Slices útiles
+  // 2. Cortar el array
   const beforeHT = idxHT >= 0 ? actions.slice(0, idxHT) : actions.slice();
+
   const betweenHTFT =
-    idxHT >= 0 && idxFT >= 0 ? actions.slice(idxHT + 1, idxFT) : [];
-  const afterOT = idxOT >= 0 ? actions.slice(idxOT + 1) : [];
+    idxHT >= 0 && idxFT >= 0
+      ? actions.slice(idxHT + 1, idxFT)
+      : idxHT >= 0
+        ? actions.slice(idxHT + 1)
+        : [];
 
-  // Clasificación tras OT:
-  // - Prórroga: eventos con minuto numérico (95, 105, 120…)
-  // - Tanda: goles (36) SIN minuto numérico (el feed los manda así)
-  const overtime = afterOT.filter(
-    (e) => e.type !== MatchEventType.Overtime && isNumericMinute(e.minute),
+  const afterFT = idxFT >= 0 ? actions.slice(idxFT + 1) : [];
+
+  // 3. Filtrar eventos relevantes
+  const isRelevant = (e: MatchEvent) =>
+    e.type === MatchEventType.Goal ||
+    e.type === MatchEventType.Card ||
+    e.type === MatchEventType.Substitution ||
+    e.type === MatchEventType.PenaltyGoal ||
+    e.type === MatchEventType.FailedPenalty;
+
+  // 4. Ordenar descendente
+  const sortByDesc = (arr: MatchEvent[]) =>
+    arr.filter(isRelevant).sort((a, b) => safeTotal(b) - safeTotal(a));
+
+  const firstHalf = sortByDesc(beforeHT);
+  const secondHalf = sortByDesc(betweenHTFT);
+  const overtimeSorted = sortByDesc(afterFT);
+
+  // 5. Penaltis
+  const penalties = afterFT.filter(
+    (e) =>
+      e.isPenalty ||
+      e.type === MatchEventType.PenaltyGoal ||
+      e.type === MatchEventType.FailedPenalty,
   );
-  const rawPens = afterOT.filter(
-    (e) => e.type === MatchEventType.Goal && !isNumericMinute(e.minute),
+
+  // Marcadores
+  const breaks = actions.filter(
+    (a) => a.type === MatchEventType.Half && a.label === 'HT',
   );
-
-  // Ordena grupos por minuto descendente (donde aplique)
-  const sortByDescTotal = (arr: MatchEvent[]) =>
-    arr.slice().sort((a, b) => safeTotal(b) - safeTotal(a));
-
-  const firstHalf = sortByDescTotal(
-    beforeHT.filter((e) => e.type !== MatchEventType.HalfTime),
+  const finals = actions.filter(
+    (a) => a.type === MatchEventType.Half && a.label === 'FT',
   );
-  const secondHalf = sortByDescTotal(
-    betweenHTFT.filter((e) => e.type !== MatchEventType.FinalTime),
-  );
-  const overtimeSorted = sortByDescTotal(overtime);
-
-  // Penaltis: mantener orden de llegada (P1, P2, …). Si quieres al revés, invierte el array.
-  const penalties = rawPens.slice().reverse();
-
-  const breaks = actions.filter((a) => a.type === MatchEventType.HalfTime);
-  const finals = actions.filter((a) => a.type === MatchEventType.FinalTime);
 
   return {
     firstHalf,
@@ -160,6 +167,6 @@ export function makeActionGroupsForMatch(
     breaks,
     finals,
     overtime: overtimeSorted,
-    penalties, // ← usa este grupo para pintar la tanda
+    penalties,
   };
 }

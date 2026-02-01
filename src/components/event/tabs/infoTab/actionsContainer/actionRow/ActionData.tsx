@@ -2,7 +2,7 @@ import React from 'react';
 
 interface ActionDataProps {
   playerName?: string;
-  teamName: string;
+  teamName?: string;
   assist?: string;
 }
 
@@ -10,29 +10,21 @@ export const ActionData: React.FC<ActionDataProps> = ({
   playerName,
   teamName,
   assist,
-}) => (
-  <div className="min-w-0 flex-1 leading-tight">
-    <div className="flex items-baseline gap-2">
-      {playerName && (
-        <span
-          className="truncate text-[15px] font-medium text-text"
-          title={playerName}
-        >
-          {playerName}
-        </span>
-      )}
-      <span className="truncate text-sm text-muted" title={teamName}>
-        ({teamName})
+}) => {
+  return (
+    <div className="flex flex-col min-w-0">
+      <span className="text-sm font-semibold text-text truncate">
+        {playerName || 'Jugador desconocido'}
       </span>
-    </div>
-
-    {assist && assist !== '-' && (
-      <div
-        className="truncate text-xs text-muted"
-        title={`Asistencia: ${assist}`}
-      >
-        Asistencia: {assist}
+      <div className="flex items-center gap-1 text-xs text-muted truncate">
+        <span>{teamName}</span>
+        {assist && (
+          <>
+            <span className="w-1 h-1 rounded-full bg-muted-foreground/50" />
+            <span className="italic">Asist: {assist}</span>
+          </>
+        )}
       </div>
-    )}
-  </div>
-);
+    </div>
+  );
+};

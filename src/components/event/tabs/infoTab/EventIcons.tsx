@@ -3,35 +3,56 @@ import FootballBall from '@/components/ui/icons/FootballBallIcon';
 import PenaltyIcon from '@/components/ui/icons/PenaltyIcon';
 import PenaltyMissedIcon from '@/components/ui/icons/PenaltyMissedIcon';
 import { MatchEventType } from '@/types/events/events.types';
-import { CircleDot, Flag, Pause, RotateCcw } from 'lucide-react';
+import { ArrowRightLeft, Ban, Circle } from 'lucide-react';
 
-export function EventIcons({ type }: { type: MatchEventType }) {
-  switch (type) {
+interface EventIconsProps {
+  type: string | number;
+}
+
+export const EventIcons: React.FC<EventIconsProps> = ({ type }) => {
+  // Convertimos a string para asegurar comparación
+  const typeStr = String(type);
+
+  switch (typeStr) {
     case MatchEventType.Goal:
-      return <FootballBall className="w-4 h-4" />;
+    case 'Goal':
+      return <FootballBall className="w-4 h-4 text-brand" />;
+
     case MatchEventType.PenaltyGoal:
-      return <PenaltyIcon className="w-4 h-4" />;
+    case 'PenaltyGoal':
+      return <PenaltyIcon className="w-4 h-4 text-green-600 fill-current" />;
+
     case MatchEventType.FailedPenalty:
-      return <PenaltyMissedIcon className="w-4 h-4 bg-red-600" />;
-    case MatchEventType.YellowCard:
+    case 'MissedPenalty':
+      return <PenaltyMissedIcon className="w-4 h-4 text-red-500" />;
+
+    case MatchEventType.Card:
+    case 'Card':
+    case 'Yellow': // Por si acaso
+    case 'YellowCard':
+      // Si el backend no distingue aquí, pintamos amarilla por defecto.
+      // Idealmente pasarías 'cardType' como prop extra si quisieras distinguir color exacto.
       return (
         <span className="inline-block w-3 h-4 rounded-xs bg-yellow-400 border border-yellow-600" />
       );
-    case MatchEventType.RedCard:
+
+    case 'Red': // Por si acaso
+    case 'RedCard':
       return (
         <span className="inline-block w-3 h-4 rounded-xs bg-red-500 border border-red-700" />
       );
-    case MatchEventType.HalfTime:
-      return <Pause className="w-4 h-4" />;
-    case MatchEventType.Overtime:
-      return <RotateCcw className="w-4 h-4" />;
-    case MatchEventType.FinalTime:
-      return <Flag className="w-4 h-4" />;
-    default:
-      return <CircleDot className="w-4 h-4" />;
-  }
-}
 
+    case MatchEventType.Substitution:
+    case 'Substitution':
+      return <ArrowRightLeft className="w-4 h-4 text-brand" />;
+
+    case 'Var':
+      return <Ban className="w-4 h-4 text-text" />;
+
+    default:
+      return <Circle className="w-2 h-2 text-muted" />;
+  }
+};
 export function SidePill({ score }: { score?: string }) {
   if (!score) return null;
   return (
