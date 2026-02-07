@@ -51,10 +51,10 @@ export function useLocalEventFilters({
       ? COMPETITIONS_ID_MAP[selectedLeague]
       : undefined;
     if (leagueId) {
-      filtered = filtered.filter((e) => e.competitionid === leagueId);
+      filtered = filtered.filter((e) => e.competitionId === leagueId);
     } else if (selectedSport) {
       const sportIds = competitionIdsForSport(selectedSport);
-      filtered = filtered.filter((e) => sportIds.has(e.competitionid));
+      filtered = filtered.filter((e) => sportIds.has(e.competitionId));
     }
 
     // 4. Filtro por Fechas (Modo resultados)
