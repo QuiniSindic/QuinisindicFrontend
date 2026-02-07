@@ -21,31 +21,33 @@ export default function PredictionButton({
 
   const label = hasPrediction ? 'Actualizar predicción' : 'Guardar predicción';
 
-  const enabled = 'bg-brand text-brand-contrast hover:opacity-90';
-  const disabled = 'bg-muted text-background cursor-not-allowed';
+  const enabled = 'bg-muted text-brand-contrast hover:opacity-90';
+  const disabled = 'bg-brand text-background cursor-not-allowed';
 
   return (
     <>
       {/* Mobile: botón fijo */}
-      <div className="fixed bottom-0 inset-x-0 z-40 lg:hidden mb-4">
-        <div className="px-3 pb-[env(safe-area-inset-bottom)] bg-background/80 backdrop-blur-sm border-t border-border">
-          {isLoggedIn ? (
-            <Button
-              type="submit"
-              isLoading={saving}
-              disabled={!isValid || saving}
-              className={`
+      <div className="w-full flex justify-center sticky bottom-0 z-10 bg-background/95 backdrop-blur-sm py-4 border-t border-border/50 md:static md:bg-transparent md:border-0 md:py-0 mt-4">
+        <div className="fixed bottom-0 inset-x-0 z-40 lg:hidden mb-4">
+          <div className="px-3 pb-[env(safe-area-inset-bottom)] bg-background/80 backdrop-blur-sm">
+            {isLoggedIn ? (
+              <Button
+                type="submit"
+                isLoading={saving}
+                disabled={!isValid || saving}
+                className={`
                 w-full h-12 font-semibold rounded-xl mt-2
                 ${!isValid ? enabled : disabled}
               `}
-            >
-              {label}
-            </Button>
-          ) : (
-            <Button disabled className="w-full h-12 rounded-xl mt-2">
-              Inicia sesión para guardar
-            </Button>
-          )}
+              >
+                {label}
+              </Button>
+            ) : (
+              <Button disabled className="w-full h-12 rounded-xl mt-2">
+                Inicia sesión para guardar
+              </Button>
+            )}
+          </div>
         </div>
       </div>
 
@@ -69,28 +71,3 @@ export default function PredictionButton({
     </>
   );
 }
-
-// old v1
-/**
- * 
- * return (
-    <div className="flex justify-center mt-2 w-full">
-      {isLoggedIn ? (
-        <Button
-          type="submit"
-          isLoading={saving}
-          disabled={!isValid || saving}
-          className={`group relative text-white flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md
-            ${!isValid ? 'bg-gray-400 cursor-not-allowed' : 'bg-secondary hover:bg-secondary/90'}`}
-        >
-          {hasPrediction ? 'Actualizar predicción' : 'Guardar predicción'}
-        </Button>
-      ) : (
-        <Button className="cursor-not-allowed" disabled={!isLoggedIn}>
-          Inicia sesión para guardar
-        </Button>
-      )}
-    </div>
-  );
- * 
- */

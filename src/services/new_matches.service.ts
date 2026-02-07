@@ -92,7 +92,8 @@ export const getMatchDataV2 = async (id: number): Promise<MatchData | null> => {
       competitions (
         id,
         name,
-        country
+        country,
+        sport_id
       )
     `,
     )
@@ -123,7 +124,8 @@ export const getMatchDataV2 = async (id: number): Promise<MatchData | null> => {
     awayTeam: match.away_team_data,
 
     // Datos del Join con competitions
-    competitionid: match.competitions?.id,
+    competitionId: match.competitions?.id,
+    sportId: match.competitions?.sport_id,
     country: match.competitions?.country || '',
 
     events: match.events,

@@ -31,40 +31,38 @@ export default function EventsList({
     );
   }
 
-  if (displayedEvents.length === 0) {
-    return (
-      <div className="text-center py-12 bg-surface rounded-lg border border-border/50">
-        <p className="text-muted">No se encontraron eventos.</p>
-        {mode === 'results' && (
-          <p className="text-xs text-muted/60 mt-1">
-            Prueba cambiando los filtros de fecha.
-          </p>
-        )}
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-3">
       {mode === 'events' && <StatusFilter />}
 
-      {displayedEvents.map((event) => {
-        const live = isLive(event.status);
-        const finished = isFinished(event.status);
+      {displayedEvents.length === 0 ? (
+        <div className="text-center py-12 bg-surface rounded-lg border border-border/50">
+          <p className="text-muted">No se encontraron eventos.</p>
+          {mode === 'results' && (
+            <p className="text-xs text-muted/60 mt-1">
+              Prueba cambiando los filtros de fecha.
+            </p>
+          )}
+        </div>
+      ) : (
+        displayedEvents.map((event) => {
+          const live = isLive(event.status);
+          const finished = isFinished(event.status);
 
-        return (
-          <Link
-            // Prefetch false para ahorrar ancho de banda en listas largas,
-            // a menos que sea muy probable que el usuario haga click
-            prefetch={false}
-            href={`/event/${event.id}`}
-            key={event.id}
-            className="block" // Asegura que el Link se comporte como bloque
-          >
-            <MatchWidget event={event} isLive={live} isFinished={finished} />
-          </Link>
-        );
-      })}
+          return (
+            <Link
+              // Prefetch false para ahorrar ancho de banda en listas largas,
+              // a menos que sea muy probable que el usuario haga click
+              prefetch={false}
+              href={`/event/${event.id}`}
+              key={event.id}
+              className="block" // Asegura que el Link se comporte como bloque
+            >
+              <MatchWidget event={event} isLive={live} isFinished={finished} />
+            </Link>
+          );
+        })
+      )}
 
       {!full && data.length > 6 && (
         <div className="text-center pt-2">

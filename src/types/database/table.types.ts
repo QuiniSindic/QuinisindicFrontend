@@ -1,11 +1,13 @@
 export interface Prediction {
   id: string;
-  userId: string;
-  matchId: number;
-  competitionId: number;
-  homeScore: number;
-  awayScore: number;
-  points: null;
-  createdAt: string;
-  updatedAt: string;
+  user_id: string;
+  match_id: number;
+  competition_id: number;
+  sport_id: number;
+  home_score: number;
+  away_score: number;
+  points: number | null;
+  created_at: string;
+  updated_at: string;
+  status: string;
 }

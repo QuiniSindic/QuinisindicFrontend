@@ -149,20 +149,26 @@ export async function saveEventPredictionV2(payload: PredictionPayload) {
   const { data, error } = await supabase
     .from('predictions')
     .insert({
-      match_id: payload.event_id,
       user_id: user.id, // Aseguramos que sea el usuario actual
+      sport_id: payload.sport_id,
+      competition_id: payload.competition_id,
+      match_id: payload.event_id,
       home_score: payload.home_score,
       away_score: payload.away_score,
-      // ... otros campos si los tienes
     })
     .select()
     .single();
 
-  if (error) throw new Error(error.message);
+  if (error) {
+    // Si hay error de duplicado, es útil saberlo
+    if (error.code === '23505')
+      throw new Error('Ya tienes una predicción para este partido');
+    throw new Error(error.message);
+  }
+
   return { ok: true, data };
 }
 
-// 4. Actualizar predicción existente
 export async function updateEventPredictionV2(
   eventId: number,
   updatePayload: PredictionUpdatePayload,

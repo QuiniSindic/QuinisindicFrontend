@@ -3,11 +3,11 @@
 import { useGetMatchQueryV2 } from '@/hooks/useUpcomingEvents';
 import {
   useGetEventPredictionsV2,
-  useMyPrediction,
+  useMyPredictionV2,
 } from '@/hooks/useUserPrediction';
 import {
-  saveEventPrediction,
-  updateEventPrediction,
+  saveEventPredictionV2,
+  updateEventPredictionV2,
 } from '@/services/predictions.service';
 
 import { useAuth } from '@/hooks/useAuth';
@@ -38,9 +38,7 @@ const MatchInfo: React.FC<MatchInfoProps> = ({
   const userId = user?.id ?? '';
 
   const { events } = useEventsQuery();
-
   const { data: matchData } = useGetMatchQueryV2(event.id);
-
   const liveEvent = matchData ?? event;
 
   const notStarted = liveEvent.status === 'NS';
@@ -51,10 +49,13 @@ const MatchInfo: React.FC<MatchInfoProps> = ({
   const isInProgress =
     liveEvent.status.includes("'") || liveEvent.status === 'HT';
 
-  const { data: userPred, refetch: refetchUserPred } = useMyPrediction(
-    userId,
-    event.id,
-  );
+  const {
+    data: userPred,
+    refetch: refetchUserPred,
+    isLoading: isLoadingUserPred,
+  } = useMyPredictionV2(userId, event.id);
+
+  console.log({ userPred });
 
   const {
     data: allPredictions,
@@ -63,46 +64,47 @@ const MatchInfo: React.FC<MatchInfoProps> = ({
   } = useGetEventPredictionsV2(event.id, initialPreds);
 
   const handleSave = async (values: { home: string; away: string }) => {
-    const payload: PredictionPayload = {
-      event_id: event.id,
-      competition_id: event.competitionid,
-      home_score: parseInt(values.home, 10),
-      away_score: parseInt(values.away, 10),
-    };
+    try {
+      const payload: PredictionPayload = {
+        event_id: event.id,
+        competition_id: event.competitionId,
+        home_score: parseInt(values.home, 10),
+        away_score: parseInt(values.away, 10),
+        sport_id: event.sportId,
+      };
 
-    const res = await saveEventPrediction(payload);
-    if (!res.ok) throw new Error(res.error || 'Error al guardar la predicción');
+      await saveEventPredictionV2(payload);
 
-    toast.success('¡Predicción guardada con éxito!');
-    await refetchUserPred();
-    await refetchAllPreds();
+      toast.success('¡Predicción guardada con éxito!');
+      await refetchUserPred();
+      await refetchAllPreds();
+    } catch (error: any) {
+      toast.error(error.message || 'Error al guardar la predicción');
+    }
   };
 
   const handleUpdate = async (values: { home: string; away: string }) => {
-    const payload: PredictionUpdatePayload = {
-      home_score: parseInt(values.home, 10),
-      away_score: parseInt(values.away, 10),
-    };
+    try {
+      const payload: PredictionUpdatePayload = {
+        home_score: parseInt(values.home, 10),
+        away_score: parseInt(values.away, 10),
+      };
 
-    const res = await updateEventPrediction(event.id, payload);
-    if (!res.ok)
-      throw new Error(res.error || 'Error al actualizar la predicción');
+      await updateEventPredictionV2(event.id, payload);
 
-    toast.success('¡Predicción actualizada con éxito!');
-    await refetchUserPred();
-    await refetchAllPreds();
+      toast.success('¡Predicción actualizada con éxito!');
+      await refetchUserPred();
+      await refetchAllPreds();
+    } catch (error: any) {
+      toast.error(error.message || 'Error al actualizar la predicción');
+    }
   };
 
-  if (authLoading) {
+  if (authLoading || isLoadingUserPred) {
     return (
-      <>
-        <EventNavigation currentId={event.id} events={events} />
-        <div className="flex justify-center text-center items-center min-h-screen">
-          <div className="text-text">
-            <Spinner label="Cargando partido..." variant="wave" />
-          </div>
-        </div>
-      </>
+      <div className="flex justify-center text-center items-center min-h-screen">
+        <Spinner label="Cargando partido..." variant="wave" />
+      </div>
     );
   }
 
@@ -114,23 +116,31 @@ const MatchInfo: React.FC<MatchInfoProps> = ({
         <EventNavigation currentId={event.id} events={events} />
       )}
 
-      <div className="match-info-container flex flex-col min-h-screen px-3 sm:px-4 bg-background text-text">
-        <NoPredictionWarn status={event.status} prediction={userPred} />
+      <div className="match-info-container flex flex-col min-h-screen px-4 bg-background text-text pb-32 md:pb-10 max-w-3xl mx-auto">
+        {/* Aviso de estado (Login / No empezado) */}
+        <div className="mt-2">
+          <NoPredictionWarn status={event.status} prediction={userPred} />
+        </div>
 
-        <PredictionForm
-          key={liveEvent.id}
-          event={liveEvent}
-          initialPrediction={{
-            home: userPred?.homeScore ?? '',
-            away: userPred?.awayScore ?? '',
-          }}
-          disabled={!(liveEvent.status === 'NS')}
-          isLoggedIn={!!user}
-          onSubmit={userPred ? handleUpdate : handleSave}
-        />
+        {/* Formulario Principal (Tarjeta de Marcador) */}
+        <div className="mt-4">
+          <PredictionForm
+            key={liveEvent.id}
+            event={liveEvent}
+            initialPrediction={{
+              home: userPred?.home_score ?? '',
+              away: userPred?.away_score ?? '',
+            }}
+            disabled={!(liveEvent.status === 'NS')}
+            isLoggedIn={!!user}
+            onSubmit={userPred ? handleUpdate : handleSave}
+          />
+        </div>
 
-        <div className="my-4 h-px w-full bg-border" />
+        {/* Separador sutil */}
+        <div className="my-6 h-px w-full bg-border/50" />
 
+        {/* Pestañas de Información */}
         <MatchInfoTabs
           event={liveEvent}
           predictions={allPredictions ?? []}

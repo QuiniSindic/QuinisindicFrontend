@@ -27,6 +27,13 @@ export const UserSchema = z.object({
 });
 export type User = z.infer<typeof UserSchema>;
 
+export interface PublicProfile {
+  id: string;
+  username: string;
+  email?: string; // Opcional, a veces no quieres mostrarlo
+  img?: string | null; // Usamos 'img' para coherencia con tu frontend
+}
+
 export interface AuthFormData {
   username?: string;
   email: string;

@@ -1,5 +1,6 @@
 'use client';
 
+import { useAuth } from '@/hooks/useAuth';
 import { Navbar, NavbarBrand, NavbarContent } from '@heroui/react';
 import { ThemeToggleButton } from '../ui/theme/ThemeToggleButton';
 import AvatarUser from './header/AvatarUser';
@@ -7,6 +8,8 @@ import { Brand } from './header/Brand';
 import DesktopNavbar from './header/DesktopNavbar';
 
 export default function Header() {
+  const { data, isLoading } = useAuth();
+
   return (
     <Navbar
       maxWidth="full"
@@ -31,9 +34,11 @@ export default function Header() {
       </div>
 
       <NavbarContent justify="end" className="gap-4">
-        <div className="hidden md:flex items-center">
-          <ThemeToggleButton />
-        </div>
+        {!data && !isLoading && (
+          <div className="hidden md:flex items-center">
+            <ThemeToggleButton />
+          </div>
+        )}
 
         <div className="hidden md:flex">
           <AvatarUser />

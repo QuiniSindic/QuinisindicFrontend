@@ -1,6 +1,6 @@
 'use client';
 
-import { useGetUsersUsernames } from '@/hooks/useUsers';
+import { useGetUsersUsernamesV2 } from '@/hooks/useUsers';
 import { Prediction } from '@/types/database/table.types';
 import { Avatar, Spinner } from '@heroui/react';
 import dayjs from 'dayjs';
@@ -11,8 +11,12 @@ interface UsersPredictionsProps {
 }
 
 const UsersPredictions = ({ predictions }: UsersPredictionsProps) => {
-  const userIds = predictions.map((p) => p.userId);
-  const { data: users = {}, isLoading, error } = useGetUsersUsernames(userIds);
+  const userIds = predictions.map((p) => p.user_id);
+  const {
+    data: users = {},
+    isLoading,
+    error,
+  } = useGetUsersUsernamesV2(userIds);
 
   if (isLoading) {
     return (
@@ -45,7 +49,7 @@ const UsersPredictions = ({ predictions }: UsersPredictionsProps) => {
     >
       <ul className="divide-y divide-border">
         {predictions.map((prediction) => {
-          const user = users[prediction.userId];
+          const user = users[prediction.user_id];
           const name = user?.username ?? 'Usuario';
 
           return (
@@ -70,13 +74,13 @@ const UsersPredictions = ({ predictions }: UsersPredictionsProps) => {
                     </p>
 
                     <PredictionScoreBadge
-                      home={Number(prediction.homeScore)}
-                      away={Number(prediction.awayScore)}
+                      home={Number(prediction.home_score)}
+                      away={Number(prediction.away_score)}
                     />
                   </div>
 
                   <p className="mt-0.5 text-xs text-muted">
-                    {dayjs(prediction.createdAt).format('DD/MM/YYYY HH:mm')}
+                    {dayjs(prediction.created_at).format('DD/MM/YYYY HH:mm')}
                   </p>
                 </div>
               </div>
