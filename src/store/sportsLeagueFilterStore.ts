@@ -1,4 +1,8 @@
-import { LeagueName, SportName, SPORTS_LIST_ITEMS } from '@/utils/sports.utils';
+import {
+  LeagueName,
+  SportName,
+  SPORTS_LIST_ITEMS,
+} from '@/utils/domain/sports';
 import { create } from 'zustand';
 
 export type MatchStatusFilter = 'all' | 'live' | 'upcoming';

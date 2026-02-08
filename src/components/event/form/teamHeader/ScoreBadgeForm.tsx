@@ -1,7 +1,7 @@
 'use client';
 
-import { MatchData } from '@/types/events/events.types';
-import { parseKickoff } from '@/utils/date.utils';
+import { MatchData } from '@/types/domain/events';
+import { parseKickoff } from '@/utils/common/date';
 import 'dayjs/locale/es';
 
 interface Props {

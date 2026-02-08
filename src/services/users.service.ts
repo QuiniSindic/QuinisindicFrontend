@@ -1,4 +1,4 @@
-import { PublicProfile } from '@/types/auth/auth.types';
+import { PublicProfile } from '@/types/auth/auth';
 import { createClient } from '@/utils/supabase/client';
 
 // export const getUserUsernames = async (

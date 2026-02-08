@@ -5,9 +5,9 @@ import {
   MatchEventType,
   MatchStatus,
   ParsedMinute,
-} from '@/types/events/events.types';
+} from '@/types/domain/events';
 import dayjs from 'dayjs';
-import { COMPETITIONS_ID_MAP, SPORTS_LIST_ITEMS } from './sports.utils';
+import { COMPETITIONS_ID_MAP, SPORTS_LIST_ITEMS } from './sports';
 
 export const NOT_LIVE: MatchStatus[] = ['NS', 'FT', 'Canc.', 'Susp.'];
 export const CANCELED: MatchStatus[] = ['Canc.', 'Susp.'];

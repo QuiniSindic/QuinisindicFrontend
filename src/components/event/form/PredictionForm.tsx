@@ -1,6 +1,6 @@
 'use client';
 
-import { FormValues, MatchData } from '@/types/events/events.types';
+import { FormValues, MatchData } from '@/types/domain/events';
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import PredictionButton from './prediction/PredictionButton';

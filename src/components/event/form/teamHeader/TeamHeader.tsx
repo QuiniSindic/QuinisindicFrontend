@@ -1,7 +1,7 @@
 // src/components/event/form/teamHeader/TeamHeader.tsx
 'use client';
 
-import { MatchData } from '@/types/events/events.types';
+import { MatchData } from '@/types/domain/events';
 import ScoreBadgeForm from './ScoreBadgeForm';
 import TeamBadgeForm from './TeamBadgeForm';
 

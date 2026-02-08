@@ -1,6 +1,11 @@
 import { LeagueListButton } from '@/components/ui/buttons/LeagueListButton';
 import { OptionsListButton } from '@/components/ui/buttons/OptionsListButton';
-import { LeagueName, SportName, SPORTS_LIST_ITEMS } from '@/utils/sports.utils';
+import {
+  COMPETITIONS_ID_MAP,
+  LeagueName,
+  SportName,
+  SPORTS_LIST_ITEMS,
+} from '@/utils/domain/sports';
 import { SportsFilter } from '../../filters/SportsFilter';
 import { CarouselScrollContainer } from '../../ui/CarouselScrollContainer';
 
@@ -20,6 +25,13 @@ export const SportsListMobile = ({
   const currentSport = SPORTS_LIST_ITEMS.find(
     (sport) => sport.name === selectedSport,
   );
+
+  const PLAYOFF_LEAGUE_IDS = [42];
+
+  const isPlayoffLeague =
+    selectedLeague &&
+    COMPETITIONS_ID_MAP[selectedLeague] &&
+    PLAYOFF_LEAGUE_IDS.includes(COMPETITIONS_ID_MAP[selectedLeague]);
 
   return (
     <div className="block lg:hidden">
@@ -57,18 +69,23 @@ export const SportsListMobile = ({
           <OptionsListButton
             title="Clasificación"
             isSelected={false}
+            className={isPlayoffLeague ? 'w-[calc(50%-4px)]' : 'w-full'}
             onClick={() =>
               window.dispatchEvent(new CustomEvent('open-standings'))
             }
           />
 
-          <OptionsListButton
-            title="Resultados"
-            isSelected={false}
-            onClick={() =>
-              window.dispatchEvent(new CustomEvent('open-results'))
-            }
-          />
+          {isPlayoffLeague && (
+            <OptionsListButton
+              title="Cuadro"
+              isSelected={false}
+              className="w-[calc(50%-4px)]"
+              onClick={() =>
+                // Emitimos un evento distinto para abrir el bracket
+                window.dispatchEvent(new CustomEvent('open-bracket'))
+              }
+            />
+          )}
         </CarouselScrollContainer>
       )}
     </div>

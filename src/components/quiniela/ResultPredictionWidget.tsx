@@ -1,4 +1,4 @@
-import { Partido } from '@/types/quiniela.types';
+import { Partido } from '@/types/domain/quiniela';
 import ResultPredictionButtons from './ResultPredictionButtons';
 
 interface ResultPredictionWidgetProps {

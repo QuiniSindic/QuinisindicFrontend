@@ -1,7 +1,7 @@
-import { MatchData } from '@/types/events/events.types';
+import { MatchData } from '@/types/domain/events';
 import Link from 'next/link';
-import ArrowLeft from '../ui/icons/ArrowLeft';
-import ArrowRight from '../ui/icons/ArrowRight';
+import ArrowLeft from '../common/icons/ArrowLeft';
+import ArrowRight from '../common/icons/ArrowRight';
 
 interface EventNavigationProps {
   currentId: number;

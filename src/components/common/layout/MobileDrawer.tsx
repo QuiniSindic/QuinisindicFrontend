@@ -1,14 +1,14 @@
 'use client';
 
 import { logout } from '@/actions/auth';
-import { useAuth } from '@/hooks/useAuth';
-import { useThemeMode } from '@/hooks/useThemeMode';
-import { PC_HEADER_ITEMS } from '@/utils/header.utils';
+import { ThemeToggleButton } from '@/components/ui/theme/ThemeToggleButton';
+import { useAuth } from '@/hooks/logic/useAuth';
+import { useThemeMode } from '@/hooks/ui/useThemeMode';
+import { PC_HEADER_ITEMS } from '@/utils/ui/navigation';
 import { Avatar, Modal, ModalBody, ModalContent } from '@heroui/react';
 import { useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { ThemeToggleButton } from '../ui/theme/ThemeToggleButton';
 
 interface MobileDrawerProps {
   isOpen: boolean;

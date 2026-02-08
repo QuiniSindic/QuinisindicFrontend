@@ -1,8 +1,8 @@
 'use client';
-import FootballBall from '@/components/ui/icons/FootballBallIcon';
-import PenaltyIcon from '@/components/ui/icons/PenaltyIcon';
-import PenaltyMissedIcon from '@/components/ui/icons/PenaltyMissedIcon';
-import { MatchEventType } from '@/types/events/events.types';
+import FootballBall from '@/components/common/icons/FootballBallIcon';
+import PenaltyIcon from '@/components/common/icons/PenaltyIcon';
+import PenaltyMissedIcon from '@/components/common/icons/PenaltyMissedIcon';
+import { MatchEventType } from '@/types/domain/events';
 import { ArrowRightLeft, Ban, Circle } from 'lucide-react';
 
 interface EventIconsProps {

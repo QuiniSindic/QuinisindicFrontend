@@ -1,5 +1,5 @@
 import { NoDataToDisplay } from '@/components/ui/feedback/NoDataToDisplay';
-import type { MatchData } from '@/types/events/events.types';
+import type { MatchData } from '@/types/domain/events';
 import { Spinner } from '@heroui/react';
 import React from 'react';
 

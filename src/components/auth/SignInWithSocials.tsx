@@ -1,8 +1,8 @@
 'use client';
 
 import { loginWithGoogle } from '@/actions/auth';
-import AppleIcon from '../ui/icons/AppleIcon';
-import GoogleIcon from '../ui/icons/GoogleIcon';
+import AppleIcon from '../common/icons/AppleIcon';
+import GoogleIcon from '../common/icons/GoogleIcon';
 
 interface SignInWithSocialsProps {
   isLogin?: boolean;

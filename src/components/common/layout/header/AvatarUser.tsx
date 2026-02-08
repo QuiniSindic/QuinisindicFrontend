@@ -1,7 +1,8 @@
 'use client';
 
 import { logout } from '@/actions/auth';
-import { useAuth } from '@/hooks/useAuth';
+import { ThemeToggleButton } from '@/components/ui/theme/ThemeToggleButton';
+import { useAuth } from '@/hooks/logic/useAuth';
 import {
   Avatar,
   Button,
@@ -14,7 +15,6 @@ import {
 import { useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ThemeToggleButton } from '../../ui/theme/ThemeToggleButton';
 
 export default function AvatarUser() {
   const router = useRouter();

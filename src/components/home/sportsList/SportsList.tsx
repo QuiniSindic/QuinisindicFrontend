@@ -1,6 +1,6 @@
 'use client';
 import { useSportsFilter } from '@/store/sportsLeagueFilterStore';
-import { LeagueName, SportName } from '@/utils/sports.utils';
+import { LeagueName, SportName } from '@/utils/domain/sports';
 import { SportsListDesktop } from './SportsListDesktop';
 import { SportsListMobile } from './SportsListMobile';
 

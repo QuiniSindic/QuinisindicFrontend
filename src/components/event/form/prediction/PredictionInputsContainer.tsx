@@ -1,6 +1,6 @@
 'use client';
 
-import { FormValues, MatchData } from '@/types/events/events.types';
+import { FormValues, MatchData } from '@/types/domain/events';
 import { UseFormSetValue } from 'react-hook-form';
 import { ScoreInputsContainer } from './ScoreInputsContainer';
 

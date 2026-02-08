@@ -1,6 +1,6 @@
 'use client';
 
-import { AuthFormData } from '@/types/auth/auth.types';
+import { AuthFormData } from '@/types/auth/auth';
 import { FieldErrors, UseFormRegister } from 'react-hook-form';
 import PasswordField from '../ui/inputs/PasswordField';
 import TextField from '../ui/inputs/TextField';

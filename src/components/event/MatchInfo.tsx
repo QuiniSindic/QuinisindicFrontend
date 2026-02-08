@@ -1,23 +1,23 @@
 'use client';
 
-import { useGetMatchQueryV2 } from '@/hooks/useUpcomingEvents';
+import { useGetMatchQuery } from '@/hooks/useUpcomingEvents';
 import {
-  useGetEventPredictionsV2,
-  useMyPredictionV2,
+  useGetEventPredictions,
+  useMyPrediction,
 } from '@/hooks/useUserPrediction';
 import {
   saveEventPredictionV2,
   updateEventPredictionV2,
 } from '@/services/predictions.service';
 
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/hooks/logic/useAuth';
 import { useEventsQuery } from '@/hooks/useEventsQuery';
-import { Prediction } from '@/types/database/table.types';
-import { MatchData } from '@/types/events/events.types';
+import { Prediction } from '@/types/database/table';
+import { MatchData } from '@/types/domain/events';
 import {
   PredictionPayload,
   PredictionUpdatePayload,
-} from '@/types/prediction.types';
+} from '@/types/domain/prediction';
 import { Spinner } from '@heroui/react';
 import toast, { Toaster } from 'react-hot-toast';
 import EventNavigation from './EventNavigation';
@@ -38,7 +38,7 @@ const MatchInfo: React.FC<MatchInfoProps> = ({
   const userId = user?.id ?? '';
 
   const { events } = useEventsQuery();
-  const { data: matchData } = useGetMatchQueryV2(event.id);
+  const { data: matchData } = useGetMatchQuery(event.id);
   const liveEvent = matchData ?? event;
 
   const notStarted = liveEvent.status === 'NS';
@@ -53,7 +53,7 @@ const MatchInfo: React.FC<MatchInfoProps> = ({
     data: userPred,
     refetch: refetchUserPred,
     isLoading: isLoadingUserPred,
-  } = useMyPredictionV2(userId, event.id);
+  } = useMyPrediction(userId, event.id);
 
   console.log({ userPred });
 
@@ -61,13 +61,13 @@ const MatchInfo: React.FC<MatchInfoProps> = ({
     data: allPredictions,
     refetch: refetchAllPreds,
     isLoading: loadingAllPreds,
-  } = useGetEventPredictionsV2(event.id, initialPreds);
+  } = useGetEventPredictions(event.id, initialPreds);
 
   const handleSave = async (values: { home: string; away: string }) => {
     try {
       const payload: PredictionPayload = {
         event_id: event.id,
-        competition_id: event.competitionId,
+        competition_id: event.competitionid,
         home_score: parseInt(values.home, 10),
         away_score: parseInt(values.away, 10),
         sport_id: event.sportId,

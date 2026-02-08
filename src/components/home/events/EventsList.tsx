@@ -3,8 +3,8 @@
 import { StatusFilter } from '@/components/filters/StatusFilter';
 import MatchWidget from '@/components/ui/matchWidget/MatchWidget';
 import { useLocalEventFilters } from '@/hooks/useLocalEventFilters';
-import { MatchData } from '@/types/events/events.types';
-import { isFinished, isLive } from '@/utils/events.utils';
+import { MatchData } from '@/types/domain/events';
+import { isFinished, isLive } from '@/utils/domain/events';
 import Link from 'next/link';
 
 interface EventsListProps {

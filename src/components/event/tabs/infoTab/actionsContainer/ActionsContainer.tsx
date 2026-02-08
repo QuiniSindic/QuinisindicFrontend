@@ -5,7 +5,7 @@ import {
   MatchEvent,
   MatchEventType,
   MatchStatus,
-} from '@/types/events/events.types';
+} from '@/types/domain/events';
 import React from 'react';
 import { ActionRow } from './actionRow/ActionRow';
 import { TimelineDivider } from './actionRow/TimelineDivider';

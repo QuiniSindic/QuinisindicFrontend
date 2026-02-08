@@ -2,7 +2,7 @@
 'use client';
 
 import { useSportsFilter } from '@/store/sportsLeagueFilterStore';
-import { MatchData } from '@/types/events/events.types';
+import { MatchData } from '@/types/domain/events';
 import EventsList from './EventsList';
 
 interface EventsSectionProps {

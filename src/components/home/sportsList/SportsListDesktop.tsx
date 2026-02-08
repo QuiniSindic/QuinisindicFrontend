@@ -1,4 +1,8 @@
-import { LeagueName, SportName, SPORTS_LIST_ITEMS } from '@/utils/sports.utils';
+import {
+  LeagueName,
+  SportName,
+  SPORTS_LIST_ITEMS,
+} from '@/utils/domain/sports';
 
 interface SportsListDesktopProps {
   selectedSport: SportName | null;

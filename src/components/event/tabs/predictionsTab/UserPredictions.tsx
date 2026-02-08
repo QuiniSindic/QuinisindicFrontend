@@ -1,7 +1,7 @@
 'use client';
 
-import { useGetUsersUsernamesV2 } from '@/hooks/useUsers';
-import { Prediction } from '@/types/database/table.types';
+import { useGetUsersUsernames } from '@/hooks/useUsers';
+import { Prediction } from '@/types/database/table';
 import { Avatar, Spinner } from '@heroui/react';
 import dayjs from 'dayjs';
 import { PredictionScoreBadge } from './PredictionScoreBadge';
@@ -12,11 +12,7 @@ interface UsersPredictionsProps {
 
 const UsersPredictions = ({ predictions }: UsersPredictionsProps) => {
   const userIds = predictions.map((p) => p.user_id);
-  const {
-    data: users = {},
-    isLoading,
-    error,
-  } = useGetUsersUsernamesV2(userIds);
+  const { data: users = {}, isLoading, error } = useGetUsersUsernames(userIds);
 
   if (isLoading) {
     return (

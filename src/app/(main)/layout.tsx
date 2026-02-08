@@ -1,6 +1,6 @@
+import Header from '@/components/common/layout/Header';
+import { MobileNavigation } from '@/components/common/layout/MobileNavigation';
 import { MobileOverlays } from '@/components/home/overlays/MobileOverlays';
-import Header from '@/components/layout/Header';
-import { MobileNavigation } from '@/components/layout/MobileNavigation';
 
 export default function MainLayout({
   children,

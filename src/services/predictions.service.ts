@@ -1,9 +1,9 @@
-import { Prediction } from '@/types/database/table.types';
+import { IResponse } from '@/types/common/api';
+import { Prediction } from '@/types/database/table';
 import {
   PredictionPayload,
   PredictionUpdatePayload,
-} from '@/types/prediction.types';
-import { IResponse } from '@/types/response.types';
+} from '@/types/domain/prediction';
 import { createClient } from '@/utils/supabase/client';
 import { BACKEND_URL } from 'core/config';
 

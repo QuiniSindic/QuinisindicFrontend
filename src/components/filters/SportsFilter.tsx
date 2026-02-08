@@ -1,5 +1,5 @@
 import { SportListButton } from '@/components/ui/buttons/SportsListButton';
-import { SportName, SPORTS_LIST_ITEMS } from '@/utils/sports.utils';
+import { SportName, SPORTS_LIST_ITEMS } from '@/utils/domain/sports';
 import { CarouselScrollContainer } from '../ui/CarouselScrollContainer';
 
 interface SportsFilterProps {

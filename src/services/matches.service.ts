@@ -1,4 +1,4 @@
-import { MatchData } from '@/types/events/events.types';
+import { MatchData } from '@/types/domain/events';
 import { BACKEND_URL } from 'core/config';
 
 // export const getMatches = async ({

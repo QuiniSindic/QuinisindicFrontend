@@ -1,12 +1,12 @@
 import { useSportsFilter } from '@/store/sportsLeagueFilterStore';
-import { MatchData } from '@/types/events/events.types';
+import { MatchData } from '@/types/domain/events';
 import {
   competitionIdsForSport,
   isFinished,
   isLive,
-} from '@/utils/events.utils';
+} from '@/utils/domain/events';
 
-import { COMPETITIONS_ID_MAP } from '@/utils/sports.utils';
+import { COMPETITIONS_ID_MAP } from '@/utils/domain/sports';
 import dayjs from 'dayjs';
 import { useMemo } from 'react';
 
@@ -51,10 +51,10 @@ export function useLocalEventFilters({
       ? COMPETITIONS_ID_MAP[selectedLeague]
       : undefined;
     if (leagueId) {
-      filtered = filtered.filter((e) => e.competitionId === leagueId);
+      filtered = filtered.filter((e) => e.competitionid === leagueId);
     } else if (selectedSport) {
       const sportIds = competitionIdsForSport(selectedSport);
-      filtered = filtered.filter((e) => sportIds.has(e.competitionId));
+      filtered = filtered.filter((e) => sportIds.has(e.competitionid));
     }
 
     // 4. Filtro por Fechas (Modo resultados)

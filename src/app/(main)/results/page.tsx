@@ -2,10 +2,10 @@
 
 import FilterBar from '@/components/filters/FilterBar';
 import EventsSection from '@/components/home/events/EventsSection';
-import { useEventsQuery } from '@/hooks/useEventsQuery';
+import { useResultsQuery } from '@/hooks/useResultsQuery';
 
 export default function ResultsPage() {
-  const { events, isLoading } = useEventsQuery();
+  const { events, isLoading } = useResultsQuery();
 
   return (
     <div className="min-h-screen pb-12 bg-background">

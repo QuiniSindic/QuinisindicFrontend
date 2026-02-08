@@ -1,5 +1,5 @@
-import { MatchData } from '@/types/events/events.types';
-import { formatMatchWidget } from '@/utils/date.utils';
+import { MatchData } from '@/types/domain/events';
+import { formatMatchWidget } from '@/utils/common/date';
 
 interface MatchScheduleProps {
   date: string;

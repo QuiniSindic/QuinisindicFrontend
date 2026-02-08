@@ -1,5 +1,5 @@
-import { LoginDTO, SignUpDTO, User } from '@/types/auth/auth.types';
-import { IResponse } from '@/types/response.types';
+import { LoginDTO, SignUpDTO, User } from '@/types/auth/auth';
+import { IResponse } from '@/types/common/api';
 import { createClient } from '@/utils/supabase/client';
 import { BACKEND_URL } from 'core/config';
 

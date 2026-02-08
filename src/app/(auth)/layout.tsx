@@ -1,4 +1,4 @@
-import QuinisindicLogo from '@/components/ui/icons/QuinisindicLogo';
+import QuinisindicLogo from '@/components/common/icons/QuinisindicLogo';
 import { ThemeToggleButton } from '@/components/ui/theme/ThemeToggleButton';
 import Link from 'next/link';
 

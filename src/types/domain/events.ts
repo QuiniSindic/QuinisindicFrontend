@@ -54,9 +54,10 @@ export interface MatchData {
   events?: MatchEvent[];
   homeId: number;
   awayId: number;
-  competitionId: number;
+  competitionid: number;
   sportId: number;
   minute?: string;
+  round?: string;
   homeTeam: TeamInfo;
   awayTeam: TeamInfo;
   country: string;

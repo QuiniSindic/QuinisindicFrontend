@@ -1,4 +1,4 @@
-import { FormValues } from '@/types/events/events.types';
+import { FormValues } from '@/types/domain/events';
 import { UseFormSetValue } from 'react-hook-form';
 import ScoreInput from './ScoreInput';
 

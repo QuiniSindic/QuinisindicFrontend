@@ -3,9 +3,10 @@ type OptionsListButtonProps = {
   isSelected: boolean;
   onClick: () => void;
   disabled?: boolean;
-  roleType?: 'toggle' | 'tab'; // según uses toggle o tabs
-  variant?: 'solid' | 'outline-solid'; // estilo base
-  size?: 'sm' | 'md'; // tamaños
+  roleType?: 'toggle' | 'tab';
+  variant?: 'solid' | 'outline-solid';
+  size?: 'sm' | 'md';
+  className?: string; // Para controlar ancho desde fuera
 };
 
 export const OptionsListButton = ({
@@ -16,6 +17,7 @@ export const OptionsListButton = ({
   roleType = 'toggle',
   variant = 'outline-solid',
   size = 'md',
+  className = '',
 }: OptionsListButtonProps) => {
   const ariaProps =
     roleType === 'tab'
@@ -26,7 +28,7 @@ export const OptionsListButton = ({
     size === 'sm' ? 'h-9 px-3 text-sm' : 'h-10 px-3 text-[0.95rem]';
 
   const base = `
-    snap-center rounded-lg font-semibold whitespace-nowrap truncate
+    w-full snap-center rounded-lg font-semibold whitespace-nowrap truncate
     transition-colors duration-200 transition-transform duration-150
     focus-visible:outline-none focus-visible:ring-2
     focus-visible:ring-ring focus-visible:ring-offset-2
@@ -34,14 +36,13 @@ export const OptionsListButton = ({
     motion-reduce:transition-none motion-reduce:transform-none
   `;
 
+  // ... (resto de estilos igual) ...
   const stateHover =
     'sm:hover:shadow-lg sm:hover:scale-[1.02] active:scale-[0.98] sm:active:scale-100';
-
   const outlineUnselected =
     'bg-transparent text-text border border-border hover:bg-background';
   const outlineSelected =
     'bg-brand text-brand-contrast border border-transparent';
-
   const solidUnselected =
     'bg-surface text-text border border-border hover:bg-background';
   const solidSelected =
@@ -53,7 +54,7 @@ export const OptionsListButton = ({
     variant === 'outline-solid' ? outlineUnselected : solidUnselected;
 
   return (
-    <div className="snap-center shrink-0">
+    <div className={`snap-center shrink-0 ${className}`}>
       <button
         type="button"
         onClick={onClick}

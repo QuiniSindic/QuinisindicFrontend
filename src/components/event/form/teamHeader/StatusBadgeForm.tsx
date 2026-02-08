@@ -1,5 +1,5 @@
-import { MatchData } from '@/types/events/events.types';
-import { formatKickoffBadge } from '@/utils/date.utils';
+import { MatchData } from '@/types/domain/events';
+import { formatKickoffBadge } from '@/utils/common/date';
 import dayjs from 'dayjs';
 
 //CHECK: refactor paleta de colores si es necesario

@@ -1,7 +1,7 @@
 'use client';
 
 import { useSportsFilter } from '@/store/sportsLeagueFilterStore';
-import { SPORTS_LIST_ITEMS } from '@/utils/sports.utils';
+import { SPORTS_LIST_ITEMS } from '@/utils/domain/sports';
 import { useMemo } from 'react';
 import { DateFilter } from './date/DateFilter';
 import { LeaguesFilter } from './LeagueFilter';

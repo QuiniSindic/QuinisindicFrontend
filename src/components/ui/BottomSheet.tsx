@@ -26,7 +26,7 @@ export function BottomSheet({
       hideCloseButton
       backdrop="opaque" // "transparent" | "blur-sm"
       classNames={{
-        base: 'rounded-t-2xl bg-surface text-text border border-border shadow-lg focus:outline-none',
+        base: 'rounded-t-2xl bg-surface text-text border border-border shadow-lg outline-none focus:outline-none',
         body: 'px-2 pb-4 relative',
         backdrop: 'bg-background/80 backdrop-blur-sm',
       }}

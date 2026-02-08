@@ -1,7 +1,7 @@
 'use client';
 
 import { login, signup } from '@/actions/auth';
-import { AuthFormData } from '@/types/auth/auth.types';
+import { AuthFormData } from '@/types/auth/auth';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import React from 'react';

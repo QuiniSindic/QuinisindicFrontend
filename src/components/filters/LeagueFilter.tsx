@@ -1,5 +1,5 @@
 import { LeagueListButton } from '@/components/ui/buttons/LeagueListButton';
-import { LeagueName } from '@/utils/sports.utils';
+import { LeagueName } from '@/utils/domain/sports';
 import { CarouselScrollContainer } from '../ui/CarouselScrollContainer';
 
 interface LeaguesFilterProps {

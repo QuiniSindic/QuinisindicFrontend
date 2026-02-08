@@ -1,6 +1,6 @@
 import EventTeamsData from '@/components/ui/matchWidget/EventTeamsData';
 import { MatchSchedule } from '@/components/ui/matchWidget/MatchSchedule';
-import { MatchData } from '@/types/events/events.types';
+import { MatchData } from '@/types/domain/events';
 import LiveBadge from './LiveBadge';
 
 interface MatchWidgetProps {

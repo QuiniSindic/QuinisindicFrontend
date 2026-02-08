@@ -1,8 +1,8 @@
 'use client';
 
-import { useAuth } from '@/hooks/useAuth';
+import { ThemeToggleButton } from '@/components/ui/theme/ThemeToggleButton';
+import { useAuth } from '@/hooks/logic/useAuth';
 import { Navbar, NavbarBrand, NavbarContent } from '@heroui/react';
-import { ThemeToggleButton } from '../ui/theme/ThemeToggleButton';
 import AvatarUser from './header/AvatarUser';
 import { Brand } from './header/Brand';
 import DesktopNavbar from './header/DesktopNavbar';
