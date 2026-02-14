@@ -54,6 +54,7 @@ const FormAuth = ({ isLogin = false }: FormAuthProps) => {
         // Si hay error, lo mostramos. Si hay éxito, la acción redirige sola.
         if (result?.error) {
           setError(result.error);
+          return;
         }
 
         await queryClient.invalidateQueries({ queryKey: ['user'] });
