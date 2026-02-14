@@ -64,7 +64,7 @@ export function MobileOverlays() {
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand" />
             </div>
           ) : bracketMatches.length > 0 ? (
-            <TournamentBracket matches={bracketMatches} />
+            <TournamentBracket matches={bracketMatches} onMatchSelect={close} />
           ) : (
             <div className="flex flex-col items-center justify-center h-full text-muted">
               <p>No hay cuadro disponible.</p>
