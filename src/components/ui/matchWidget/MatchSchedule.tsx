@@ -17,27 +17,25 @@ export const MatchSchedule = ({
   const dateFormatted = formatMatchWidget(date);
   const baseTextCls = 'text-muted text-sm md:text-base text-center';
 
-  // LÓGICA PARA PARTIDOS EN VIVO
   if (isLive) {
-    // Si el campo minute tiene información (ej: "HT", "45", "90+2")
     if (event.minute) {
-      const isHT = event.minute === 'HT';
+      const rawMinute = String(event.minute).trim();
+      const isHT = rawMinute === 'HT';
+      const normalizedMinute = rawMinute.replace(/'+$/, '');
 
       return (
-        <p className={`${baseTextCls} font-bold text-brand animate-pulse`}>
-          {isHT ? 'Descanso' : `${event.minute}'`}
+        <p className={`${baseTextCls} font-bold text-brand`}>
+          {isHT ? 'Descanso' : `${normalizedMinute}`}
         </p>
       );
     }
-    // Backup si está en LIVE pero el minuto es NULL
+
     return <p className={`${baseTextCls} font-bold text-brand`}>En vivo</p>;
   }
 
-  // LÓGICA PARA FINALIZADOS
   if (isFinished || event.status === 'FT') {
     return <p className={baseTextCls}>Finalizado</p>;
   }
 
-  // POR DEFECTO: Mostrar fecha (Partidos NS)
   return <p className={baseTextCls}>{dateFormatted}</p>;
 };

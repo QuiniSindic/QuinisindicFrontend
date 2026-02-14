@@ -1,8 +1,12 @@
-export default function LiveBadge() {
+interface LiveBadgeProps {
+  label?: string;
+}
+
+export default function LiveBadge({ label = 'En vivo' }: LiveBadgeProps) {
   return (
-    <div className="absolute top-2 right-2 flex items-center gap-1.5">
-      <span className="mr-1 text-sm font-semibold text-text">Live</span>
-      <div className="bg-red-600 h-4 w-4 rounded-full animate-pulse"></div>
+    <div className="inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-background/80 px-2 py-1 backdrop-blur-sm">
+      <span className="text-xs font-semibold text-text">{label}</span>
+      <span className="h-2.5 w-2.5 rounded-full bg-red-600 animate-pulse" />
     </div>
   );
 }

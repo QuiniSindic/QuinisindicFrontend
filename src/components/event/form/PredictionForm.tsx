@@ -13,6 +13,8 @@ interface Props {
   disabled?: boolean;
   isLoggedIn: boolean;
   onSubmit: (vals: FormValues) => Promise<void>;
+  createLabel?: string;
+  updateLabel?: string;
 }
 
 export default function PredictionForm({
@@ -21,6 +23,8 @@ export default function PredictionForm({
   disabled = false,
   isLoggedIn,
   onSubmit,
+  createLabel,
+  updateLabel,
 }: Props) {
   const defaults = useMemo<FormValues>(
     () => ({
@@ -135,6 +139,8 @@ export default function PredictionForm({
             isValid={isValid}
             saving={saving}
             hasPrediction={hasPrediction}
+            createLabel={createLabel}
+            updateLabel={updateLabel}
           />
         </div>
       </div>

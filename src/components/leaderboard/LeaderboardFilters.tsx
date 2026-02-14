@@ -1,5 +1,6 @@
 'use client';
 import { createClient } from '@/utils/supabase/client';
+import { toSpanishSportName } from '@/utils/ui/sportName';
 import { useEffect, useState } from 'react';
 
 interface Props {
@@ -73,7 +74,9 @@ export default function LeaderboardFilters({
           >
             {items.map((item) => (
               <option key={item.id} value={item.id}>
-                {item.name}
+                {currentScope === 'sport'
+                  ? toSpanishSportName(item.name)
+                  : item.name}
               </option>
             ))}
           </select>

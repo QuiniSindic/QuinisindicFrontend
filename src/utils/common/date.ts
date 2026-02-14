@@ -63,3 +63,16 @@ export function formatKickoffBadge(
 
   return `${prefix} • ${dj.locale('es').format('HH:mm')}`;
 }
+
+export const formatKickoff = (kickoff: string) => {
+  const parsed = dayjs(kickoff);
+  if (!parsed.isValid()) return '-';
+  return parsed.locale('es').format('DD/MM/YY HH:mm');
+};
+
+export const getTimestamp = (value?: string | null) => {
+  if (!value) return 0;
+  const parsed = dayjs(value);
+  if (!parsed.isValid()) return 0;
+  return parsed.valueOf();
+};

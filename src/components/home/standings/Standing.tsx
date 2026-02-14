@@ -29,7 +29,7 @@ export default function StandingsTable({ competition }: StandingsTableProps) {
   if (!standing) {
     return (
       <p className="text-center text-muted py-4">
-        Clasificación no disponible para esta liga.
+        Clasificación no disponible para esta competición.
       </p>
     );
   }
@@ -53,7 +53,7 @@ export default function StandingsTable({ competition }: StandingsTableProps) {
   if (!standing || standing.length === 0) {
     return (
       <p className="text-center text-muted py-4">
-        Clasificación no disponible para esta liga.
+        Clasificación no disponible para esta competición.
       </p>
     );
   }

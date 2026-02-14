@@ -1,5 +1,6 @@
 'use client';
 
+import { Suspense } from 'react';
 import FilterBar from '@/components/filters/FilterBar';
 import EventsSection from '@/components/home/events/EventsSection';
 import { useEventsQuery } from '@/hooks/useEventsQuery';
@@ -15,12 +16,14 @@ export default function EventsPage() {
 
           <FilterBar mode="events" />
 
-          <EventsSection
-            data={events}
-            isLoading={isLoading}
-            mode="events"
-            full
-          />
+          <Suspense fallback={null}>
+            <EventsSection
+              data={events}
+              isLoading={isLoading}
+              mode="events"
+              full
+            />
+          </Suspense>
         </div>
       </div>
     </div>

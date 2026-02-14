@@ -7,9 +7,10 @@ import { BracketMatchCard } from './BracketMatchCard';
 
 interface Props {
   matches: MatchData[];
+  onMatchSelect?: () => void;
 }
 
-export const TournamentBracket = ({ matches }: Props) => {
+export const TournamentBracket = ({ matches, onMatchSelect }: Props) => {
   const rounds = organizeBracket(matches);
   const [activeTab, setActiveTab] = useState('playoff'); // Tab por defecto: Octavos
 
@@ -71,7 +72,10 @@ export const TournamentBracket = ({ matches }: Props) => {
                   {round.matches.map((match) => (
                     <div key={match.id} className="relative">
                       {/* Aquí irían las líneas conectoras CSS en una V2 */}
-                      <BracketMatchCard match={match} />
+                      <BracketMatchCard
+                        match={match}
+                        onMatchSelect={onMatchSelect}
+                      />
                     </div>
                   ))}
                 </div>

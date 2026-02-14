@@ -8,6 +8,8 @@ interface PredictionButtonProps {
   isValid: boolean;
   saving: boolean;
   hasPrediction: boolean;
+  createLabel?: string;
+  updateLabel?: string;
 }
 
 export default function PredictionButton({
@@ -16,10 +18,14 @@ export default function PredictionButton({
   isValid,
   saving,
   hasPrediction,
+  createLabel,
+  updateLabel,
 }: PredictionButtonProps) {
-  if (!isNS) return null; // solo mostrar en estado NS
+  if (!isNS) return null;
 
-  const label = hasPrediction ? 'Actualizar predicción' : 'Guardar predicción';
+  const label = hasPrediction
+    ? (updateLabel ?? 'Actualizar prediccion')
+    : (createLabel ?? 'Guardar prediccion');
 
   const enabled = 'bg-muted text-brand-contrast hover:opacity-90';
   const disabled = 'bg-brand text-background cursor-not-allowed';

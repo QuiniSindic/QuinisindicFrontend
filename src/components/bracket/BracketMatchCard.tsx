@@ -7,9 +7,10 @@ import Link from 'next/link';
 
 interface Props {
   match: MatchData;
+  onMatchSelect?: () => void;
 }
 
-export const BracketMatchCard = ({ match }: Props) => {
+export const BracketMatchCard = ({ match, onMatchSelect }: Props) => {
   // Parsear resultado si existe (ej: "2-1")
   let homeScore = '-';
   let awayScore = '-';
@@ -31,7 +32,11 @@ export const BracketMatchCard = ({ match }: Props) => {
   const date = dayjs(match.kickoff).format('dddd DD/MM HH:mm');
 
   return (
-    <Link href={`/event/${match.id}`} className="block w-full">
+    <Link
+      href={`/event/${match.id}`}
+      className="block w-full"
+      onClick={onMatchSelect}
+    >
       <div
         className="
         bg-surface border border-border rounded-lg shadow-sm 

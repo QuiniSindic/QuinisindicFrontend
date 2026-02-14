@@ -1,4 +1,4 @@
-import { BarChart2, Home, LucideProps, Trophy } from 'lucide-react';
+import { Award, Home, LucideProps, Scale } from 'lucide-react';
 import { ForwardRefExoticComponent, RefAttributes } from 'react';
 
 type HeaderMenuItem = {
@@ -11,8 +11,8 @@ type HeaderMenuItem = {
 
 export const BOTTOM_NAV_ITEMS: HeaderMenuItem[] = [
   { label: 'Home', href: '/home', icon: Home },
-  { label: 'Quiniela', href: '/quiniela', icon: Trophy },
-  { label: 'Ranking', href: '/leaderboard', icon: BarChart2 },
+  { label: 'Predicciones', href: '/predictions', icon: Scale },
+  { label: 'Ranking', href: '/leaderboard', icon: Award },
 ];
 
 export const PC_HEADER_ITEMS: HeaderMenuItem[] = [
