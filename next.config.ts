@@ -13,6 +13,14 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'lsm-static-prod.livescore.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'images.fotmob.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
+      },
     ],
   },
   async redirects() {

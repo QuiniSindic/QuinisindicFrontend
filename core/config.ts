@@ -7,8 +7,7 @@ export const PROJECT_ID = process.env.NEXT_PUBLIC_SUPABASE_PROJECT_ID || '';
 export const BACKEND_URL =
   process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001';
 
-export const API_LOGO_COMPETITION_URL =
-  'https://lsm-static-prod.livescore.com/high/';
-
-export const API_LOGO_COMPETITION_URL_LOW =
-  'https://lsm-static-prod.livescore.com/medium/';
+// teamlogo/8634_xsmall.png -> peque y id equipo
+// leaguelogo/47.png -> grande y id liga
+export const FOTMOB_IMAGES_URL =
+  'https://images.fotmob.com/image_resources/logo/';
