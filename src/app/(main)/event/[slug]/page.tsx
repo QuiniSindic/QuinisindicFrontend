@@ -5,24 +5,23 @@ import { createClient } from '@/utils/supabase/server';
 
 export default async function EventDetailPage({
   params,
+  searchParams,
 }: {
-  params: Promise<{ slug: string }>; // El slug siempre viene como string de la URL
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ returnTo?: string }>;
 }) {
   const { slug } = await params;
-  const matchId = Number(slug); // Convertimos a número para la DB
+  const { returnTo } = await searchParams;
+  const matchId = Number(slug);
 
-  // 1. Obtener usuario (Autenticación con Supabase Server)
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // 2. Obtener datos del partido y predicciones en paralelo
-  // Nota: getMatchData y getEventPredictions ahora llaman a Supabase directo
   const match = await getMatchDataV2(matchId);
   const predictions = await getEventPredictionsV2(matchId);
 
-  // Si no hay partido (ID inválido), podrías manejar un 404 aquí
   if (!match) {
     return <div className="p-4 text-center">No se encontró el evento.</div>;
   }
@@ -38,7 +37,7 @@ export default async function EventDetailPage({
       )}
 
       <div className="p-2 grow">
-        <MatchInfo event={match} predictions={predictions} />
+        <MatchInfo event={match} predictions={predictions} returnTo={returnTo} />
       </div>
     </div>
   );

@@ -11,7 +11,6 @@ import {
 } from '@/services/predictions.service';
 
 import { useAuth } from '@/hooks/logic/useAuth';
-import { useEventsQuery } from '@/hooks/useEventsQuery';
 import { Prediction } from '@/types/database/table';
 import { MatchData } from '@/types/domain/events';
 import {
@@ -28,16 +27,17 @@ import PredictionForm from './form/PredictionForm';
 interface MatchInfoProps {
   event: MatchData;
   predictions?: Prediction[];
+  returnTo?: string;
 }
 
 const MatchInfo: React.FC<MatchInfoProps> = ({
   event,
   predictions: initialPreds,
+  returnTo,
 }) => {
   const { data: user, isLoading: authLoading } = useAuth();
   const userId = user?.id ?? '';
 
-  const { events } = useEventsQuery();
   const { data: matchData } = useGetMatchQuery(event.id);
   const liveEvent = matchData ?? event;
 
@@ -112,9 +112,7 @@ const MatchInfo: React.FC<MatchInfoProps> = ({
     <>
       <Toaster />
 
-      {events?.length > 0 && (
-        <EventNavigation currentId={event.id} events={events} />
-      )}
+      <EventNavigation currentId={event.id} returnTo={returnTo} />
 
       <div className="match-info-container flex flex-col min-h-screen px-4 bg-background text-text pb-32 md:pb-10 max-w-3xl mx-auto">
         {/* Aviso de estado (Login / No empezado) */}

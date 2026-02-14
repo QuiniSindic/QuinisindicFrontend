@@ -52,7 +52,7 @@ export const ActionsContainer: React.FC<ActionsContainerProps> = ({
 
       <div className="flex flex-col gap-0">
         {/* 1. FINAL (Si existe el evento o el estado es final) */}
-        {(getBreakLabel('FT') || FINAL_STATUSES.includes(status as any)) && (
+        {(getBreakLabel('FT') || FINAL_STATUSES.has(status)) && (
           <TimelineDivider title="Final" />
         )}
 

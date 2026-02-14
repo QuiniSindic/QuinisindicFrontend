@@ -46,6 +46,13 @@ export interface MatchEvent {
   label?: string; // "HT", "FT" para eventos tipo Half
 }
 
+export type TeamInfo = {
+  id: number;
+  name: string;
+  abbr: string;
+  img: string | null;
+  country: string;
+};
 export interface MatchData {
   id: number;
   status: MatchStatus;
@@ -64,12 +71,15 @@ export interface MatchData {
   Odds?: Odds;
 }
 
-export type TeamInfo = {
+export type MatchLite = {
   id: number;
-  name: string;
-  abbr: string;
-  img: string | null;
-  country: string;
+  kickoff: string;
+  status: string;
+  minute?: string | null;
+  home_team_data?: TeamInfo | null;
+  away_team_data?: TeamInfo | null;
+  home_score?: number | null;
+  away_score?: number | null;
 };
 
 export interface MatchFullData extends MatchData {
@@ -99,16 +109,10 @@ export const MATCH_STATUSES = [
   'Pen',
 ] as const;
 
-export const FINAL_STATUSES: MatchStatus[] = ['FT', 'AET', 'AP', 'Canc.'];
-export type MatchStatus = (typeof MATCH_STATUSES)[number];
+export const NOT_STARTED_STATUSES = new Set(['NS']);
+export const FINAL_STATUSES = new Set(['FT', 'AET', 'AP', 'Pen', 'Canc.']);
 
-export interface CompetitionData {
-  id: string;
-  name: string;
-  fullName: string;
-  badge: string;
-  matches: MatchData[];
-}
+export type MatchStatus = (typeof MATCH_STATUSES)[number];
 
 export type ParsedMinute = {
   min: number;
