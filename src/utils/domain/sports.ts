@@ -8,10 +8,11 @@ export const SPORTS_LIST_ITEMS = [
       'Serie A',
       'Ligue 1',
       'Champions League',
+      'Europa League',
+      'Copa del Rey',
+      'Mundial',
       // 'UEFA Conference League',
       // 'La Liga Hypermotion',
-      // 'Europa League',
-      // 'Copa del Rey',
       // 'Mundial de Clubes',
     ],
   },
@@ -56,6 +57,9 @@ export const COMPETITIONS_ID_MAP: Record<LeagueName, number> = {
   'Serie A': 55,
   'Ligue 1': 53,
   'Champions League': 42,
+  'Copa del Rey': 138,
+  'Europa League': 73,
+  Mundial: 77,
 
   // FIX: cuando se añadan los deportes
   NBA: 0,
@@ -89,7 +93,8 @@ export const getPositionClass = (
   const relegationClass = 'text-red-500 font-medium';
 
   switch (leagueId) {
-    case 42: // Champions League (League Phase)
+    case 42: // Champions League
+    case 73: // Europa League
       if (position <= 8) return championsClass; // Octavos
       if (position <= 24) return europaClass; // Playoff (usamos azul para diferenciar)
       return defaultClass;

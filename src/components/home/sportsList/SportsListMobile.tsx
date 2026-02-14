@@ -26,7 +26,7 @@ export const SportsListMobile = ({
     (sport) => sport.name === selectedSport,
   );
 
-  const PLAYOFF_LEAGUE_IDS = [42];
+  const PLAYOFF_LEAGUE_IDS = [42, 73, 77, 138];
 
   const isPlayoffLeague =
     selectedLeague &&
