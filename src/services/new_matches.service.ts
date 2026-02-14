@@ -1,4 +1,5 @@
-import { CompetitionData, MatchData } from '@/types/domain/events';
+import { CompetitionData } from '@/types/domain/competitions';
+import { MatchData } from '@/types/domain/events';
 import { createClient } from '@/utils/supabase/client';
 import dayjs from 'dayjs';
 
