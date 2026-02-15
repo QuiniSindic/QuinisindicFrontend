@@ -109,6 +109,7 @@ export const MATCH_STATUSES = [
   'Pen',
 ] as const;
 
+export const FINISHED_MATCH_STATUSES = ['FT', 'AET', 'AP', 'Pen'] as const;
 export const NOT_STARTED_STATUSES = new Set(['NS']);
 export const FINAL_STATUSES = new Set(['FT', 'AET', 'AP', 'Pen', 'Canc.']);
 

@@ -1,6 +1,7 @@
 import {
   ActionGroups,
   FINAL_STATUSES,
+  FINISHED_MATCH_STATUSES,
   MatchData,
   MatchEvent,
   MatchEventType,
@@ -11,11 +12,8 @@ import {
 import { PredictionGroup, PredictionView } from '@/types/domain/prediction';
 import dayjs from 'dayjs';
 import { getTimestamp } from '../common/date';
-import { COMPETITIONS_ID_MAP, SPORTS_LIST_ITEMS } from './sports';
 
-export const NOT_LIVE: MatchStatus[] = ['NS', 'FT', 'Canc.', 'Susp.'];
 export const CANCELED: MatchStatus[] = ['Canc.', 'Susp.'];
-export const IS_LIVE: MatchStatus[] = ['HT', 'OT', '1H', '2H', 'Pen'];
 export const IS_FINISHED: MatchStatus[] = ['FT', 'AET', 'AP', 'Canc.', 'Susp.'];
 
 export function isLive(status: MatchStatus) {
@@ -46,19 +44,6 @@ export const concatenateAndSortEvents = ({
     const bDate = dayjs(b.kickoff);
     return aDate.valueOf() - bDate.valueOf();
   });
-};
-
-export const competitionIdsForSport = (sportName?: string): Set<number> => {
-  if (!sportName) return new Set<number>();
-
-  const sport = SPORTS_LIST_ITEMS.find((s) => s.name === sportName);
-  if (!sport) return new Set<number>();
-
-  const ids = sport.leagues
-    .map((lg) => COMPETITIONS_ID_MAP[lg])
-    .filter((id): id is number => typeof id === 'number');
-
-  return new Set(ids);
 };
 
 // --- FIX PRINCIPAL: parseMinute ya no acepta segundo argumento ---
@@ -333,4 +318,11 @@ export const getTeamName = (
 ) => {
   if (!team?.name) return fallback;
   return team.name;
+};
+
+export const isFinishedMatchStatus = (status?: string | null): boolean => {
+  if (!status) return false;
+  return FINISHED_MATCH_STATUSES.includes(
+    status as (typeof FINISHED_MATCH_STATUSES)[number],
+  );
 };

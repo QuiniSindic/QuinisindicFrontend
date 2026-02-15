@@ -1,6 +1,7 @@
 'use client';
 
 import { MatchData } from '@/types/domain/events';
+import { isFinishedMatchStatus } from '@/utils/domain/events';
 import dayjs from 'dayjs';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -15,11 +16,7 @@ export const BracketMatchCard = ({ match, onMatchSelect }: Props) => {
   let homeScore = '-';
   let awayScore = '-';
 
-  if (
-    match.status === 'FT' ||
-    match.status === 'AET' ||
-    match.status === 'AP'
-  ) {
+  if (isFinishedMatchStatus(match.status)) {
     if (match.result && match.result.includes('-')) {
       [homeScore, awayScore] = match.result.split('-');
     }

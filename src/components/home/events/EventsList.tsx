@@ -7,7 +7,7 @@ import { useSportsFilter } from '@/store/sportsLeagueFilterStore';
 import { MatchData } from '@/types/domain/events';
 import { isFinished, isLive } from '@/utils/domain/events';
 import {
-  COMPETITIONS_ID_MAP,
+  getCompetitionIdByLeagueName,
   SPORT_ID_MAP,
   SPORTS_MAP,
 } from '@/utils/domain/sports';
@@ -31,6 +31,7 @@ export default function EventsList({
   const {
     selectedSport,
     selectedLeague,
+    selectedCompetitionId,
     selectedFrom,
     selectedTo,
     statusFilter,
@@ -42,9 +43,8 @@ export default function EventsList({
   const shouldIncludeReturnTo = returnTo !== '/home';
   const sportSlug = selectedSport ? SPORTS_MAP[selectedSport] : undefined;
   const sportId = sportSlug ? SPORT_ID_MAP[sportSlug] : undefined;
-  const competitionId = selectedLeague
-    ? COMPETITIONS_ID_MAP[selectedLeague]
-    : undefined;
+  const competitionId =
+    selectedCompetitionId ?? getCompetitionIdByLeagueName(selectedLeague);
 
   const params = new URLSearchParams();
   params.set('mode', mode);

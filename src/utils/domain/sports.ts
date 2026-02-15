@@ -40,7 +40,7 @@ export const SPORTS_LIST_ITEMS = [
 ] as const;
 
 export type SportName = (typeof SPORTS_LIST_ITEMS)[number]['name'];
-export type LeagueName = (typeof SPORTS_LIST_ITEMS)[number]['leagues'][number];
+export type LeagueName = string;
 
 export const SPORTS_MAP: Record<SportName, string> = {
   Fútbol: 'football',
@@ -70,6 +70,14 @@ export const COMPETITIONS_ID_MAP: Record<LeagueName, number> = {
   'Abierto de Estados Unidos': 0,
   'Fórmula 1': 0,
   MotoGP: 0,
+};
+
+export const getCompetitionIdByLeagueName = (
+  league?: LeagueName | null,
+): number | undefined => {
+  if (!league) return undefined;
+  const id = COMPETITIONS_ID_MAP[league];
+  return typeof id === 'number' && id > 0 ? id : undefined;
 };
 
 // IDs arbitrarios para tus deportes (asegúrate de que coincidan con tu DB)

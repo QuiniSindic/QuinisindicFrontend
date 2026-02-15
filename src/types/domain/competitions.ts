@@ -5,6 +5,7 @@ export interface CompetitionData {
   name: string;
   fullName: string;
   badge: string;
+  country?: string;
   matches: MatchData[];
 }
 

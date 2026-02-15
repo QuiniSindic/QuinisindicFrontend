@@ -4,7 +4,7 @@ import { TournamentBracket } from '@/components/bracket/TournamentBracket';
 import { BottomSheet } from '@/components/ui/BottomSheet';
 import { useBracketMatches } from '@/hooks/useBracketMatches';
 import { useSportsFilter } from '@/store/sportsLeagueFilterStore';
-import { COMPETITIONS_ID_MAP } from '@/utils/domain/sports';
+import { getCompetitionIdByLeagueName } from '@/utils/domain/sports';
 import { useEffect, useState } from 'react';
 import StandingsTable from '../standings/Standing';
 
@@ -12,11 +12,10 @@ type View = 'standings' | 'bracket' | null;
 
 export function MobileOverlays() {
   const [view, setView] = useState<View>(null);
-  const { selectedLeague } = useSportsFilter();
+  const { selectedLeague, selectedCompetitionId } = useSportsFilter();
 
-  const competitionId = selectedLeague
-    ? COMPETITIONS_ID_MAP[selectedLeague]
-    : undefined;
+  const competitionId =
+    selectedCompetitionId ?? getCompetitionIdByLeagueName(selectedLeague);
 
   const { data: bracketMatches = [], isLoading } =
     useBracketMatches(competitionId);
@@ -46,8 +45,11 @@ export function MobileOverlays() {
         onClose={close}
         title={selectedLeague as string}
       >
-        {selectedLeague ? (
-          <StandingsTable competition={selectedLeague} />
+        {selectedLeague || selectedCompetitionId ? (
+          <StandingsTable
+            competition={selectedLeague || undefined}
+            competitionId={selectedCompetitionId}
+          />
         ) : (
           <p className="text-center text-muted py-6">Selecciona una liga.</p>
         )}

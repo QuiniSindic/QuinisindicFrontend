@@ -1,5 +1,5 @@
 import { CompetitionData } from '@/types/domain/competitions';
-import { MatchData } from '@/types/domain/events';
+import { FINISHED_MATCH_STATUSES, MatchData } from '@/types/domain/events';
 import { createClient } from '@/utils/supabase/client';
 import dayjs from 'dayjs';
 
@@ -72,6 +72,7 @@ export async function getLiveMatches(
         name: match.competitions.name,
         fullName: match.competitions.name,
         badge: match.competitions.badge,
+        country: match.competitions.country || '',
         matches: [],
       });
     }
@@ -233,7 +234,7 @@ export async function getPastMatches(
 
   // Filtro de ESTADO: Solo partidos terminados
   // Ajusta según tus status ('FT', 'AET', 'Pen', etc.)
-  query = query.in('status', ['FT', 'AET', 'AP', 'Pen']);
+  query = query.in('status', [...FINISHED_MATCH_STATUSES]);
 
   // Ventana de Tiempo (PASADO)
   if (fromDate && toDate) {
@@ -273,6 +274,7 @@ export async function getPastMatches(
         name: match.competitions.name,
         fullName: match.competitions.name,
         badge: match.competitions.badge,
+        country: match.competitions.country || '',
         matches: [],
       });
     }

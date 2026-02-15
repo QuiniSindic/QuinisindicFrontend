@@ -2,7 +2,7 @@
 
 import { MatchData } from '@/types/domain/events';
 import { organizeBracket } from '@/utils/domain/bracket';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BracketMatchCard } from './BracketMatchCard';
 
 interface Props {
@@ -12,10 +12,21 @@ interface Props {
 
 export const TournamentBracket = ({ matches, onMatchSelect }: Props) => {
   const rounds = organizeBracket(matches);
-  const [activeTab, setActiveTab] = useState('playoff'); // Tab por defecto: Octavos
+  const [activeTab, setActiveTab] = useState<string | null>(null);
 
   // Filtrar rondas vacías para no mostrarlas si no hay datos
   const activeRounds = rounds.filter((round) => round.matches.length > 0);
+
+  useEffect(() => {
+    if (activeRounds.length === 0) {
+      setActiveTab(null);
+      return;
+    }
+
+    if (!activeTab || !activeRounds.some((round) => round.id === activeTab)) {
+      setActiveTab(activeRounds[0].id);
+    }
+  }, [activeRounds, activeTab]);
 
   if (activeRounds.length === 0) {
     return (
@@ -27,7 +38,6 @@ export const TournamentBracket = ({ matches, onMatchSelect }: Props) => {
 
   return (
     <div className="w-full h-full flex flex-col">
-      {/* === MOBILE: TABS === */}
       <div className="lg:hidden flex border-b border-border mb-4 overflow-x-auto scrollbar-hide">
         {activeRounds.map((round) => (
           <button
@@ -47,11 +57,9 @@ export const TournamentBracket = ({ matches, onMatchSelect }: Props) => {
         ))}
       </div>
 
-      {/* === CONTENT AREA === */}
       <div className="flex-1 overflow-y-auto lg:overflow-x-auto lg:overflow-y-hidden p-1">
         <div className="flex flex-col lg:flex-row lg:h-full lg:min-w-max gap-4 lg:gap-8">
           {activeRounds.map((round) => {
-            // En Mobile, solo mostramos la ronda activa
             const isHiddenOnMobile = round.id !== activeTab;
 
             return (
@@ -62,16 +70,13 @@ export const TournamentBracket = ({ matches, onMatchSelect }: Props) => {
                   ${isHiddenOnMobile ? 'hidden lg:flex' : 'flex'}
                 `}
               >
-                {/* Título Ronda (Solo desktop, en mobile ya está en tabs) */}
                 <h3 className="hidden lg:block text-center font-bold text-muted uppercase tracking-wider text-xs mb-4 sticky top-0 bg-background py-2 z-10">
                   {round.name}
                 </h3>
 
-                {/* Lista de Partidos */}
                 <div className="flex flex-col justify-center h-full gap-4 lg:gap-8 pb-10">
                   {round.matches.map((match) => (
                     <div key={match.id} className="relative">
-                      {/* Aquí irían las líneas conectoras CSS en una V2 */}
                       <BracketMatchCard
                         match={match}
                         onMatchSelect={onMatchSelect}
