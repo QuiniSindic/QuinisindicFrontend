@@ -2,8 +2,11 @@
 
 import { useCompetitionOptions } from '@/hooks/useCompetitionOptions';
 import { useSportsFilter } from '@/store/sportsLeagueFilterStore';
-import { SPORT_ID_MAP, SPORTS_MAP } from '@/utils/domain/sports';
-import { SPORTS_LIST_ITEMS } from '@/utils/domain/sports';
+import {
+  SPORT_ID_MAP,
+  SPORTS_LIST_ITEMS,
+  SPORTS_MAP,
+} from '@/utils/domain/sports';
 import { useMemo } from 'react';
 import { DateFilter } from './date/DateFilter';
 import { LeaguesFilter } from './LeagueFilter';
@@ -51,8 +54,10 @@ export default function FilterBar({ mode }: FilterBarProps) {
       <div
         className={`
         mt-3 flex flex-col
+        ${mode === 'results' && hasLeagues ? 'gap-3' : ''}
         lg:flex-row lg:items-start 
-        ${hasLeagues ? 'lg:justify-between' : 'lg:justify-start'} 
+        ${hasLeagues ? 'lg:justify-between' : 'lg:justify-start'}
+        ${mode === 'results' && hasLeagues ? 'lg:gap-3' : ''} 
       `}
       >
         {hasLeagues && (
