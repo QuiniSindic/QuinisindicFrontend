@@ -6,7 +6,7 @@ import {
 } from '@/utils/domain/sports';
 import { create } from 'zustand';
 
-export type MatchStatusFilter = 'all' | 'live' | 'upcoming';
+export type EventListStatusFilter = 'all' | 'live' | 'upcoming';
 
 interface SportsFilter {
   selectedSport: SportName | null;
@@ -22,8 +22,8 @@ interface SportsFilter {
   selectedTo?: string | null;
   setSelectedTo: (d?: string | null) => void;
 
-  statusFilter: MatchStatusFilter;
-  setStatusFilter: (filter: MatchStatusFilter) => void;
+  statusFilter: EventListStatusFilter;
+  setStatusFilter: (filter: EventListStatusFilter) => void;
 
   clearDates: () => void;
 }

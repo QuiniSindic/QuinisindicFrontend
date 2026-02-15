@@ -118,8 +118,8 @@ export const makeActionGroupsForMatch = (
   return groups;
 };
 
-export type MatchStatusFilter = 'all' | 'live' | 'ns' | 'finished';
-export const getStatusBucket = (status: string): MatchStatusFilter => {
+export type PredictionStatusFilter = 'all' | 'live' | 'ns' | 'finished';
+export const getStatusBucket = (status: string): PredictionStatusFilter => {
   if (NOT_STARTED_STATUSES.has(status)) return 'ns';
   if (FINAL_STATUSES.has(status)) return 'finished';
   return 'live';
@@ -172,7 +172,7 @@ export const groupBySportAndLeague = (
       return a.id.localeCompare(b.id);
     }
 
-    const statusOrder: Record<MatchStatusFilter, number> = {
+    const statusOrder: Record<PredictionStatusFilter, number> = {
       live: 0,
       ns: 1,
       finished: 2,

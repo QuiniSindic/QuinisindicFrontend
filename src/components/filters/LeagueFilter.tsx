@@ -1,14 +1,12 @@
 import { LeagueListButton } from '@/components/ui/buttons/LeagueListButton';
+import { CompetitionOption } from '@/hooks/useCompetitionOptions';
+import { groupCompetitionOptionsByCountry } from '@/utils/domain/competition';
 import { LeagueName } from '@/utils/domain/sports';
 import { ChevronDown } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { CarouselScrollContainer } from '../ui/CarouselScrollContainer';
 
-export interface LeagueFilterOption {
-  id: number;
-  name: string;
-  country?: string;
-}
+export type LeagueFilterOption = CompetitionOption;
 
 interface LeaguesFilterProps {
   leagues: readonly string[] | string[];
@@ -28,25 +26,10 @@ export const LeaguesFilter = ({
   showLabel = false,
 }: LeaguesFilterProps) => {
   const [isSelectFocused, setIsSelectFocused] = useState(false);
-  const groupedLeagueOptions = useMemo(() => {
-    const groups = new Map<string, LeagueFilterOption[]>();
-
-    leagueOptions.forEach((option) => {
-      const key = option.country?.trim() || 'Otros';
-      const current = groups.get(key) || [];
-      current.push(option);
-      groups.set(key, current);
-    });
-
-    return Array.from(groups.entries())
-      .sort(([a], [b]) => a.localeCompare(b, 'es', { sensitivity: 'base' }))
-      .map(([country, options]) => ({
-        country,
-        options: [...options].sort((a, b) =>
-          a.name.localeCompare(b.name, 'es', { sensitivity: 'base' }),
-        ),
-      }));
-  }, [leagueOptions]);
+  const groupedLeagueOptions = useMemo(
+    () => groupCompetitionOptionsByCountry(leagueOptions),
+    [leagueOptions],
+  );
 
   const useCountryGroupedSelect = leagueOptions.length > 0;
 

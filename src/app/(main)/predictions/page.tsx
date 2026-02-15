@@ -9,7 +9,7 @@ import {
   getStatusBucket,
   getStatusLabel,
   groupBySportAndLeague,
-  MatchStatusFilter,
+  PredictionStatusFilter,
 } from '@/utils/domain/events';
 import { Spinner } from '@heroui/react';
 import { useQuery } from '@tanstack/react-query';
@@ -22,7 +22,8 @@ type SortMode = 'status' | 'kickoff_desc' | 'kickoff_asc';
 export default function PredictionsPage() {
   const { data: user, isLoading: authLoading } = useAuth();
   const [view, setView] = useState<'mine' | 'community'>('mine');
-  const [statusFilter, setStatusFilter] = useState<MatchStatusFilter>('all');
+  const [statusFilter, setStatusFilter] =
+    useState<PredictionStatusFilter>('all');
   const [sortMode, setSortMode] = useState<SortMode>('status');
 
   const {

@@ -4,6 +4,7 @@ import {
   LeagueName,
   SportName,
 } from '@/utils/domain/sports';
+import { groupCompetitionOptionsByCountry } from '@/utils/domain/competition';
 import { ChevronDown } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { LeagueFilterOption } from '../../filters/LeagueFilter';
@@ -30,25 +31,10 @@ export const SportsListMobile = ({
   const [isSelectFocused, setIsSelectFocused] = useState(false);
   const PLAYOFF_LEAGUE_IDS = [42, 73, 77, 138];
 
-  const groupedLeagueOptions = useMemo(() => {
-    const groups = new Map<string, LeagueFilterOption[]>();
-
-    leagueOptions.forEach((option) => {
-      const key = option.country?.trim() || 'Otros';
-      const current = groups.get(key) || [];
-      current.push(option);
-      groups.set(key, current);
-    });
-
-    return Array.from(groups.entries())
-      .sort(([a], [b]) => a.localeCompare(b, 'es', { sensitivity: 'base' }))
-      .map(([country, options]) => ({
-        country,
-        options: [...options].sort((a, b) =>
-          a.name.localeCompare(b.name, 'es', { sensitivity: 'base' }),
-        ),
-      }));
-  }, [leagueOptions]);
+  const groupedLeagueOptions = useMemo(
+    () => groupCompetitionOptionsByCountry(leagueOptions),
+    [leagueOptions],
+  );
 
   const selectedLeagueId =
     selectedCompetitionId ?? getCompetitionIdByLeagueName(selectedLeague);

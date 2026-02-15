@@ -13,7 +13,7 @@ export const useUpcomingEventsQuery = (
 
   return useQuery({
     queryKey: ['events', sport, competitionId, from, to],
-    queryFn: () => getLiveMatches(sport, competitionId),
+    queryFn: () => getLiveMatches(sport, competitionId, from, to),
     refetchOnMount: false,
     refetchInterval: 1000 * 60, // 30 segundos
     refetchOnWindowFocus: true,
