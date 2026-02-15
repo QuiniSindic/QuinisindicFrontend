@@ -55,8 +55,6 @@ const MatchInfo: React.FC<MatchInfoProps> = ({
     isLoading: isLoadingUserPred,
   } = useMyPrediction(userId, event.id);
 
-  console.log({ userPred });
-
   const {
     data: allPredictions,
     refetch: refetchAllPreds,

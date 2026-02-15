@@ -3,28 +3,29 @@
 import { useStandingsQuery } from '@/hooks/useStandingLeague';
 import { TeamStandingData } from '@/types/domain/standings';
 import {
-  COMPETITIONS_ID_MAP,
+  getCompetitionIdByLeagueName,
   getPositionClass,
-  LeagueName,
 } from '@/utils/domain/sports';
 import { FOTMOB_IMAGES_URL } from 'core/config';
 import Image from 'next/image';
 
 interface StandingsTableProps {
   competition?: string;
+  competitionId?: number | null;
 }
 
-export default function StandingsTable({ competition }: StandingsTableProps) {
+export default function StandingsTable({
+  competition,
+  competitionId,
+}: StandingsTableProps) {
   const {
     data: standing,
     isLoading,
     isError,
     error,
-  } = useStandingsQuery(competition);
+  } = useStandingsQuery(competition, competitionId);
 
-  const leagueId = competition
-    ? COMPETITIONS_ID_MAP[competition as LeagueName]
-    : 0;
+  const leagueId = competitionId ?? getCompetitionIdByLeagueName(competition) ?? 0;
 
   if (!standing) {
     return (

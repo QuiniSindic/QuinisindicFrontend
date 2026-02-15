@@ -4,13 +4,9 @@ import QuinielaWidget from './QuinielaWidget';
 
 interface PredictionsProps {
   partidos: Partido[];
-  predictions: string[];
 }
 
-export default function Predictions({
-  partidos,
-  predictions,
-}: PredictionsProps) {
+export default function Predictions({ partidos }: PredictionsProps) {
   return (
     <div className="grid gap-4">
       {partidos.map((partido, index) => (
@@ -18,7 +14,6 @@ export default function Predictions({
           key={index}
           partido={partido}
           isLastMatch={index === 14}
-          predictions={predictions}
         />
       ))}
       <div className="flex justify-center">
