@@ -3,7 +3,7 @@
 import {
   LeaderboardEntry,
   LeaderboardFilterOption,
-} from '@/services/server/pageData.service';
+} from '@/types/domain/leaderboard';
 import {
   LeaderboardFiltersState,
   LeaderboardScope,

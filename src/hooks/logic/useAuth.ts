@@ -1,4 +1,4 @@
-import { getMeV2 } from '@/services/auth.service';
+import { getMe } from '@/services/browser/auth.service';
 import { User } from '@/types/auth/auth';
 import { useQuery } from '@tanstack/react-query';
 
@@ -6,7 +6,7 @@ export const useAuth = (initialData?: User | null) => {
   return useQuery({
     queryKey: ['user'],
     queryFn: async () => {
-      const response = await getMeV2();
+      const response = await getMe();
 
       if (!response.ok) {
         console.error('Error al obtener el usuario:', response.error);

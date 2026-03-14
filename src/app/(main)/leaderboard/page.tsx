@@ -2,7 +2,7 @@ import { LeaderboardPageClient } from '@/components/leaderboard/LeaderboardPageC
 import {
   getServerLeaderboard,
   getServerLeaderboardFilterOptions,
-} from '@/services/server/pageData.service';
+} from '@/services/server/leaderboard.service';
 import { SearchParams } from '@/types/domain/search-params';
 import { parseLeaderboardFilters } from '@/utils/domain/filterParams';
 import { Metadata } from 'next';

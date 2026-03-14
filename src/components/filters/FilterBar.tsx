@@ -1,6 +1,7 @@
 'use client';
 
 import { useCompetitionOptions } from '@/hooks/useCompetitionOptions';
+import { CompetitionOption } from '@/types/domain/competitions';
 import { useEventFiltersNavigation } from '@/hooks/useEventFiltersNavigation';
 import { EventFilters } from '@/types/domain/filters';
 import { SPORTS_LIST_ITEMS } from '@/utils/domain/sports';
@@ -11,9 +12,13 @@ import { SportsFilter } from './SportsFilter';
 
 interface FilterBarProps {
   filters: EventFilters;
+  initialCompetitionOptions?: CompetitionOption[];
 }
 
-export function FilterBar({ filters }: FilterBarProps) {
+export function FilterBar({
+  filters,
+  initialCompetitionOptions,
+}: FilterBarProps) {
   const {
     setSelectedSport,
     setSelectedLeague,
@@ -23,6 +28,7 @@ export function FilterBar({ filters }: FilterBarProps) {
   } = useEventFiltersNavigation(filters);
   const { data: competitions = [] } = useCompetitionOptions(
     filters.sportId ?? undefined,
+    initialCompetitionOptions,
   );
 
   const { staticLeagues, dynamicLeagueOptions } = useMemo(() => {

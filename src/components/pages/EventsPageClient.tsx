@@ -2,20 +2,25 @@
 
 import { EventsView } from '@/components/home/events/EventsView';
 import { useMatchesByFilters } from '@/hooks/useMatchesByFilters';
-import { getLiveMatches, getPastMatches } from '@/services/new_matches.service';
-import { CompetitionData } from '@/types/domain/competitions';
+import {
+  getLiveMatches,
+  getPastMatches,
+} from '@/services/browser/matches.service';
+import { CompetitionData, CompetitionOption } from '@/types/domain/competitions';
 import { EventFilters } from '@/types/domain/filters';
 
 interface EventsPageClientProps {
   title: string;
   filters: EventFilters;
   initialData: CompetitionData[];
+  initialCompetitionOptions?: CompetitionOption[];
 }
 
 export function EventsPageClient({
   title,
   filters,
   initialData,
+  initialCompetitionOptions,
 }: EventsPageClientProps) {
   const { events, isLoading } = useMatchesByFilters({
     queryKeyBase: filters.mode,
@@ -43,6 +48,7 @@ export function EventsPageClient({
       filters={filters}
       events={events}
       isLoading={isLoading}
+      initialCompetitionOptions={initialCompetitionOptions}
     />
   );
 }

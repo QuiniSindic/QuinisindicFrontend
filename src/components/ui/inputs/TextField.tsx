@@ -1,6 +1,6 @@
 'use client';
 
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useId } from 'react';
 
 export type TextFieldProps = Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
@@ -34,8 +34,8 @@ const TextField = forwardRef<HTMLInputElement, TextFieldProps>(
     },
     ref,
   ) => {
-    const inputId =
-      id || inputProps.name || `tf-${Math.random().toString(36).slice(2)}`;
+    const generatedId = useId();
+    const inputId = id || inputProps.name || generatedId;
 
     const hasError = !!errorText;
 

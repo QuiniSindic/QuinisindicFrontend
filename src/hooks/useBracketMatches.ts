@@ -1,4 +1,4 @@
-import { getBracketMatches } from '@/services/new_matches.service';
+import { getBracketMatches } from '@/services/browser/matches.service';
 import { useQuery } from '@tanstack/react-query';
 
 export const useBracketMatches = (competitionId?: number) => {

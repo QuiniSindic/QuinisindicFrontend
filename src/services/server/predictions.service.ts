@@ -1,42 +1,38 @@
 import { Prediction } from '@/types/database/table';
 import { CompetitionLite } from '@/types/domain/competitions';
 import { MatchLite } from '@/types/domain/events';
-import {
-  PredictionPayload,
-  PredictionUpdatePayload,
-} from '@/types/domain/prediction';
+import { PredictionView } from '@/types/domain/prediction';
 import { SportLite } from '@/types/domain/sports';
 import { getTeamName } from '@/utils/domain/events';
-import { createClient } from '@/utils/supabase/client';
 import { toSpanishSportName } from '@/utils/ui/sportName';
-import { getUserUsernamesV2 } from './users.service';
+import { createClient } from '@/utils/supabase/server';
+import { getServerUsernames } from '@/services/server/users.service';
 
-//________SUPABASE
-
-export async function getEventPredictionsV2(
+export async function getServerEventPredictions(
   eventId: number,
 ): Promise<Prediction[]> {
-  const supabase = createClient();
-
+  const supabase = await createClient();
   const { data, error } = await supabase
     .from('predictions')
     .select('*')
     .eq('match_id', eventId);
 
   if (error) {
-    console.error('Error fetching predictions:', error);
+    console.error('Error fetching server event predictions:', error);
     return [];
   }
 
-  return data || [];
+  return (data ?? []) as Prediction[];
 }
 
-export async function getUserMatchPredictionV2(eventId: number) {
-  const supabase = createClient();
-
+export async function getServerUserMatchPrediction(
+  eventId: number,
+): Promise<Prediction | null> {
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
   if (!user) return null;
 
   const { data, error } = await supabase
@@ -47,99 +43,33 @@ export async function getUserMatchPredictionV2(eventId: number) {
     .single();
 
   if (error && error.code !== 'PGRST116') {
-    // PGRST116 es "no rows found" (normal si no ha predicho)
-    console.error('Error fetching user prediction:', error);
+    console.error('Error fetching server user prediction:', error);
   }
 
-  return data;
+  return (data as Prediction | null) ?? null;
 }
 
-export async function saveEventPredictionV2(payload: PredictionPayload) {
-  const supabase = createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) throw new Error('User not authenticated');
-
-  const { data, error } = await supabase
-    .from('predictions')
-    .insert({
-      user_id: user.id, // Aseguramos que sea el usuario actual
-      sport_id: payload.sport_id,
-      competition_id: payload.competition_id,
-      match_id: payload.event_id,
-      home_score: payload.home_score,
-      away_score: payload.away_score,
-    })
-    .select()
-    .single();
-
-  if (error) {
-    // Si hay error de duplicado, es útil saberlo
-    if (error.code === '23505')
-      throw new Error('Ya tienes una predicción para este partido');
-    throw new Error(error.message);
-  }
-
-  return { ok: true, data };
-}
-
-export async function updateEventPredictionV2(
-  eventId: number,
-  updatePayload: PredictionUpdatePayload,
-) {
-  const supabase = createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) throw new Error('User not authenticated');
-
-  // Asumimos que updatePayload trae los scores
-  const { data, error } = await supabase
-    .from('predictions')
-    .update({
-      home_score: updatePayload.home_score,
-      away_score: updatePayload.away_score,
-    })
-    .eq('match_id', eventId)
-    .eq('user_id', user.id) // Seguridad extra: solo actualizar la suya
-    .select()
-    .single();
-
-  if (error) throw new Error(error.message);
-  return { ok: true, data };
-}
-
-export async function getAllPredictionsV2() {
-  const supabase = createClient();
-
-  const { data: predictionsRaw, error: predictionsError } = await supabase
+export async function getServerPredictionsFeed(): Promise<PredictionView[]> {
+  const supabase = await createClient();
+  const { data: predictionsRaw, error } = await supabase
     .from('predictions')
     .select('*')
     .order('created_at', { ascending: false })
     .limit(1000);
 
-  if (predictionsError) {
-    throw new Error(predictionsError.message);
+  if (error) {
+    throw new Error(error.message);
   }
 
   const predictions = (predictionsRaw ?? []) as Prediction[];
   if (predictions.length === 0) return [];
 
-  const matchIds = Array.from(
-    new Set(predictions.map((prediction) => prediction.match_id)),
-  );
+  const matchIds = Array.from(new Set(predictions.map((row) => row.match_id)));
   const competitionIds = Array.from(
-    new Set(predictions.map((prediction) => prediction.competition_id)),
+    new Set(predictions.map((row) => row.competition_id)),
   );
-  const sportIds = Array.from(
-    new Set(predictions.map((prediction) => prediction.sport_id)),
-  );
-  const userIds = Array.from(
-    new Set(predictions.map((prediction) => prediction.user_id)),
-  );
+  const sportIds = Array.from(new Set(predictions.map((row) => row.sport_id)));
+  const userIds = Array.from(new Set(predictions.map((row) => row.user_id)));
 
   const [matchesRes, competitionsRes, sportsRes, usersMap] = await Promise.all([
     supabase
@@ -150,7 +80,7 @@ export async function getAllPredictionsV2() {
       .in('id', matchIds),
     supabase.from('competitions').select('id, name').in('id', competitionIds),
     supabase.from('sports').select('id, name').in('id', sportIds),
-    getUserUsernamesV2(userIds),
+    getServerUsernames(userIds),
   ]);
 
   if (matchesRes.error) throw new Error(matchesRes.error.message);
@@ -173,9 +103,6 @@ export async function getAllPredictionsV2() {
     const sport = sportById.get(prediction.sport_id);
     const profile = usersMap[prediction.user_id];
 
-    const homeTeam = getTeamName(match?.home_team_data, 'Local');
-    const awayTeam = getTeamName(match?.away_team_data, 'Visitante');
-
     return {
       id: prediction.id,
       userId: prediction.user_id,
@@ -183,8 +110,8 @@ export async function getAllPredictionsV2() {
       matchId: prediction.match_id,
       kickoff: match?.kickoff ?? prediction.created_at,
       matchStatus: match?.status ?? prediction.status,
-      homeTeam,
-      awayTeam,
+      homeTeam: getTeamName(match?.home_team_data, 'Local'),
+      awayTeam: getTeamName(match?.away_team_data, 'Visitante'),
       predicted: `${prediction.home_score} - ${prediction.away_score}`,
       homeScore: match?.home_score ?? null,
       awayScore: match?.away_score ?? null,

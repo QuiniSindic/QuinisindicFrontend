@@ -22,8 +22,11 @@ export function isLive(status: MatchStatus) {
 }
 
 export function isFinished(status: MatchStatus) {
-  const s = String(status);
-  return IS_FINISHED.includes(s as any) || CANCELED.includes(s as any);
+  const normalizedStatus = String(status) as MatchStatus;
+  return (
+    IS_FINISHED.includes(normalizedStatus) ||
+    CANCELED.includes(normalizedStatus)
+  );
 }
 
 export const concatenateAndSortEvents = ({
@@ -46,16 +49,13 @@ export const concatenateAndSortEvents = ({
   });
 };
 
-// --- FIX PRINCIPAL: parseMinute ya no acepta segundo argumento ---
 export function parseMinute(
   minute: number | string | null | undefined,
 ): ParsedMinute {
   if (minute == null) return { min: 0, extra: 0, total: 0, label: '' };
 
-  // Convertimos SIEMPRE a string primero para parsear
   const s = String(minute).trim().replace("'", '');
 
-  // Caso: "90+4"
   if (s.includes('+')) {
     const [mm, ee] = s.split('+');
     const min = Number(mm) || 0;
@@ -63,7 +63,6 @@ export function parseMinute(
     return { min, extra: ex, total: min + ex, label: `${min}+${ex}'` };
   }
 
-  // Caso normal: "45" o 45
   const min = Number(s) || 0;
   return {
     min,
@@ -87,13 +86,11 @@ export const makeActionGroupsForMatch = (
 
   if (!events || events.length === 0) return groups;
 
-  // 1. Ordenamos por minuto de menor a mayor para procesar lógicamente
   const sortedEvents = [...events].sort((a, b) => a?.minute - b.minute);
 
   sortedEvents.forEach((event) => {
     const min = event.minute;
 
-    // 1. Clasificación por tipo de evento
     if (event.type === 'Half' || event.type === MatchEventType.Half) {
       groups.breaks.push(event);
       return;
@@ -104,8 +101,6 @@ export const makeActionGroupsForMatch = (
       return;
     }
 
-    // 2. Clasificación por tiempo (Minutos corregidos según tu log)
-    // Usamos > 45 para asegurar que el inicio de la 2H (min 46) entre en su grupo
     if (min > 90) {
       groups.overtime.push(event);
     } else if (min > 45) {

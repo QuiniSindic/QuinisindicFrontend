@@ -1,7 +1,5 @@
-import {
-  getServerCurrentUser,
-  getServerPredictionsFeed,
-} from '@/services/server/pageData.service';
+import { getServerCurrentUser } from '@/services/server/auth.service';
+import { getServerPredictionsFeed } from '@/services/server/predictions.service';
 import { SearchParams } from '@/types/domain/search-params';
 import { formatKickoff } from '@/utils/common/date';
 import {

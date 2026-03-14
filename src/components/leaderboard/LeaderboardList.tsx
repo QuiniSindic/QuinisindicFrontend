@@ -1,6 +1,6 @@
 'use client';
 
-import { LeaderboardEntry } from '@/services/server/pageData.service';
+import { LeaderboardEntry } from '@/types/domain/leaderboard';
 import Image from 'next/image';
 
 interface Props {

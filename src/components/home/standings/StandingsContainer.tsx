@@ -1,15 +1,18 @@
 'use client';
 
+import { TeamStandingData } from '@/types/domain/standings';
 import { StandingsTable } from './StandingsTable';
 
 interface StandingsContainerProps {
   selectedLeague: string | null;
   selectedCompetitionId: number | null;
+  initialStandings?: TeamStandingData[];
 }
 
 export function StandingsContainer({
   selectedLeague,
   selectedCompetitionId,
+  initialStandings,
 }: StandingsContainerProps) {
   if (!selectedLeague && !selectedCompetitionId) return null;
 
@@ -21,6 +24,7 @@ export function StandingsContainer({
       <StandingsTable
         competition={selectedLeague || undefined}
         competitionId={selectedCompetitionId}
+        initialData={initialStandings}
       />
     </aside>
   );

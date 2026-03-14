@@ -12,7 +12,7 @@ interface PredictionButtonProps {
   updateLabel?: string;
 }
 
-export default function PredictionButton({
+export function PredictionButton({
   isNS,
   isLoggedIn,
   isValid,

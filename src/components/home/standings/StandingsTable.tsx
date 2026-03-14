@@ -12,18 +12,20 @@ import Image from 'next/image';
 interface StandingsTableProps {
   competition?: string;
   competitionId?: number | null;
+  initialData?: TeamStandingData[];
 }
 
 export function StandingsTable({
   competition,
   competitionId,
+  initialData,
 }: StandingsTableProps) {
   const {
     data: standing,
     isLoading,
     isError,
     error,
-  } = useStandingsQuery(competition, competitionId);
+  } = useStandingsQuery(competition, competitionId, initialData);
 
   const leagueId =
     competitionId ?? getCompetitionIdByLeagueName(competition) ?? 0;
@@ -31,7 +33,7 @@ export function StandingsTable({
   if (!standing) {
     return (
       <p className="text-center text-muted py-4">
-        Clasificación no disponible para esta competición.
+        Clasificacion no disponible para esta competicion.
       </p>
     );
   }
@@ -39,7 +41,7 @@ export function StandingsTable({
   if (isLoading) {
     return (
       <p className="text-center text-muted py-4">
-        Cargando clasificación de <strong>{competition}</strong>...
+        Cargando clasificacion de <strong>{competition}</strong>...
       </p>
     );
   }
@@ -55,7 +57,7 @@ export function StandingsTable({
   if (!standing || standing.length === 0) {
     return (
       <p className="text-center text-muted py-4">
-        Clasificación no disponible para esta competición.
+        Clasificacion no disponible para esta competicion.
       </p>
     );
   }
@@ -76,10 +78,7 @@ export function StandingsTable({
         </thead>
         <tbody className="divide-y divide-border/50">
           {standing.map((team: TeamStandingData, index: number) => {
-            // Calculamos el estilo basado en la posición y la liga
             const posClass = getPositionClass(leagueId, team.position);
-
-            // Alternar colores de fondo sutiles
             const rowBg = index % 2 === 0 ? 'bg-transparent' : 'bg-surface/30';
 
             return (

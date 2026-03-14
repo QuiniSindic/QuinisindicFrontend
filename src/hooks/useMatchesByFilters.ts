@@ -1,4 +1,4 @@
-import { getLiveMatches, getPastMatches } from '@/services/new_matches.service';
+import { getLiveMatches, getPastMatches } from '@/services/browser/matches.service';
 import { CompetitionData } from '@/types/domain/competitions';
 import { MatchData } from '@/types/domain/events';
 import { EventFilters } from '@/types/domain/filters';

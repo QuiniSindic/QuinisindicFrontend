@@ -6,9 +6,9 @@ import {
   useMyPrediction,
 } from '@/hooks/useUserPrediction';
 import {
-  saveEventPredictionV2,
-  updateEventPredictionV2,
-} from '@/services/predictions.service';
+  saveEventPrediction,
+  updateEventPrediction,
+} from '@/services/browser/predictions.service';
 
 import { useAuth } from '@/hooks/logic/useAuth';
 import { User } from '@/types/auth/auth';
@@ -32,6 +32,14 @@ interface MatchInfoProps {
   initialUserPrediction?: Prediction | null;
   returnTo?: string;
 }
+
+const getErrorMessage = (error: unknown, fallback: string) => {
+  if (error instanceof Error && error.message) {
+    return error.message;
+  }
+
+  return fallback;
+};
 
 export function MatchInfo({
   event,
@@ -76,13 +84,15 @@ export function MatchInfo({
         sport_id: event.sportId,
       };
 
-      await saveEventPredictionV2(payload);
+      await saveEventPrediction(payload);
 
-      toast.success('¡Predicción guardada con éxito!');
+      toast.success('Prediccion guardada con exito');
       await refetchUserPred();
       await refetchAllPreds();
-    } catch (error: any) {
-      toast.error(error.message || 'Error al guardar la predicción');
+    } catch (error: unknown) {
+      toast.error(
+        getErrorMessage(error, 'Error al guardar la prediccion'),
+      );
     }
   };
 
@@ -93,13 +103,15 @@ export function MatchInfo({
         away_score: parseInt(values.away, 10),
       };
 
-      await updateEventPredictionV2(event.id, payload);
+      await updateEventPrediction(event.id, payload);
 
-      toast.success('¡Predicción actualizada con éxito!');
+      toast.success('Prediccion actualizada con exito');
       await refetchUserPred();
       await refetchAllPreds();
-    } catch (error: any) {
-      toast.error(error.message || 'Error al actualizar la predicción');
+    } catch (error: unknown) {
+      toast.error(
+        getErrorMessage(error, 'Error al actualizar la prediccion'),
+      );
     }
   };
 
@@ -118,12 +130,10 @@ export function MatchInfo({
       <EventNavigation currentId={event.id} returnTo={returnTo} />
 
       <div className="match-info-container flex flex-col min-h-screen px-4 bg-background text-text pb-32 md:pb-10 max-w-3xl mx-auto">
-        {/* Aviso de estado (Login / No empezado) */}
         <div className="mt-2">
           <NoPredictionWarn status={event.status} prediction={userPred} />
         </div>
 
-        {/* Formulario Principal (Tarjeta de Marcador) */}
         <div className="mt-4">
           <PredictionForm
             key={liveEvent.id}
@@ -138,10 +148,8 @@ export function MatchInfo({
           />
         </div>
 
-        {/* Separador sutil */}
         <div className="my-6 h-px w-full bg-border/50" />
 
-        {/* Pestañas de Información */}
         <MatchInfoTabs
           event={liveEvent}
           predictions={allPredictions ?? []}

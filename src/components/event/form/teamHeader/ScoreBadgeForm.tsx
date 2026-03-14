@@ -8,7 +8,7 @@ interface Props {
   event: MatchData;
 }
 
-export default function ScoreBadgeForm({ event }: Props) {
+export function ScoreBadgeForm({ event }: Props) {
   const isNS = event.status === 'NS';
   const isFT =
     event.status === 'FT' ||

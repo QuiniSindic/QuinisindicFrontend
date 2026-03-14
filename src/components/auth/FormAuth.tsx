@@ -60,7 +60,7 @@ const FormAuth = ({ isLogin = false }: FormAuthProps) => {
         await queryClient.invalidateQueries({ queryKey: ['user'] });
         router.push('/home');
         router.refresh();
-      } catch (err) {
+      } catch (_error) {
         setError('Ocurrió un error inesperado. Inténtalo de nuevo.');
       }
     });

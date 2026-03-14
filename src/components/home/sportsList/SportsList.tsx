@@ -2,6 +2,7 @@
 
 import { useCompetitionOptions } from '@/hooks/useCompetitionOptions';
 import { useEventFiltersNavigation } from '@/hooks/useEventFiltersNavigation';
+import { CompetitionOption } from '@/types/domain/competitions';
 import { EventFilters } from '@/types/domain/filters';
 import { LeagueName, SportName } from '@/utils/domain/sports';
 import { SportsListDesktop } from './SportsListDesktop';
@@ -9,13 +10,18 @@ import { SportsListMobile } from './SportsListMobile';
 
 interface SportsListProps {
   filters: EventFilters;
+  initialCompetitionOptions?: CompetitionOption[];
 }
 
-export function SportsList({ filters }: SportsListProps) {
+export function SportsList({
+  filters,
+  initialCompetitionOptions,
+}: SportsListProps) {
   const { setSelectedSport, setSelectedLeague } =
     useEventFiltersNavigation(filters);
   const { data: leagueOptions = [] } = useCompetitionOptions(
     filters.sportId ?? undefined,
+    initialCompetitionOptions,
   );
 
   const handleLeagueSelect = (league: LeagueName | null, leagueId?: number) => {

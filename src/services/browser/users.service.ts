@@ -1,13 +1,20 @@
 import { PublicProfile } from '@/types/auth/auth';
 import { createClient } from '@/utils/supabase/client';
+import { mapProfileRow } from '@/services/shared/users.mapper';
 
-export const getUserUsernamesV2 = async (
+interface RawProfileRow {
+  id: string;
+  username?: string | null;
+  email?: string | null;
+  avatar_url?: string | null;
+}
+
+export const getUserUsernames = async (
   userIds: string[],
 ): Promise<Record<string, PublicProfile>> => {
-  if (!userIds || userIds.length === 0) return {};
+  if (userIds.length === 0) return {};
 
   const supabase = createClient();
-
   const { data, error } = await supabase
     .from('profiles')
     .select('id, username, email, avatar_url')
@@ -20,15 +27,9 @@ export const getUserUsernamesV2 = async (
 
   const record: Record<string, PublicProfile> = {};
 
-  data?.forEach((user: any) => {
-    if (user.id) {
-      record[user.id] = {
-        id: user.id,
-        username: user.username || user.email?.split('@')[0] || 'Usuario',
-        email: user.email,
-        img: user.avatar_url,
-      } as PublicProfile;
-    }
+  (data as RawProfileRow[] | null)?.forEach((user) => {
+    if (!user.id) return;
+    record[user.id] = mapProfileRow(user);
   });
 
   return record;

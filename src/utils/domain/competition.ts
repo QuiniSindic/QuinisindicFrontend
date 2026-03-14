@@ -1,4 +1,4 @@
-import { CompetitionOption } from '@/hooks/useCompetitionOptions';
+import { CompetitionOption } from '@/types/domain/competitions';
 
 export interface GroupedCompetitionOptions {
   country: string;

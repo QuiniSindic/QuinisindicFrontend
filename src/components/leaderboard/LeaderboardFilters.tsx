@@ -1,6 +1,6 @@
 'use client';
 
-import { LeaderboardFilterOption } from '@/services/server/pageData.service';
+import { LeaderboardFilterOption } from '@/types/domain/leaderboard';
 import { LeaderboardScope } from '@/types/domain/filters';
 import { toSpanishSportName } from '@/utils/ui/sportName';
 

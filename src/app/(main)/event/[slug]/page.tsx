@@ -1,10 +1,10 @@
 import MatchInfo from '@/components/event/MatchInfo';
+import { getServerCurrentUser } from '@/services/server/auth.service';
+import { getServerMatchData } from '@/services/server/matches.service';
 import {
-  getServerCurrentUser,
   getServerEventPredictions,
-  getServerMatchData,
   getServerUserMatchPrediction,
-} from '@/services/server/pageData.service';
+} from '@/services/server/predictions.service';
 import { notFound } from 'next/navigation';
 
 export default async function EventDetailPage({

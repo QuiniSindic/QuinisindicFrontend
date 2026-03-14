@@ -2,7 +2,7 @@
 
 import { MatchData } from '@/types/domain/events';
 import { organizeBracket } from '@/utils/domain/bracket';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { BracketMatchCard } from './BracketMatchCard';
 
 interface Props {
@@ -12,21 +12,15 @@ interface Props {
 
 export const TournamentBracket = ({ matches, onMatchSelect }: Props) => {
   const rounds = organizeBracket(matches);
-  const [activeTab, setActiveTab] = useState<string | null>(null);
+  const [selectedTab, setSelectedTab] = useState<string | null>(null);
 
   // Filtrar rondas vacías para no mostrarlas si no hay datos
   const activeRounds = rounds.filter((round) => round.matches.length > 0);
 
-  useEffect(() => {
-    if (activeRounds.length === 0) {
-      setActiveTab(null);
-      return;
-    }
-
-    if (!activeTab || !activeRounds.some((round) => round.id === activeTab)) {
-      setActiveTab(activeRounds[0].id);
-    }
-  }, [activeRounds, activeTab]);
+  const activeTab =
+    selectedTab && activeRounds.some((round) => round.id === selectedTab)
+      ? selectedTab
+      : (activeRounds[0]?.id ?? null);
 
   if (activeRounds.length === 0) {
     return (
@@ -42,7 +36,7 @@ export const TournamentBracket = ({ matches, onMatchSelect }: Props) => {
         {activeRounds.map((round) => (
           <button
             key={round.id}
-            onClick={() => setActiveTab(round.id)}
+            onClick={() => setSelectedTab(round.id)}
             className={`
               flex-1 py-3 px-4 text-sm font-medium whitespace-nowrap border-b-2 transition-colors
               ${

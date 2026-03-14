@@ -1,6 +1,7 @@
 'use client';
 
 import { FilterBar } from '@/components/filters/FilterBar';
+import { CompetitionOption } from '@/types/domain/competitions';
 import { MatchData } from '@/types/domain/events';
 import { EventFilters } from '@/types/domain/filters';
 import { EventsSection } from './EventsSection';
@@ -11,6 +12,7 @@ interface EventsPageViewProps {
   events: MatchData[];
   isLoading: boolean;
   currentPath?: string;
+  initialCompetitionOptions?: CompetitionOption[];
 }
 
 export function EventsView({
@@ -19,6 +21,7 @@ export function EventsView({
   events,
   isLoading,
   currentPath,
+  initialCompetitionOptions,
 }: EventsPageViewProps) {
   return (
     <div className="min-h-screen pb-12 bg-background">
@@ -26,7 +29,10 @@ export function EventsView({
         <div className="flex flex-col gap-3">
           <h1 className="text-3xl font-bold text-text">{title}</h1>
 
-          <FilterBar filters={filters} />
+          <FilterBar
+            filters={filters}
+            initialCompetitionOptions={initialCompetitionOptions}
+          />
 
           <EventsSection
             data={events}

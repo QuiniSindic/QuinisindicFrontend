@@ -1,4 +1,8 @@
-import { getLiveMatches, getMatchDataV2 } from '@/services/new_matches.service';
+import {
+  getLiveMatches,
+  getMatchData,
+} from '@/services/browser/matches.service';
+import { MatchData } from '@/types/domain/events';
 import { useQuery } from '@tanstack/react-query';
 
 export const useUpcomingEventsQuery = (
@@ -22,13 +26,10 @@ export const useUpcomingEventsQuery = (
   });
 };
 
-export const useGetMatchQuery = (
-  matchId: number,
-  initialData?: Awaited<ReturnType<typeof getMatchDataV2>> | null,
-) => {
+export const useGetMatchQuery = (matchId: number, initialData?: MatchData) => {
   return useQuery({
     queryKey: ['event', matchId],
-    queryFn: () => getMatchDataV2(matchId),
+    queryFn: () => getMatchData(matchId),
     initialData,
     enabled: Boolean(matchId),
     refetchOnMount: 'always',
