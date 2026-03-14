@@ -1,7 +1,11 @@
 import MatchInfo from '@/components/event/MatchInfo';
-import { getMatchDataV2 } from '@/services/new_matches.service';
-import { getEventPredictionsV2 } from '@/services/predictions.service';
-import { createClient } from '@/utils/supabase/server';
+import {
+  getServerCurrentUser,
+  getServerEventPredictions,
+  getServerMatchData,
+  getServerUserMatchPrediction,
+} from '@/services/server/pageData.service';
+import { notFound } from 'next/navigation';
 
 export default async function EventDetailPage({
   params,
@@ -14,16 +18,15 @@ export default async function EventDetailPage({
   const { returnTo } = await searchParams;
   const matchId = Number(slug);
 
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  const match = await getMatchDataV2(matchId);
-  const predictions = await getEventPredictionsV2(matchId);
+  const [user, match, predictions, userPrediction] = await Promise.all([
+    getServerCurrentUser(),
+    getServerMatchData(matchId),
+    getServerEventPredictions(matchId),
+    getServerUserMatchPrediction(matchId),
+  ]);
 
   if (!match) {
-    return <div className="p-4 text-center">No se encontró el evento.</div>;
+    notFound();
   }
 
   return (
@@ -31,13 +34,19 @@ export default async function EventDetailPage({
       {!user && (
         <div className="bg-surface border border-border border-l-4 border-l-brand px-3 py-2">
           <p className="text-sm text-text">
-            Debes iniciar sesión para poder guardar tus predicciones
+            Debes iniciar sesion para poder guardar tus predicciones
           </p>
         </div>
       )}
 
       <div className="p-2 grow">
-        <MatchInfo event={match} predictions={predictions} returnTo={returnTo} />
+        <MatchInfo
+          event={match}
+          predictions={predictions}
+          initialUser={user}
+          initialUserPrediction={userPrediction}
+          returnTo={returnTo}
+        />
       </div>
     </div>
   );

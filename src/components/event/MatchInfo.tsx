@@ -11,6 +11,7 @@ import {
 } from '@/services/predictions.service';
 
 import { useAuth } from '@/hooks/logic/useAuth';
+import { User } from '@/types/auth/auth';
 import { Prediction } from '@/types/database/table';
 import { MatchData } from '@/types/domain/events';
 import {
@@ -27,18 +28,22 @@ import PredictionForm from './form/PredictionForm';
 interface MatchInfoProps {
   event: MatchData;
   predictions?: Prediction[];
+  initialUser?: User | null;
+  initialUserPrediction?: Prediction | null;
   returnTo?: string;
 }
 
-const MatchInfo: React.FC<MatchInfoProps> = ({
+export function MatchInfo({
   event,
   predictions: initialPreds,
+  initialUser,
+  initialUserPrediction,
   returnTo,
-}) => {
-  const { data: user, isLoading: authLoading } = useAuth();
+}: MatchInfoProps) {
+  const { data: user, isLoading: authLoading } = useAuth(initialUser);
   const userId = user?.id ?? '';
 
-  const { data: matchData } = useGetMatchQuery(event.id);
+  const { data: matchData } = useGetMatchQuery(event.id, event);
   const liveEvent = matchData ?? event;
 
   const notStarted = liveEvent.status === 'NS';
@@ -53,7 +58,7 @@ const MatchInfo: React.FC<MatchInfoProps> = ({
     data: userPred,
     refetch: refetchUserPred,
     isLoading: isLoadingUserPred,
-  } = useMyPrediction(userId, event.id);
+  } = useMyPrediction(userId, event.id, initialUserPrediction);
 
   const {
     data: allPredictions,
@@ -149,6 +154,6 @@ const MatchInfo: React.FC<MatchInfoProps> = ({
       </div>
     </>
   );
-};
+}
 
 export default MatchInfo;
