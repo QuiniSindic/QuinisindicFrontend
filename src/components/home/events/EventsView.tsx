@@ -1,22 +1,24 @@
 'use client';
 
-import FilterBar from '@/components/filters/FilterBar';
+import { FilterBar } from '@/components/filters/FilterBar';
 import { MatchData } from '@/types/domain/events';
-import { Suspense } from 'react';
-import EventsSection from './EventsSection';
+import { EventFilters } from '@/types/domain/filters';
+import { EventsSection } from './EventsSection';
 
 interface EventsPageViewProps {
   title: string;
-  mode: 'events' | 'results';
+  filters: EventFilters;
   events: MatchData[];
   isLoading: boolean;
+  currentPath?: string;
 }
 
-export default function EventsView({
+export function EventsView({
   title,
-  mode,
+  filters,
   events,
   isLoading,
+  currentPath,
 }: EventsPageViewProps) {
   return (
     <div className="min-h-screen pb-12 bg-background">
@@ -24,16 +26,15 @@ export default function EventsView({
         <div className="flex flex-col gap-3">
           <h1 className="text-3xl font-bold text-text">{title}</h1>
 
-          <FilterBar mode={mode} />
+          <FilterBar filters={filters} />
 
-          <Suspense fallback={null}>
-            <EventsSection
-              data={events}
-              isLoading={isLoading}
-              mode={mode}
-              full
-            />
-          </Suspense>
+          <EventsSection
+            data={events}
+            filters={filters}
+            currentPath={currentPath}
+            isLoading={isLoading}
+            full
+          />
         </div>
       </div>
     </div>
