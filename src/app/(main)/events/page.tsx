@@ -1,16 +1,33 @@
-'use client';
+import { EventsPageClient } from '@/components/pages/EventsPageClient';
+import { getServerLiveMatches } from '@/services/server/pageData.service';
+import { SearchParams } from '@/types/domain/search-params';
+import { parseEventFilters } from '@/utils/domain/filterParams';
+import { Metadata } from 'next';
 
-import EventsView from '@/components/home/events/EventsView';
-import { useEventsQuery } from '@/hooks/useEventsQuery';
+// TODO: Learn SEO
+export const metadata: Metadata = {
+  title: 'Quinisindic | Eventos',
+};
 
-export default function EventsPage() {
-  const { events, isLoading } = useEventsQuery();
+type Props = {
+  searchParams: SearchParams;
+};
+
+export default async function EventsPage({ searchParams }: Props) {
+  const filters = parseEventFilters(await searchParams, 'events');
+
+  const initialData = await getServerLiveMatches(
+    filters.sportId ?? undefined,
+    filters.competitionId ?? undefined,
+    filters.from ?? undefined,
+    filters.to ?? undefined,
+  );
+
   return (
-    <EventsView
+    <EventsPageClient
       title="Eventos"
-      mode="events"
-      events={events}
-      isLoading={isLoading}
+      filters={filters}
+      initialData={initialData}
     />
   );
 }
