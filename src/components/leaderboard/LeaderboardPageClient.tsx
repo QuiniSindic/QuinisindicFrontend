@@ -1,3 +1,5 @@
+'use client';
+
 import {
   LeaderboardEntry,
   LeaderboardFilterOption,
