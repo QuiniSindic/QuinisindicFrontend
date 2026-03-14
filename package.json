@@ -6,7 +6,7 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "check:ts": "npx tsc --project tsconfig.json --noEmit --alwaysStrict --forceConsistentCasingInFileNames",
     "format": "prettier --write \"{app,components,core,lib,services,utils}/**/*.{ts,tsx,js,jsx}\""
   },
