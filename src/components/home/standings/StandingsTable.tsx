@@ -14,7 +14,7 @@ interface StandingsTableProps {
   competitionId?: number | null;
 }
 
-export default function StandingsTable({
+export function StandingsTable({
   competition,
   competitionId,
 }: StandingsTableProps) {
@@ -25,7 +25,8 @@ export default function StandingsTable({
     error,
   } = useStandingsQuery(competition, competitionId);
 
-  const leagueId = competitionId ?? getCompetitionIdByLeagueName(competition) ?? 0;
+  const leagueId =
+    competitionId ?? getCompetitionIdByLeagueName(competition) ?? 0;
 
   if (!standing) {
     return (

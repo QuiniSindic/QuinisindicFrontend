@@ -1,31 +1,27 @@
-'use client';
+import { HomePageClient } from '@/components/home/HomePageClient';
+import { getServerLiveMatches } from '@/services/server/pageData.service';
+import { SearchParams } from '@/types/domain/search-params';
+import { parseEventFilters } from '@/utils/domain/filterParams';
+import { Metadata } from 'next';
 
-import { Suspense } from 'react';
-import EventsSection from '@/components/home/events/EventsSection';
-import SportsList from '@/components/home/sportsList/SportsList';
-import StandingsContainer from '@/components/home/standings/StandingsContainer';
-import { useEventsQuery } from '@/hooks/useEventsQuery';
+// TODO: Learn SEO
+export const metadata: Metadata = {
+  title: 'Quinisindic | Home',
+};
 
-export default function Home() {
-  const { events, isLoading } = useEventsQuery();
+type Props = {
+  searchParams: SearchParams;
+};
 
-  return (
-    <div className="mb-4 mx-4 sm:mx-8 md:mx-8 lg:mx-12 xl:mx-12 ">
-      <>
-        <div className="flex flex-col gap-3 lg:flex-row lg:gap-4 mt-4">
-          <SportsList />
-          <div className="flex flex-col lg:flex-row lg:gap-4 flex-1">
-            <Suspense fallback={null}>
-              <EventsSection
-                data={events}
-                isLoading={isLoading}
-                mode="events"
-              />
-            </Suspense>
-            <StandingsContainer />
-          </div>
-        </div>
-      </>
-    </div>
+export default async function HomePage({ searchParams }: Props) {
+  const filters = parseEventFilters(await searchParams, 'events');
+
+  const initialData = await getServerLiveMatches(
+    filters.sportId ?? undefined,
+    filters.competitionId ?? undefined,
+    filters.from ?? undefined,
+    filters.to ?? undefined,
   );
+
+  return <HomePageClient filters={filters} initialData={initialData} />;
 }
