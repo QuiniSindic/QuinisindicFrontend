@@ -1,25 +1,34 @@
 'use client';
 
-import { useSportsFilter } from '@/store/sportsLeagueFilterStore';
 import { Popover, PopoverContent, PopoverTrigger } from '@heroui/react';
 import { CalendarDays, ChevronDown, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { DateFilterContent } from './DateFilterContent';
 
-export const DateFilter = () => {
+interface DateFilterProps {
+  selectedFrom: string | null;
+  selectedTo: string | null;
+  clearDates: () => void;
+  setSelectedFrom: (value?: string | null) => void;
+  setSelectedTo: (value?: string | null) => void;
+  selectedSport?: string | null;
+  selectedLeague?: string | null;
+}
+
+export const DateFilter = ({
+  selectedFrom,
+  selectedTo,
+  clearDates,
+  setSelectedFrom,
+  setSelectedTo,
+  selectedSport,
+  selectedLeague,
+}: DateFilterProps) => {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const [placement, setPlacement] = useState<'bottom-start' | 'bottom-end'>(
     'bottom-end',
   );
-
-  const {
-    selectedFrom,
-    selectedTo,
-    clearDates,
-    selectedSport,
-    selectedLeague,
-  } = useSportsFilter();
 
   const desktopContainerRef = useRef<HTMLDivElement>(null);
 
@@ -53,7 +62,7 @@ export const DateFilter = () => {
   // Helper para acortar el texto de la fecha (DD/MM) y ahorrar espacio
   const formatDateShort = (dateStr: string) => {
     if (!dateStr) return '';
-    const [_, m, d] = dateStr.split('-');
+    const [, m, d] = dateStr.split('-');
     return `${d}/${m}`;
   };
 
@@ -93,7 +102,14 @@ export const DateFilter = () => {
 
         {isMobileOpen && (
           <div className="p-3 pt-0 border-t border-border">
-            <DateFilterContent closeWrapper={() => setIsMobileOpen(false)} />
+            <DateFilterContent
+              selectedFrom={selectedFrom}
+              selectedTo={selectedTo}
+              setSelectedFrom={setSelectedFrom}
+              setSelectedTo={setSelectedTo}
+              clearDates={clearDates}
+              closeWrapper={() => setIsMobileOpen(false)}
+            />
           </div>
         )}
       </div>
@@ -133,8 +149,8 @@ export const DateFilter = () => {
               </span>
 
               {hasActiveFilters ? (
-                <div
-                  role="button"
+                <button
+                  type="button"
                   onClick={(e) => {
                     e.stopPropagation();
                     clearDates();
@@ -144,7 +160,7 @@ export const DateFilter = () => {
                   title="Limpiar fechas"
                 >
                   <X size={12} />
-                </div>
+                </button>
               ) : (
                 <ChevronDown size={14} className="shrink-0 text-muted" />
               )}
@@ -152,7 +168,14 @@ export const DateFilter = () => {
           </PopoverTrigger>
 
           <PopoverContent>
-            <DateFilterContent closeWrapper={() => setIsPopoverOpen(false)} />
+            <DateFilterContent
+              selectedFrom={selectedFrom}
+              selectedTo={selectedTo}
+              setSelectedFrom={setSelectedFrom}
+              setSelectedTo={setSelectedTo}
+              clearDates={clearDates}
+              closeWrapper={() => setIsPopoverOpen(false)}
+            />
           </PopoverContent>
         </Popover>
       </div>

@@ -1,7 +1,8 @@
 import { getMeV2 } from '@/services/auth.service';
+import { User } from '@/types/auth/auth';
 import { useQuery } from '@tanstack/react-query';
 
-export const useAuth = () => {
+export const useAuth = (initialData?: User | null) => {
   return useQuery({
     queryKey: ['user'],
     queryFn: async () => {
@@ -21,6 +22,7 @@ export const useAuth = () => {
 
       return data;
     },
+    initialData,
     retry: false,
     refetchOnWindowFocus: false,
     staleTime: 1000 * 60 * 5, // 5 minutos

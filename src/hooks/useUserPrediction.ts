@@ -5,10 +5,15 @@ import {
 import { Prediction } from '@/types/database/table';
 import { useQuery } from '@tanstack/react-query';
 
-export const useMyPrediction = (userId: string, eventId: number) => {
+export const useMyPrediction = (
+  userId: string,
+  eventId: number,
+  initialData?: Prediction | null,
+) => {
   return useQuery({
     queryKey: ['userPrediction', userId, eventId],
     queryFn: () => getUserMatchPredictionV2(eventId),
+    initialData,
     enabled: !!userId,
     refetchOnWindowFocus: false,
   });

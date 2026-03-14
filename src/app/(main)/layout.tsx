@@ -1,6 +1,7 @@
 import Header from '@/components/common/layout/Header';
 import { MobileNavigation } from '@/components/common/layout/MobileNavigation';
 import { MobileOverlays } from '@/components/home/overlays/MobileOverlays';
+import { Suspense } from 'react';
 
 export default function MainLayout({
   children,
@@ -12,7 +13,9 @@ export default function MainLayout({
       <Header />
       <main className="grow pb-16 md:pb-0">{children}</main>
       <MobileNavigation />
-      <MobileOverlays />
+      <Suspense fallback={null}>
+        <MobileOverlays />
+      </Suspense>
     </div>
   );
 }

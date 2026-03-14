@@ -22,10 +22,14 @@ export const useUpcomingEventsQuery = (
   });
 };
 
-export const useGetMatchQuery = (matchId: number) => {
+export const useGetMatchQuery = (
+  matchId: number,
+  initialData?: Awaited<ReturnType<typeof getMatchDataV2>> | null,
+) => {
   return useQuery({
     queryKey: ['event', matchId],
     queryFn: () => getMatchDataV2(matchId),
+    initialData,
     enabled: Boolean(matchId),
     refetchOnMount: 'always',
     refetchOnWindowFocus: false,

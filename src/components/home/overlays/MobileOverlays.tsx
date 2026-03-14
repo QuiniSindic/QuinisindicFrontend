@@ -3,22 +3,24 @@
 import { TournamentBracket } from '@/components/bracket/TournamentBracket';
 import { BottomSheet } from '@/components/ui/BottomSheet';
 import { useBracketMatches } from '@/hooks/useBracketMatches';
-import { useSportsFilter } from '@/store/sportsLeagueFilterStore';
-import { getCompetitionIdByLeagueName } from '@/utils/domain/sports';
+import { parseEventFilters } from '@/utils/domain/filterParams';
+import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import StandingsTable from '../standings/Standing';
+import { StandingsTable } from '../standings/StandingsTable';
 
 type View = 'standings' | 'bracket' | null;
 
 export function MobileOverlays() {
   const [view, setView] = useState<View>(null);
-  const { selectedLeague, selectedCompetitionId } = useSportsFilter();
+  const searchParams = useSearchParams();
+  const filters = parseEventFilters(
+    Object.fromEntries(searchParams.entries()),
+    'events',
+  );
 
-  const competitionId =
-    selectedCompetitionId ?? getCompetitionIdByLeagueName(selectedLeague);
-
-  const { data: bracketMatches = [], isLoading } =
-    useBracketMatches(competitionId);
+  const { data: bracketMatches = [], isLoading } = useBracketMatches(
+    filters.competitionId ?? undefined,
+  );
 
   useEffect(() => {
     const onStandings = () => setView('standings');
@@ -43,12 +45,12 @@ export function MobileOverlays() {
       <BottomSheet
         open={view === 'standings'}
         onClose={close}
-        title={selectedLeague as string}
+        title={filters.selectedLeague || 'Clasificacion'}
       >
-        {selectedLeague || selectedCompetitionId ? (
+        {filters.selectedLeague || filters.competitionId ? (
           <StandingsTable
-            competition={selectedLeague || undefined}
-            competitionId={selectedCompetitionId}
+            competition={filters.selectedLeague || undefined}
+            competitionId={filters.competitionId}
           />
         ) : (
           <p className="text-center text-muted py-6">Selecciona una liga.</p>

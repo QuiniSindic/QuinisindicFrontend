@@ -1,23 +1,26 @@
 import { useDateFilters } from '@/hooks/useDateFilters';
-import { useSportsFilter } from '@/store/sportsLeagueFilterStore';
 import { RotateCcw } from 'lucide-react';
 import { CarouselScrollContainer } from '../../ui/CarouselScrollContainer';
 import { DateFilterActions } from './DateFilterActions';
 import { DateFilterInput } from './DateFilterInput';
 
 interface DateFilterContentProps {
+  selectedFrom: string | null;
+  selectedTo: string | null;
+  setSelectedFrom: (value?: string | null) => void;
+  setSelectedTo: (value?: string | null) => void;
+  clearDates: () => void;
   closeWrapper: () => void;
 }
 
-export const DateFilterContent = ({ closeWrapper }: DateFilterContentProps) => {
-  const {
-    selectedFrom,
-    setSelectedFrom,
-    selectedTo,
-    setSelectedTo,
-    clearDates,
-  } = useSportsFilter();
-
+export const DateFilterContent = ({
+  selectedFrom,
+  selectedTo,
+  setSelectedFrom,
+  setSelectedTo,
+  clearDates,
+  closeWrapper,
+}: DateFilterContentProps) => {
   const { setToday, setYesterday, setLast7Days } = useDateFilters(
     (date) => setSelectedFrom(date),
     (date) => setSelectedTo(date),

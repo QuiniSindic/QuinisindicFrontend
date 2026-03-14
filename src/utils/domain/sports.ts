@@ -46,9 +46,13 @@ export const SPORTS_MAP: Record<SportName, string> = {
   Fútbol: 'football',
   Baloncesto: 'basketball',
   Tenis: 'tennis',
-  Motor: 'motor',
+  Motor: 'motorsport',
   // Ciclismo: 'cycling',
 };
+
+export const SPORT_NAME_BY_SLUG = Object.fromEntries(
+  Object.entries(SPORTS_MAP).map(([name, slug]) => [slug, name]),
+) as Record<string, SportName>;
 
 export const COMPETITIONS_ID_MAP: Record<LeagueName, number> = {
   'La Liga': 87,
@@ -87,6 +91,34 @@ export const SPORT_ID_MAP: Record<string, number> = {
   tennis: 3,
   motor: 4,
   cycling: 5,
+};
+
+export const getSportNameBySlug = (slug?: string | null): SportName | null => {
+  if (!slug) return null;
+  return SPORT_NAME_BY_SLUG[slug] ?? null;
+};
+
+export const getSportSlugByName = (sport?: SportName | null): string | null => {
+  if (!sport) return null;
+  return SPORTS_MAP[sport] ?? null;
+};
+
+export const getSportIdByName = (sport?: SportName | null): number | null => {
+  const slug = getSportSlugByName(sport);
+  if (!slug) return null;
+  return SPORT_ID_MAP[slug] ?? null;
+};
+
+export const getSportNameByLeagueName = (
+  league?: LeagueName | null,
+): SportName | null => {
+  if (!league) return null;
+
+  return (
+    SPORTS_LIST_ITEMS.find((sport) =>
+      (sport.leagues as readonly string[]).includes(league),
+    )?.name ?? null
+  );
 };
 
 export const getPositionClass = (

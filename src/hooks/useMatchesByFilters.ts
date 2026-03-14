@@ -1,12 +1,7 @@
 import { getLiveMatches, getPastMatches } from '@/services/new_matches.service';
-import { useSportsFilter } from '@/store/sportsLeagueFilterStore';
 import { CompetitionData } from '@/types/domain/competitions';
 import { MatchData } from '@/types/domain/events';
-import {
-  getCompetitionIdByLeagueName,
-  SPORT_ID_MAP,
-  SPORTS_MAP,
-} from '@/utils/domain/sports';
+import { EventFilters } from '@/types/domain/filters';
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
@@ -20,6 +15,8 @@ type MatchesFetcher = (
 interface UseMatchesByFiltersParams {
   queryKeyBase: 'events' | 'results';
   fetcher: MatchesFetcher;
+  filters: EventFilters;
+  initialData?: CompetitionData[];
   queryOptions?: Omit<
     UseQueryOptions<CompetitionData[], Error>,
     'queryKey' | 'queryFn'
@@ -29,26 +26,19 @@ interface UseMatchesByFiltersParams {
 export const useMatchesByFilters = ({
   queryKeyBase,
   fetcher,
+  filters,
+  initialData,
   queryOptions,
 }: UseMatchesByFiltersParams) => {
-  const {
-    selectedSport,
-    selectedLeague,
-    selectedCompetitionId,
-    selectedFrom,
-    selectedTo,
-  } = useSportsFilter();
-
-  const sportSlug = selectedSport ? SPORTS_MAP[selectedSport] : undefined;
-  const sportId = sportSlug ? SPORT_ID_MAP[sportSlug] : undefined;
-  const competitionId =
-    selectedCompetitionId ?? getCompetitionIdByLeagueName(selectedLeague);
-  const from = selectedFrom || undefined;
-  const to = selectedTo || undefined;
+  const sportId = filters.sportId ?? undefined;
+  const competitionId = filters.competitionId ?? undefined;
+  const from = filters.from || undefined;
+  const to = filters.to || undefined;
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: [queryKeyBase, sportId, competitionId, from, to],
     queryFn: () => fetcher(sportId, competitionId, from, to),
+    initialData,
     ...queryOptions,
   });
 
@@ -60,22 +50,31 @@ export const useMatchesByFilters = ({
   return { events, isLoading, isError, error };
 };
 
-export const useUpcomingMatchesByFilters = () =>
+export const useUpcomingMatchesByFilters = (
+  filters: EventFilters,
+  initialData?: CompetitionData[],
+) =>
   useMatchesByFilters({
     queryKeyBase: 'events',
     fetcher: getLiveMatches,
+    filters,
+    initialData,
     queryOptions: {
-      refetchOnMount: false,
-      refetchInterval: 1000 * 60,
+      refetchInterval: 1000 * 60, // cada 1min
       refetchOnWindowFocus: true,
-      staleTime: 1000 * 60 * 5,
+      refetchOnMount: true,
     },
   });
 
-export const usePastMatchesByFilters = () =>
+export const usePastMatchesByFilters = (
+  filters: EventFilters,
+  initialData?: CompetitionData[],
+) =>
   useMatchesByFilters({
     queryKeyBase: 'results',
     fetcher: getPastMatches,
+    filters,
+    initialData,
     queryOptions: {
       refetchOnMount: false,
       refetchOnWindowFocus: false,

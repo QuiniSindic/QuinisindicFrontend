@@ -1,98 +1,69 @@
-import { useSportsFilter } from '@/store/sportsLeagueFilterStore';
+import { EventFilters } from '@/types/domain/filters';
 import { MatchData } from '@/types/domain/events';
 import { isFinished, isLive } from '@/utils/domain/events';
-import {
-  getCompetitionIdByLeagueName,
-  SPORT_ID_MAP,
-  SPORTS_MAP,
-} from '@/utils/domain/sports';
 import dayjs from 'dayjs';
 import { useMemo } from 'react';
 
 interface UseFilteredMatchesProps {
   data: MatchData[];
-  mode: 'events' | 'results';
+  filters: EventFilters;
   full: boolean;
 }
 
 export function useLocalEventFilters({
   data,
-  mode,
+  filters,
   full,
 }: UseFilteredMatchesProps) {
-  const {
-    selectedSport,
-    selectedLeague,
-    selectedCompetitionId,
-    selectedFrom,
-    selectedTo,
-    statusFilter,
-  } = useSportsFilter();
-
   return useMemo(() => {
     if (!data) return [];
 
-    // 1. Filtrado por estado (Finalizados vs Próximos)
     let filtered =
-      mode === 'results'
-        ? data.filter((e) => e && isFinished(e.status))
-        : data.filter((e) => e && !isFinished(e.status));
+      filters.mode === 'results'
+        ? data.filter((event) => event && isFinished(event.status))
+        : data.filter((event) => event && !isFinished(event.status));
 
-    // 2. Filtro por "Estado de Juego" (Live / Upcoming) - Solo en modo eventos
-    if (mode === 'events' && statusFilter !== 'all') {
+    if (filters.mode === 'events' && filters.status !== 'all') {
       filtered = filtered.filter((event) => {
         const live = isLive(event.status);
-        return statusFilter === 'live' ? live : !live;
+        return filters.status === 'live' ? live : !live;
       });
     }
 
-    // 3. Filtro por Liga o Deporte
-    const leagueId =
-      selectedCompetitionId ?? getCompetitionIdByLeagueName(selectedLeague);
-    if (leagueId) {
-      filtered = filtered.filter((e) => e.competitionid === leagueId);
-    } else if (selectedSport) {
-      const sportSlug = SPORTS_MAP[selectedSport];
-      const selectedSportId = sportSlug ? SPORT_ID_MAP[sportSlug] : undefined;
-      if (selectedSportId) {
-        filtered = filtered.filter((e) => e.sportId === selectedSportId);
-      }
+    if (filters.competitionId) {
+      filtered = filtered.filter(
+        (event) => event.competitionid === filters.competitionId,
+      );
+    } else if (filters.sportId) {
+      filtered = filtered.filter((event) => event.sportId === filters.sportId);
     }
 
-    // 4. Filtro por Fechas (Modo resultados)
-    if (mode === 'results' && (selectedFrom || selectedTo)) {
+    if (filters.mode === 'results' && (filters.from || filters.to)) {
       filtered = filtered.filter((event) => {
         const eventDate = dayjs(event.kickoff);
         if (!eventDate.isValid()) return false;
-        const isAfter = selectedFrom
-          ? !eventDate.isBefore(dayjs(selectedFrom), 'day')
+
+        const isAfter = filters.from
+          ? !eventDate.isBefore(dayjs(filters.from), 'day')
           : true;
-        const isBefore = selectedTo
-          ? !eventDate.isAfter(dayjs(selectedTo), 'day')
+        const isBefore = filters.to
+          ? !eventDate.isAfter(dayjs(filters.to), 'day')
           : true;
+
         return isAfter && isBefore;
       });
     }
 
-    // 5. Ordenación
     const sorted = [...filtered].sort((a, b) => {
       const aLive = isLive(a.status);
       const bLive = isLive(b.status);
+
       if (aLive && !bLive) return -1;
       if (!aLive && bLive) return 1;
+
       return dayjs(a.kickoff).valueOf() - dayjs(b.kickoff).valueOf();
     });
 
     return full ? sorted : sorted.slice(0, 6);
-  }, [
-    data,
-    mode,
-    selectedSport,
-    selectedLeague,
-    selectedCompetitionId,
-    selectedFrom,
-    selectedTo,
-    statusFilter,
-    full,
-  ]);
+  }, [data, filters, full]);
 }
