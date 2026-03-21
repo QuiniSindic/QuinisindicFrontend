@@ -1,10 +1,7 @@
-import { OptionsListButton } from '@/components/ui/buttons/OptionsListButton';
-import {
-  getCompetitionIdByLeagueName,
-  LeagueName,
-  SportName,
-} from '@/utils/domain/sports';
+﻿import { OptionsListButton } from '@/components/ui/buttons/OptionsListButton';
+import { SportOption } from '@/types/domain/sports';
 import { groupCompetitionOptionsByCountry } from '@/utils/domain/competition';
+import { LeagueName } from '@/utils/domain/sports';
 import { ChevronDown } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { LeagueFilterOption } from '../../filters/LeagueFilter';
@@ -12,15 +9,17 @@ import { SportsFilter } from '../../filters/SportsFilter';
 import { CarouselScrollContainer } from '../../ui/CarouselScrollContainer';
 
 interface SportsListMobileProps {
-  selectedSport: SportName | null;
+  sports: SportOption[];
+  selectedSport: string | null;
   selectedLeague: LeagueName | null;
   selectedCompetitionId: number | null;
   leagueOptions: LeagueFilterOption[];
-  toggleSport: (sport: SportName) => void;
+  toggleSport: (sport: SportOption) => void;
   handleLeagueSelect: (league: LeagueName | null, leagueId?: number) => void;
 }
 
 export const SportsListMobile = ({
+  sports,
   selectedSport,
   selectedLeague,
   selectedCompetitionId,
@@ -36,15 +35,14 @@ export const SportsListMobile = ({
     [leagueOptions],
   );
 
-  const selectedLeagueId =
-    selectedCompetitionId ?? getCompetitionIdByLeagueName(selectedLeague);
   const isPlayoffLeague = !!(
-    selectedLeagueId && PLAYOFF_LEAGUE_IDS.includes(selectedLeagueId)
+    selectedCompetitionId && PLAYOFF_LEAGUE_IDS.includes(selectedCompetitionId)
   );
 
   return (
     <div className="block lg:hidden">
       <SportsFilter
+        sports={sports}
         selectedSport={selectedSport}
         onSelect={(sport) => {
           if (sport) toggleSport(sport);
@@ -91,7 +89,6 @@ export const SportsListMobile = ({
         </div>
       )}
 
-      {/* clasificación en mobile (+ results?) */}
       {selectedSport && selectedLeague && (
         <CarouselScrollContainer
           className="mt-3 animate-appearance-in"
@@ -112,7 +109,6 @@ export const SportsListMobile = ({
               isSelected={false}
               className="w-[calc(50%-4px)]"
               onClick={() =>
-                // Emitimos un evento distinto para abrir el bracket
                 window.dispatchEvent(new CustomEvent('open-bracket'))
               }
             />

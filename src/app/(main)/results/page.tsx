@@ -1,6 +1,7 @@
-import { EventsPageClient } from '@/components/pages/EventsPageClient';
+﻿import { EventsPageClient } from '@/components/pages/EventsPageClient';
 import { getServerCompetitionsBySport } from '@/services/server/competitions.service';
 import { getServerPastMatches } from '@/services/server/matches.service';
+import { getServerSportsOptions } from '@/services/server/sports.service';
 import { SearchParams } from '@/types/domain/search-params';
 import { parseEventFilters } from '@/utils/domain/filterParams';
 import { Metadata } from 'next';
@@ -16,7 +17,7 @@ type Props = {
 export default async function ResultsPage({ searchParams }: Props) {
   const filters = parseEventFilters(await searchParams, 'results');
 
-  const [initialData, initialCompetitionOptions] = await Promise.all([
+  const [initialData, initialCompetitionOptions, initialSportsOptions] = await Promise.all([
     getServerPastMatches(
       filters.sportId ?? undefined,
       filters.competitionId ?? undefined,
@@ -26,6 +27,7 @@ export default async function ResultsPage({ searchParams }: Props) {
     filters.sportId
       ? getServerCompetitionsBySport(filters.sportId)
       : Promise.resolve([]),
+    getServerSportsOptions(),
   ]);
 
   return (
@@ -34,6 +36,7 @@ export default async function ResultsPage({ searchParams }: Props) {
       filters={filters}
       initialData={initialData}
       initialCompetitionOptions={initialCompetitionOptions}
+      initialSportsOptions={initialSportsOptions}
     />
   );
 }

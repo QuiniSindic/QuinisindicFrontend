@@ -1,124 +1,16 @@
-export const SPORTS_LIST_ITEMS = [
-  {
-    name: 'Fútbol',
-    leagues: [
-      'La Liga',
-      'Premier League',
-      'Bundesliga',
-      'Serie A',
-      'Ligue 1',
-      'Champions League',
-      'Europa League',
-      'Copa del Rey',
-      'Mundial',
-      // 'UEFA Conference League',
-      // 'La Liga Hypermotion',
-      // 'Mundial de Clubes',
-    ],
-  },
-  {
-    name: 'Baloncesto',
-    leagues: ['NBA', 'Euroliga'],
-  },
-  {
-    name: 'Tenis',
-    leagues: [
-      'Abierto de Australia',
-      'Roland Garros',
-      'Wimbledon',
-      'Abierto de Estados Unidos',
-    ],
-  },
-  {
-    name: 'Motor',
-    leagues: ['Fórmula 1', 'MotoGP'],
-  },
-  // {
-  //   name: 'Ciclismo',
-  //   leagues: ['Giro de Italia', 'Tour de Francia', 'Vuelta a España'],
-  // },
-] as const;
-
-export type SportName = (typeof SPORTS_LIST_ITEMS)[number]['name'];
+﻿export type SportName = string;
 export type LeagueName = string;
 
-export const SPORTS_MAP: Record<SportName, string> = {
-  Fútbol: 'football',
-  Baloncesto: 'basketball',
-  Tenis: 'tennis',
-  Motor: 'motorsport',
-  // Ciclismo: 'cycling',
-};
-
-export const SPORT_NAME_BY_SLUG = Object.fromEntries(
-  Object.entries(SPORTS_MAP).map(([name, slug]) => [slug, name]),
-) as Record<string, SportName>;
-
-export const COMPETITIONS_ID_MAP: Record<LeagueName, number> = {
-  'La Liga': 87,
-  'Premier League': 47,
-  Bundesliga: 54,
-  'Serie A': 55,
-  'Ligue 1': 53,
-  'Champions League': 42,
-  'Copa del Rey': 138,
-  'Europa League': 73,
-  Mundial: 77,
-
-  // FIX: cuando se añadan los deportes
-  NBA: 0,
-  Euroliga: 0,
-  'Abierto de Australia': 0,
-  'Roland Garros': 0,
-  Wimbledon: 0,
-  'Abierto de Estados Unidos': 0,
-  'Fórmula 1': 0,
-  MotoGP: 0,
-};
-
-export const getCompetitionIdByLeagueName = (
-  league?: LeagueName | null,
-): number | undefined => {
-  if (!league) return undefined;
-  const id = COMPETITIONS_ID_MAP[league];
-  return typeof id === 'number' && id > 0 ? id : undefined;
-};
-
-// IDs arbitrarios para tus deportes (asegúrate de que coincidan con tu DB)
-export const SPORT_ID_MAP: Record<string, number> = {
-  football: 1,
-  basketball: 2,
-  tennis: 3,
-  motor: 4,
-  cycling: 5,
-};
+const titleize = (value: string) =>
+  value
+    .split(' ')
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ');
 
 export const getSportNameBySlug = (slug?: string | null): SportName | null => {
   if (!slug) return null;
-  return SPORT_NAME_BY_SLUG[slug] ?? null;
-};
-
-export const getSportSlugByName = (sport?: SportName | null): string | null => {
-  if (!sport) return null;
-  return SPORTS_MAP[sport] ?? null;
-};
-
-export const getSportIdByName = (sport?: SportName | null): number | null => {
-  const slug = getSportSlugByName(sport);
-  if (!slug) return null;
-  return SPORT_ID_MAP[slug] ?? null;
-};
-
-export const getSportNameByLeagueName = (
-  league?: LeagueName | null,
-): SportName | null => {
-  if (!league) return null;
-
-  return (
-    SPORTS_LIST_ITEMS.find((sport) =>
-      (sport.leagues as readonly string[]).includes(league),
-    )?.name ?? null
-  );
+  return titleize(slug.replace(/-/g, ' '));
 };
 
 export const getPositionClass = (

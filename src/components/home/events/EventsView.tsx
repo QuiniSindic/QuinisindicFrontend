@@ -1,9 +1,10 @@
-'use client';
+﻿'use client';
 
 import { FilterBar } from '@/components/filters/FilterBar';
 import { CompetitionOption } from '@/types/domain/competitions';
 import { MatchData } from '@/types/domain/events';
 import { EventFilters } from '@/types/domain/filters';
+import { SportOption } from '@/types/domain/sports';
 import { EventsSection } from './EventsSection';
 
 interface EventsPageViewProps {
@@ -13,6 +14,7 @@ interface EventsPageViewProps {
   isLoading: boolean;
   currentPath?: string;
   initialCompetitionOptions?: CompetitionOption[];
+  initialSportsOptions?: SportOption[];
 }
 
 export function EventsView({
@@ -22,6 +24,7 @@ export function EventsView({
   isLoading,
   currentPath,
   initialCompetitionOptions,
+  initialSportsOptions,
 }: EventsPageViewProps) {
   return (
     <div className="min-h-screen pb-12 bg-background">
@@ -32,6 +35,7 @@ export function EventsView({
           <FilterBar
             filters={filters}
             initialCompetitionOptions={initialCompetitionOptions}
+            initialSportsOptions={initialSportsOptions}
           />
 
           <EventsSection

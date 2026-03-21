@@ -1,4 +1,4 @@
-import {
+﻿import {
   EventFilters,
   EventPageMode,
   EventStatusFilter,
@@ -13,13 +13,7 @@ import {
   SearchParamRecord,
   SearchParamValue,
 } from '@/types/domain/search-params';
-import {
-  getCompetitionIdByLeagueName,
-  getSportIdByName,
-  getSportNameByLeagueName,
-  getSportNameBySlug,
-  getSportSlugByName,
-} from './sports';
+import { getSportNameBySlug } from './sports';
 
 const getFirstValue = (value: SearchParamValue): string | undefined => {
   if (Array.isArray(value)) return value[0];
@@ -48,14 +42,9 @@ export const parseEventFilters = (
   mode: EventPageMode,
 ): EventFilters => {
   const sportSlug = normalizeString(searchParams.sport);
+  const sportId = parsePositiveInteger(searchParams.sport_id);
   const selectedLeague = normalizeString(searchParams.league);
-  const sport =
-    getSportNameBySlug(sportSlug) ||
-    (selectedLeague ? getSportNameByLeagueName(selectedLeague) : null);
-  const competitionId =
-    parsePositiveInteger(searchParams.competition_id) ??
-    getCompetitionIdByLeagueName(selectedLeague) ??
-    null;
+  const competitionId = parsePositiveInteger(searchParams.competition_id);
   const statusParam = normalizeString(searchParams.status);
   const status: EventStatusFilter =
     mode === 'events' && (statusParam === 'live' || statusParam === 'upcoming')
@@ -64,9 +53,9 @@ export const parseEventFilters = (
 
   return {
     mode,
-    sport,
-    sportSlug: sport ? getSportSlugByName(sport) : sportSlug,
-    sportId: sport ? getSportIdByName(sport) : null,
+    sport: getSportNameBySlug(sportSlug),
+    sportSlug,
+    sportId,
     selectedLeague,
     competitionId,
     from: normalizeDateValue(searchParams.from),
@@ -79,6 +68,7 @@ export const buildEventSearchParams = (filters: EventFilters) => {
   const params = new URLSearchParams();
 
   if (filters.sportSlug) params.set('sport', filters.sportSlug);
+  if (filters.sportId) params.set('sport_id', String(filters.sportId));
   if (filters.selectedLeague) params.set('league', filters.selectedLeague);
   if (filters.competitionId) {
     params.set('competition_id', String(filters.competitionId));

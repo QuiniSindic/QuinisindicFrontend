@@ -1,11 +1,11 @@
-'use client';
+﻿'use client';
 
 import { useCompetitionOptions } from '@/hooks/useCompetitionOptions';
-import { CompetitionOption } from '@/types/domain/competitions';
 import { useEventFiltersNavigation } from '@/hooks/useEventFiltersNavigation';
+import { useSportsOptions } from '@/hooks/useSportsOptions';
+import { CompetitionOption } from '@/types/domain/competitions';
 import { EventFilters } from '@/types/domain/filters';
-import { SPORTS_LIST_ITEMS } from '@/utils/domain/sports';
-import { useMemo } from 'react';
+import { SportOption } from '@/types/domain/sports';
 import { DateFilter } from './date/DateFilter';
 import { LeaguesFilter } from './LeagueFilter';
 import { SportsFilter } from './SportsFilter';
@@ -13,11 +13,13 @@ import { SportsFilter } from './SportsFilter';
 interface FilterBarProps {
   filters: EventFilters;
   initialCompetitionOptions?: CompetitionOption[];
+  initialSportsOptions?: SportOption[];
 }
 
 export function FilterBar({
   filters,
   initialCompetitionOptions,
+  initialSportsOptions,
 }: FilterBarProps) {
   const {
     setSelectedSport,
@@ -30,27 +32,17 @@ export function FilterBar({
     filters.sportId ?? undefined,
     initialCompetitionOptions,
   );
+  const { data: sports = [] } = useSportsOptions(initialSportsOptions);
 
-  const { staticLeagues, dynamicLeagueOptions } = useMemo(() => {
-    if (competitions.length > 0) {
-      return { staticLeagues: [], dynamicLeagueOptions: competitions };
-    }
-
-    return {
-      staticLeagues:
-        SPORTS_LIST_ITEMS.find((sport) => sport.name === filters.sport)
-          ?.leagues || [],
-      dynamicLeagueOptions: [],
-    };
-  }, [competitions, filters.sport]);
-
-  const hasLeagues =
-    filters.sport &&
-    (staticLeagues.length > 0 || dynamicLeagueOptions.length > 0);
+  const hasLeagues = competitions.length > 0;
 
   return (
     <div className="flex flex-col w-full">
-      <SportsFilter selectedSport={filters.sport} onSelect={setSelectedSport} />
+      <SportsFilter
+        sports={sports}
+        selectedSport={filters.sport}
+        onSelect={setSelectedSport}
+      />
 
       <div
         className={`
@@ -64,8 +56,8 @@ export function FilterBar({
         {hasLeagues && (
           <div className="w-full min-w-0 order-1">
             <LeaguesFilter
-              leagues={staticLeagues}
-              leagueOptions={dynamicLeagueOptions}
+              leagues={[]}
+              leagueOptions={competitions}
               selectedLeague={filters.selectedLeague}
               selectedCompetitionId={filters.competitionId}
               onSelect={setSelectedLeague}

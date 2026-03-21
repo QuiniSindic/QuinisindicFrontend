@@ -1,4 +1,4 @@
-import { SportName } from '@/utils/domain/sports';
+﻿import { SportName } from '@/utils/domain/sports';
 
 export type EventPageMode = 'events' | 'results';
 export type EventStatusFilter = 'all' | 'live' | 'upcoming';

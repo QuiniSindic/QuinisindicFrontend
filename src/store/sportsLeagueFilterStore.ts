@@ -1,20 +1,14 @@
-import {
-  getCompetitionIdByLeagueName,
-  LeagueName,
-  SportName,
-  SPORTS_LIST_ITEMS,
-} from '@/utils/domain/sports';
-import { create } from 'zustand';
+﻿import { create } from 'zustand';
 
 export type EventListStatusFilter = 'all' | 'live' | 'upcoming';
 
 interface SportsFilter {
-  selectedSport: SportName | null;
-  setSelectedSport: (sport: SportName | null) => void;
+  selectedSport: string | null;
+  setSelectedSport: (sport: string | null) => void;
 
-  selectedLeague: LeagueName | null;
+  selectedLeague: string | null;
   selectedCompetitionId: number | null;
-  setSelectedLeague: (league: LeagueName | null, leagueId?: number) => void;
+  setSelectedLeague: (league: string | null, leagueId?: number) => void;
 
   selectedFrom?: string | null;
   setSelectedFrom: (d?: string | null) => void;
@@ -59,21 +53,11 @@ export const useSportsFilter = create<SportsFilter>((set) => ({
         };
       }
 
-      const foundSport = SPORTS_LIST_ITEMS.find(
-        (sport) =>
-          league !== null &&
-          (sport.leagues as readonly string[]).includes(league),
-      )?.name;
-
-      const resolvedCompetitionId =
-        typeof leagueId === 'number' && leagueId > 0
-          ? leagueId
-          : getCompetitionIdByLeagueName(league);
-
       return {
-        selectedSport: foundSport || state.selectedSport,
+        selectedSport: state.selectedSport,
         selectedLeague: league,
-        selectedCompetitionId: resolvedCompetitionId || null,
+        selectedCompetitionId:
+          typeof leagueId === 'number' && leagueId > 0 ? leagueId : null,
       };
     }),
 

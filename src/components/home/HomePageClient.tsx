@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { EventsSection } from '@/components/home/events/EventsSection';
 import { SportsList } from '@/components/home/sportsList/SportsList';
@@ -7,11 +7,13 @@ import { useEventsQuery } from '@/hooks/useEventsQuery';
 import { CompetitionData, CompetitionOption } from '@/types/domain/competitions';
 import { EventFilters } from '@/types/domain/filters';
 import { TeamStandingData } from '@/types/domain/standings';
+import { SportOption } from '@/types/domain/sports';
 
 interface HomePageClientProps {
   filters: EventFilters;
   initialData: CompetitionData[];
   initialCompetitionOptions?: CompetitionOption[];
+  initialSportsOptions?: SportOption[];
   initialStandings?: TeamStandingData[];
 }
 
@@ -19,6 +21,7 @@ export function HomePageClient({
   filters,
   initialData,
   initialCompetitionOptions,
+  initialSportsOptions,
   initialStandings,
 }: HomePageClientProps) {
   const { events, isLoading } = useEventsQuery(filters, initialData);
@@ -29,6 +32,7 @@ export function HomePageClient({
         <SportsList
           filters={filters}
           initialCompetitionOptions={initialCompetitionOptions}
+          initialSportsOptions={initialSportsOptions}
         />
         <div className="flex flex-col lg:flex-row lg:gap-4 flex-1">
           <EventsSection

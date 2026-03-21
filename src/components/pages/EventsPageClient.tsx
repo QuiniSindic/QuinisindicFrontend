@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { EventsView } from '@/components/home/events/EventsView';
 import { useMatchesByFilters } from '@/hooks/useMatchesByFilters';
@@ -8,12 +8,14 @@ import {
 } from '@/services/browser/matches.service';
 import { CompetitionData, CompetitionOption } from '@/types/domain/competitions';
 import { EventFilters } from '@/types/domain/filters';
+import { SportOption } from '@/types/domain/sports';
 
 interface EventsPageClientProps {
   title: string;
   filters: EventFilters;
   initialData: CompetitionData[];
   initialCompetitionOptions?: CompetitionOption[];
+  initialSportsOptions?: SportOption[];
 }
 
 export function EventsPageClient({
@@ -21,6 +23,7 @@ export function EventsPageClient({
   filters,
   initialData,
   initialCompetitionOptions,
+  initialSportsOptions,
 }: EventsPageClientProps) {
   const { events, isLoading } = useMatchesByFilters({
     queryKeyBase: filters.mode,
@@ -49,6 +52,7 @@ export function EventsPageClient({
       events={events}
       isLoading={isLoading}
       initialCompetitionOptions={initialCompetitionOptions}
+      initialSportsOptions={initialSportsOptions}
     />
   );
 }
