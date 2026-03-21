@@ -76,3 +76,9 @@ export const getTimestamp = (value?: string | null) => {
   if (!parsed.isValid()) return 0;
   return parsed.valueOf();
 };
+
+export const formatDateShort = (dateStr: string) => {
+  if (!dateStr) return '';
+  const [, m, d] = dateStr.split('-');
+  return `${d}/${m}`;
+};

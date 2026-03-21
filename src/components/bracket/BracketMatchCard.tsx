@@ -1,7 +1,7 @@
 'use client';
 
 import { MatchData } from '@/types/domain/events';
-import { isFinishedMatchStatus } from '@/utils/domain/events';
+import { getTeamLogoSrc, isFinishedMatchStatus } from '@/utils/domain/events';
 import dayjs from 'dayjs';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -12,7 +12,6 @@ interface Props {
 }
 
 export const BracketMatchCard = ({ match, onMatchSelect }: Props) => {
-  // Parsear resultado si existe (ej: "2-1")
   let homeScore = '-';
   let awayScore = '-';
 
@@ -22,10 +21,8 @@ export const BracketMatchCard = ({ match, onMatchSelect }: Props) => {
     }
   }
 
-  // Detectar ganador para poner en negrita (opcional)
   const homeWin = Number(homeScore) > Number(awayScore);
   const awayWin = Number(awayScore) > Number(homeScore);
-
   const date = dayjs(match.kickoff).format('dddd DD/MM HH:mm');
 
   return (
@@ -33,6 +30,7 @@ export const BracketMatchCard = ({ match, onMatchSelect }: Props) => {
       href={`/event/${match.id}`}
       className="block w-full"
       onClick={onMatchSelect}
+      aria-label={`Abrir ${match.homeTeam.name} contra ${match.awayTeam.name}`}
     >
       <div
         className="
@@ -52,10 +50,11 @@ export const BracketMatchCard = ({ match, onMatchSelect }: Props) => {
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2 overflow-hidden">
               <Image
-                src={match.homeTeam.img as string}
+                src={getTeamLogoSrc(match.homeTeam.img)}
                 alt={match.homeTeam.name}
                 width={20}
                 height={20}
+                sizes="20px"
                 className="w-5 h-5 object-contain"
               />
               <span
@@ -71,10 +70,11 @@ export const BracketMatchCard = ({ match, onMatchSelect }: Props) => {
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2 overflow-hidden">
               <Image
-                src={match.awayTeam.img as string}
+                src={getTeamLogoSrc(match.awayTeam.img)}
                 alt={match.awayTeam.name}
                 width={20}
                 height={20}
+                sizes="20px"
                 className="w-5 h-5 object-contain"
               />
               <span

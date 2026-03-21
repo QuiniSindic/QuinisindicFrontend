@@ -6,7 +6,6 @@ interface DateFilterActionsProps {
   setToday: () => void;
   setYesterday: () => void;
   setLast7Days: () => void;
-
   closePopover: () => void;
 }
 

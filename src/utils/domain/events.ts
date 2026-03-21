@@ -321,3 +321,5 @@ export const isFinishedMatchStatus = (status?: string | null): boolean => {
     status as (typeof FINISHED_MATCH_STATUSES)[number],
   );
 };
+
+export const getTeamLogoSrc = (logo?: string | null) => logo || '/globe.svg';

@@ -27,7 +27,11 @@ export const DateFilterContent = ({
   );
 
   return (
-    <div className="flex flex-col gap-4 w-full md:w-[320px]">
+    <div
+      className="flex flex-col gap-4 w-full md:w-[320px]"
+      role="group"
+      aria-label="Filtro de fechas"
+    >
       <div className="grid grid-cols-2 gap-3 mt-2">
         <DateFilterInput
           label="Desde"
@@ -42,9 +46,8 @@ export const DateFilterContent = ({
         />
       </div>
 
-      {/* quick dates (hoy, ayer, last week) */}
       <div className="-mx-1 md:mx-0">
-        {/* mobile */}
+        {/* MOBILE */}
         <div className="md:hidden">
           <CarouselScrollContainer contentClassName="gap-2">
             <DateFilterActions
@@ -56,7 +59,7 @@ export const DateFilterContent = ({
           </CarouselScrollContainer>
         </div>
 
-        {/* desktop*/}
+        {/* DESKTOP */}
         <div className="hidden md:flex flex-wrap gap-2 justify-start">
           <DateFilterActions
             setToday={setToday}
@@ -70,15 +73,17 @@ export const DateFilterContent = ({
       {/* footer buttons */}
       <div className="flex justify-between items-center pt-2 border-t border-border">
         <button
+          type="button"
           onClick={clearDates}
           className="
             text-xs text-muted flex items-center gap-1
             hover:text-text transition-colors
           "
         >
-          <RotateCcw size={12} /> Limpiar
+          <RotateCcw size={12} aria-hidden="true" /> Limpiar
         </button>
         <button
+          type="button"
           onClick={closeWrapper}
           className="text-xs font-bold text-brand hover:underline"
         >

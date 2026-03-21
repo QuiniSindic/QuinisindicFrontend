@@ -1,9 +1,5 @@
-import { getStandingLeagues } from '@/services/browser/standings.service';
+﻿import { getStandingLeagues } from '@/services/browser/standings.service';
 import { TeamStandingData } from '@/types/domain/standings';
-import {
-  getCompetitionIdByLeagueName,
-  LeagueName,
-} from '@/utils/domain/sports';
 import { useQuery } from '@tanstack/react-query';
 
 export const useStandingsQuery = (
@@ -11,12 +7,10 @@ export const useStandingsQuery = (
   competitionIdInput?: number | null,
   initialData?: TeamStandingData[],
 ) => {
-  const competitionId =
-    competitionIdInput ??
-    getCompetitionIdByLeagueName(competition as LeagueName | null);
+  const competitionId = competitionIdInput ?? null;
 
   return useQuery({
-    queryKey: ['standings', competitionId],
+    queryKey: ['standings', competitionId, competition],
     queryFn: () => getStandingLeagues(competitionId!),
     enabled: !!competitionId && competitionId > 0,
     initialData,

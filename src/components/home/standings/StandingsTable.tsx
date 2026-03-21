@@ -1,11 +1,8 @@
-'use client';
+﻿'use client';
 
 import { useStandingsQuery } from '@/hooks/useStandingLeague';
 import { TeamStandingData } from '@/types/domain/standings';
-import {
-  getCompetitionIdByLeagueName,
-  getPositionClass,
-} from '@/utils/domain/sports';
+import { getPositionClass } from '@/utils/domain/sports';
 import { FOTMOB_IMAGES_URL } from 'core/config';
 import Image from 'next/image';
 
@@ -27,8 +24,7 @@ export function StandingsTable({
     error,
   } = useStandingsQuery(competition, competitionId, initialData);
 
-  const leagueId =
-    competitionId ?? getCompetitionIdByLeagueName(competition) ?? 0;
+  const leagueId = competitionId ?? 0;
 
   if (!standing) {
     return (
@@ -54,10 +50,10 @@ export function StandingsTable({
     );
   }
 
-  if (!standing || standing.length === 0) {
+  if (standing.length === 0) {
     return (
       <p className="text-center text-muted py-4">
-        Clasificacion no disponible para esta competicion.
+        Clasificación no disponible para esta competición.
       </p>
     );
   }

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { LeaderboardEntry } from '@/types/domain/leaderboard';
 import Image from 'next/image';
@@ -19,17 +19,36 @@ export function LeaderboardList({ data }: Props) {
   return (
     <div className="bg-surface rounded-xl shadow-sm border border-border overflow-hidden">
       <table className="w-full text-sm text-left text-text">
+        <caption className="sr-only">
+          Tabla de ranking de usuarios por puntos, plenos y número de
+          predicciones.
+        </caption>
         <thead className="text-[11px] uppercase bg-background/50 text-muted font-medium border-b border-border">
           <tr>
-            <th className="px-4 py-3 text-center w-12 tracking-wider">#</th>
-            <th className="px-4 py-3 tracking-wider">Usuario</th>
-            <th className="px-4 py-3 text-center hidden sm:table-cell tracking-wider">
+            <th
+              scope="col"
+              className="px-4 py-3 text-center w-12 tracking-wider"
+            >
+              #
+            </th>
+            <th scope="col" className="px-4 py-3 tracking-wider">
+              Usuario
+            </th>
+            <th
+              scope="col"
+              className="px-4 py-3 text-center hidden sm:table-cell tracking-wider"
+            >
               Plenos
             </th>
-            <th className="px-4 py-3 text-center hidden sm:table-cell tracking-wider">
+            <th
+              scope="col"
+              className="px-4 py-3 text-center hidden sm:table-cell tracking-wider"
+            >
               Predic.
             </th>
-            <th className="px-4 py-3 text-right tracking-wider">Puntos</th>
+            <th scope="col" className="px-4 py-3 text-right tracking-wider">
+              Puntos
+            </th>
           </tr>
         </thead>
 
@@ -62,8 +81,9 @@ export function LeaderboardList({ data }: Props) {
                       {entry.avatar_url ? (
                         <Image
                           src={entry.avatar_url}
-                          alt={entry.username}
+                          alt={`Avatar de ${entry.username}`}
                           fill
+                          sizes="32px"
                           className="object-cover"
                         />
                       ) : (
@@ -80,7 +100,12 @@ export function LeaderboardList({ data }: Props) {
 
                       <div className="flex items-center gap-2 sm:hidden text-[10px] text-muted leading-tight mt-0.5">
                         <span>{entry.predictions_count} pred.</span>
-                        <span className="text-border text-[8px]">•</span>
+                        <span
+                          className="text-border text-[8px]"
+                          aria-hidden="true"
+                        >
+                          ·
+                        </span>
                         <span
                           className={
                             entry.exact_hits > 0
