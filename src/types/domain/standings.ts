@@ -1,3 +1,5 @@
+import type { CompetitionEditionLite } from './competitions';
+
 export interface LastFiveMatches {
   result: string;
   match_id: string;
@@ -23,4 +25,22 @@ export interface TeamStandingData {
 export interface CompetitionStandingData {
   id: string; // id de competicion ex 75 la liga
   teams: TeamStandingData[];
+}
+
+export type StandingsStageType = 'league_table' | 'group';
+
+export interface StandingsGroupSnapshot {
+  id: string;
+  name: string;
+  order: number;
+  teams: TeamStandingData[];
+}
+
+export interface CompetitionStandingsSnapshot {
+  competitionId: number;
+  stageId: string;
+  stageName: string;
+  stageType: StandingsStageType;
+  edition?: CompetitionEditionLite | null;
+  groups: StandingsGroupSnapshot[];
 }

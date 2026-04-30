@@ -1,36 +1,26 @@
 import { PublicProfile } from '@/types/auth/auth';
-import { createClient } from '@/utils/supabase/server';
-import { mapProfileRow } from '@/services/shared/users.mapper';
-
-interface RawProfileRow {
-  id: string;
-  username?: string | null;
-  email?: string | null;
-  avatar_url?: string | null;
-}
+import { serverApiFetch } from '@/utils/api/server';
 
 export async function getServerUsernames(
   userIds: string[],
 ): Promise<Record<string, PublicProfile>> {
   if (userIds.length === 0) return {};
 
-  const supabase = await createClient();
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('id, username, email, avatar_url')
-    .in('id', userIds);
+  try {
+    const profiles = await serverApiFetch<PublicProfile[]>({
+      path: '/api/v2/users/profiles',
+      query: { ids: userIds },
+      auth: false,
+    });
 
-  if (error) {
-    console.error('Error fetching server profiles:', error);
+    return profiles.reduce<Record<string, PublicProfile>>((acc, profile) => {
+      if (profile.id) {
+        acc[profile.id] = profile;
+      }
+      return acc;
+    }, {});
+  } catch (error) {
+    console.error('Error fetching server profiles from backend:', error);
     return {};
   }
-
-  const record: Record<string, PublicProfile> = {};
-
-  (data as RawProfileRow[] | null)?.forEach((profile) => {
-    if (!profile.id) return;
-    record[profile.id] = mapProfileRow(profile);
-  });
-
-  return record;
 }

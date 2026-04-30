@@ -1,13 +1,13 @@
 'use client';
 
 import { NoDataToDisplay } from '@/components/ui/feedback/NoDataToDisplay';
-import { Prediction } from '@/types/database/table';
+import { PredictionRow } from '@/types/domain/prediction';
 import { Spinner } from '@heroui/react';
 import React from 'react';
 import UsersPredictions from './UserPredictions';
 
 interface MatchInfoPredictionsTabProps {
-  predictions: Prediction[];
+  predictions: PredictionRow[];
   loadingAllPreds?: boolean;
 }
 

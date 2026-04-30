@@ -9,6 +9,7 @@ interface DateFilterContentProps {
   selectedTo: string | null;
   setSelectedFrom: (value?: string | null) => void;
   setSelectedTo: (value?: string | null) => void;
+  setDateRange: (from?: string | null, to?: string | null) => void;
   clearDates: () => void;
   closeWrapper: () => void;
 }
@@ -18,13 +19,11 @@ export const DateFilterContent = ({
   selectedTo,
   setSelectedFrom,
   setSelectedTo,
+  setDateRange,
   clearDates,
   closeWrapper,
 }: DateFilterContentProps) => {
-  const { setToday, setYesterday, setLast7Days } = useDateFilters(
-    (date) => setSelectedFrom(date),
-    (date) => setSelectedTo(date),
-  );
+  const { setToday, setYesterday, setLast7Days } = useDateFilters(setDateRange);
 
   return (
     <div

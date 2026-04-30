@@ -1,5 +1,5 @@
-import { Prediction } from '@/types/database/table';
 import { MatchData } from '@/types/domain/events';
+import { PredictionRow } from '@/types/domain/prediction';
 import { KeyboardEvent, useId, useRef, useState } from 'react';
 import { MatchInfoTab } from './tabs/infoTab/MatchInfoTab';
 import MatchInfoOddsTab from './tabs/oddsTab/MatchInfoOddsTab';
@@ -10,7 +10,7 @@ type TabKey = 'match' | 'predictions' | 'odds';
 
 interface MatchInfoTabsProps {
   event: MatchData;
-  predictions: Prediction[];
+  predictions: PredictionRow[];
   isFinished?: boolean;
   isInProgress?: boolean;
   notStarted?: boolean;
@@ -78,7 +78,7 @@ export const MatchInfoTabs: React.FC<MatchInfoTabsProps> = ({
       <div
         className="mb-4 flex border-border"
         role="tablist"
-        aria-label="Información del partido"
+        aria-label="Informacion del partido"
       >
         <Tab
           ref={(el) => {

@@ -49,6 +49,7 @@ export default function MatchWidget({
             isFinished={isFinished}
             event={event}
             date={event.kickoff}
+            dateIso={event.kickoffIso}
           />
         </div>
       )}

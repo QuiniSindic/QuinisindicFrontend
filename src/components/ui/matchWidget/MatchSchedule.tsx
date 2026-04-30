@@ -3,6 +3,7 @@ import { formatMatchWidget } from '@/utils/common/date';
 
 interface MatchScheduleProps {
   date: string;
+  dateIso?: string | null;
   isLive?: boolean;
   isFinished?: boolean;
   event: MatchData;
@@ -10,11 +11,12 @@ interface MatchScheduleProps {
 
 export const MatchSchedule = ({
   date,
+  dateIso,
   isLive,
   isFinished,
   event,
 }: MatchScheduleProps) => {
-  const dateFormatted = formatMatchWidget(date);
+  const dateFormatted = formatMatchWidget(date, dateIso);
   const baseTextCls = 'text-muted text-sm md:text-base text-center';
 
   if (isLive) {

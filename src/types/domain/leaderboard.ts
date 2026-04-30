@@ -1,3 +1,5 @@
+import type { CompetitionEditionLite } from './competitions';
+
 export interface LeaderboardEntry {
   user_id: string;
   username: string;
@@ -10,4 +12,5 @@ export interface LeaderboardEntry {
 export interface LeaderboardFilterOption {
   id: number;
   name: string;
+  current_edition?: CompetitionEditionLite | null;
 }

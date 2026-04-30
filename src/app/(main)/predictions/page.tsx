@@ -1,7 +1,7 @@
+import { LocalDateTime } from '@/components/common/LocalDateTime';
 import { getServerCurrentUser } from '@/services/server/auth.service';
 import { getServerPredictionsFeed } from '@/services/server/predictions.service';
 import { SearchParams } from '@/types/domain/search-params';
-import { formatKickoff } from '@/utils/common/date';
 import {
   getResultDisplay,
   getStatusBucket,
@@ -218,7 +218,11 @@ export default async function PredictionsPage({ searchParams }: Props) {
                                     {prediction.awayTeam}
                                   </p>
                                   <span className="text-[11px] text-muted whitespace-nowrap">
-                                    {formatKickoff(prediction.kickoff)}
+                                    <LocalDateTime
+                                      value={prediction.kickoffIso ?? prediction.kickoff}
+                                      format="DD/MM/YY HH:mm"
+                                      fallback="-"
+                                    />
                                   </span>
                                 </div>
 

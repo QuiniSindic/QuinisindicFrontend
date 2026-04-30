@@ -5,7 +5,9 @@ export const QUINIELA_DATA_URL =
 export const PROJECT_ID = process.env.NEXT_PUBLIC_SUPABASE_PROJECT_ID || '';
 
 export const BACKEND_URL =
-  process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001';
+  process.env.BACKEND_URL ||
+  process.env.NEXT_PUBLIC_BACKEND_URL ||
+  'http://localhost:8000';
 
 // teamlogo/8634_xsmall.png -> peque y id equipo
 // leaguelogo/47.png -> grande y id liga

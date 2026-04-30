@@ -1,76 +1,51 @@
-import { Prediction } from '@/types/database/table';
 import {
+  PredictionRow,
   PredictionPayload,
   PredictionUpdatePayload,
 } from '@/types/domain/prediction';
-import { createClient } from '@/utils/supabase/client';
+import { browserApiFetch } from '@/utils/api/browser';
+import { ApiError } from '@/utils/api/shared';
 
 export async function getEventPredictions(
   eventId: number,
-): Promise<Prediction[]> {
-  const supabase = createClient();
-  const { data, error } = await supabase
-    .from('predictions')
-    .select('*')
-    .eq('match_id', eventId);
-
-  if (error) {
-    console.error('Error fetching predictions:', error);
+): Promise<PredictionRow[]> {
+  try {
+    return await browserApiFetch<PredictionRow[]>({
+      path: `/api/v2/football/events/${eventId}/predictions`,
+      auth: false,
+    });
+  } catch (error) {
+    console.error('Error fetching predictions from backend:', error);
     return [];
   }
-
-  return (data ?? []) as Prediction[];
 }
 
-export async function getUserMatchPrediction(eventId: number) {
-  const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+export async function getUserMatchPrediction(
+  eventId: number,
+): Promise<PredictionRow | null> {
+  try {
+    return await browserApiFetch<PredictionRow | null>({
+      path: `/api/v2/football/events/${eventId}/predictions/me`,
+    });
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 401) {
+      return null;
+    }
+    if (error instanceof ApiError && error.status === 404) {
+      return null;
+    }
 
-  if (!user) return null;
-
-  const { data, error } = await supabase
-    .from('predictions')
-    .select('*')
-    .eq('match_id', eventId)
-    .eq('user_id', user.id)
-    .single();
-
-  if (error && error.code !== 'PGRST116') {
-    console.error('Error fetching user prediction:', error);
+    console.error('Error fetching user prediction from backend:', error);
+    return null;
   }
-
-  return (data as Prediction | null) ?? null;
 }
 
 export async function saveEventPrediction(payload: PredictionPayload) {
-  const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) throw new Error('User not authenticated');
-
-  const { data, error } = await supabase
-    .from('predictions')
-    .insert({
-      user_id: user.id,
-      sport_id: payload.sport_id,
-      competition_id: payload.competition_id,
-      match_id: payload.event_id,
-      home_score: payload.home_score,
-      away_score: payload.away_score,
-    })
-    .select()
-    .single();
-
-  if (error) {
-    if (error.code === '23505') {
-      throw new Error('Ya tienes una prediccion para este partido');
-    }
-    throw new Error(error.message);
-  }
+  const data = await browserApiFetch<PredictionRow>({
+    path: `/api/v2/football/events/${payload.event_id}/predictions`,
+    method: 'POST',
+    body: payload,
+  });
 
   return { ok: true, data };
 }
@@ -79,25 +54,11 @@ export async function updateEventPrediction(
   eventId: number,
   updatePayload: PredictionUpdatePayload,
 ) {
-  const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) throw new Error('User not authenticated');
-
-  const { data, error } = await supabase
-    .from('predictions')
-    .update({
-      home_score: updatePayload.home_score,
-      away_score: updatePayload.away_score,
-    })
-    .eq('match_id', eventId)
-    .eq('user_id', user.id)
-    .select()
-    .single();
-
-  if (error) throw new Error(error.message);
+  const data = await browserApiFetch<PredictionRow>({
+    path: `/api/v2/football/events/${eventId}/predictions`,
+    method: 'PUT',
+    body: updatePayload,
+  });
 
   return { ok: true, data };
 }

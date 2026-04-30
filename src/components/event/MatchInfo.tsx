@@ -12,10 +12,10 @@ import {
 
 import { useAuth } from '@/hooks/logic/useAuth';
 import { User } from '@/types/auth/auth';
-import { Prediction } from '@/types/database/table';
 import { MatchData } from '@/types/domain/events';
 import {
   PredictionPayload,
+  PredictionRow,
   PredictionUpdatePayload,
 } from '@/types/domain/prediction';
 import { Spinner } from '@heroui/react';
@@ -27,9 +27,9 @@ import PredictionForm from './form/PredictionForm';
 
 interface MatchInfoProps {
   event: MatchData;
-  predictions?: Prediction[];
+  predictions?: PredictionRow[];
   initialUser?: User | null;
-  initialUserPrediction?: Prediction | null;
+  initialUserPrediction?: PredictionRow | null;
   returnTo?: string;
 }
 
@@ -58,9 +58,14 @@ export function MatchInfo({
   const isFinished =
     liveEvent.status === 'FT' ||
     liveEvent.status === 'AET' ||
-    liveEvent.status === 'AP';
+    liveEvent.status === 'AP' ||
+    liveEvent.status === 'Pen';
   const isInProgress =
-    liveEvent.status.includes("'") || liveEvent.status === 'HT';
+    liveEvent.status === 'LIVE' ||
+    liveEvent.status.includes("'") ||
+    liveEvent.status === 'HT' ||
+    liveEvent.status === '2H' ||
+    liveEvent.status === '1H';
 
   const {
     data: userPred,
@@ -90,9 +95,7 @@ export function MatchInfo({
       await refetchUserPred();
       await refetchAllPreds();
     } catch (error: unknown) {
-      toast.error(
-        getErrorMessage(error, 'Error al guardar la prediccion'),
-      );
+      toast.error(getErrorMessage(error, 'Error al guardar la prediccion'));
     }
   };
 
@@ -109,9 +112,7 @@ export function MatchInfo({
       await refetchUserPred();
       await refetchAllPreds();
     } catch (error: unknown) {
-      toast.error(
-        getErrorMessage(error, 'Error al actualizar la prediccion'),
-      );
+      toast.error(getErrorMessage(error, 'Error al actualizar la prediccion'));
     }
   };
 

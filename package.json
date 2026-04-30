@@ -2,13 +2,15 @@
   "name": "quinisindic-frontend",
   "version": "0.1.2",
   "private": true,
+  "packageManager": "pnpm@10.33.0",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "check:ts": "npx tsc --project tsconfig.json --noEmit --alwaysStrict --forceConsistentCasingInFileNames",
-    "format": "prettier --write \"{app,components,core,lib,services,utils}/**/*.{ts,tsx,js,jsx}\""
+    "check:ts": "tsc --project tsconfig.json --noEmit --alwaysStrict --forceConsistentCasingInFileNames",
+    "format": "prettier --write \"{src,core}/**/*.{ts,tsx,js,jsx,css}\"",
+    "supabase:types": "supabase gen types typescript --linked --schema public > src/types/database/generated.ts"
   },
   "dependencies": {
     "@heroui/react": "^2.8.7",

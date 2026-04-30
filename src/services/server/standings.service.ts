@@ -1,39 +1,27 @@
-import { TeamStandingData } from '@/types/domain/standings';
-import { mapStandingTeam } from '@/services/shared/standings.mapper';
-import { createClient } from '@/utils/supabase/server';
+import { CompetitionStandingsSnapshot } from '@/types/domain/standings';
+import { serverApiFetch } from '@/utils/api/server';
+import { ApiError } from '@/utils/api/shared';
 
-interface RawStandingTeam {
-  id: string;
-  position: number;
-  name: string;
-  badge: string;
-  played: number;
-  wins: number;
-  draws: number;
-  losses: number;
-  points: number;
-  goalsFor: number;
-  goalsAgainst: number;
-  form: TeamStandingData['form'];
-}
-
-export async function getServerStandingLeagues(
+export async function getServerCompetitionStandings(
   competitionId: number,
-): Promise<TeamStandingData[]> {
-  const supabase = await createClient();
+  stageId?: string,
+  groupId?: string,
+): Promise<CompetitionStandingsSnapshot | null> {
+  try {
+    return await serverApiFetch<CompetitionStandingsSnapshot>({
+      path: `/api/v2/football/standings/${competitionId}`,
+      query: {
+        stage_id: stageId,
+        group_id: groupId,
+      },
+      auth: false,
+    });
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 404) {
+      return null;
+    }
 
-  const { data, error } = await supabase
-    .from('competitions')
-    .select('standings')
-    .eq('id', competitionId)
-    .single();
-
-  if (error || !data) {
-    console.error('Error fetching server standings:', error);
-    return [];
+    console.error('Error fetching server standings from backend:', error);
+    return null;
   }
-
-  return ((data.standings as RawStandingTeam[] | null) || []).map(
-    mapStandingTeam,
-  );
 }

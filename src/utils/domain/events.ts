@@ -4,13 +4,14 @@ import {
   FINISHED_MATCH_STATUSES,
   MatchData,
   MatchEvent,
+  MatchEventKind,
+  MatchEventSide,
   MatchEventType,
   MatchStatus,
   NOT_STARTED_STATUSES,
   ParsedMinute,
 } from '@/types/domain/events';
 import { PredictionGroup, PredictionView } from '@/types/domain/prediction';
-import dayjs from 'dayjs';
 import { getTimestamp } from '../common/date';
 
 export const CANCELED: MatchStatus[] = ['Canc.', 'Susp.'];
@@ -43,9 +44,10 @@ export const concatenateAndSortEvents = ({
     const bLive = isLive(b.status);
     if (aLive !== bLive) return aLive ? -1 : 1;
 
-    const aDate = dayjs(a.kickoff);
-    const bDate = dayjs(b.kickoff);
-    return aDate.valueOf() - bDate.valueOf();
+    return (
+      getTimestamp(a.kickoffIso ?? a.kickoff) -
+      getTimestamp(b.kickoffIso ?? b.kickoff)
+    );
   });
 };
 
@@ -71,6 +73,258 @@ export function parseMinute(
     label: `${min}'`,
   };
 }
+
+export type ActionViewMode = 'key' | 'all';
+
+export type TimelineRow =
+  | {
+      id: string;
+      rowType: 'section';
+      title: string;
+    }
+  | {
+      id: string;
+      rowType: 'event';
+      event: MatchEvent;
+    }
+  | {
+      id: string;
+      rowType: 'marker';
+      title: string;
+      score?: {
+        home: number;
+        away: number;
+      };
+    }
+  | {
+      id: string;
+      rowType: 'summary';
+      label: string;
+    };
+
+type TimelineBucketKey = 'firstHalf' | 'secondHalf' | 'extraTime' | 'penalties';
+
+const POST_HALFTIME_STATUSES = new Set<MatchStatus | string>([
+  '2H',
+  'HT',
+  'FT',
+  'AET',
+  'AP',
+  'Pen',
+  'OT',
+]);
+
+export const getEventKind = (event: MatchEvent): MatchEventKind => {
+  if (event.kind) return event.kind;
+
+  switch (String(event.type)) {
+    case MatchEventType.Goal:
+    case MatchEventType.PenaltyGoal:
+    case 'Goal':
+    case 'PenaltyGoal':
+      return 'goal';
+    case MatchEventType.MissedPenalty:
+    case MatchEventType.FailedPenalty:
+    case 'FailedPenalty':
+    case 'MissedPenalty':
+      return 'missed_penalty';
+    case MatchEventType.Card:
+    case 'Card':
+      return 'card';
+    case MatchEventType.Substitution:
+    case 'Substitution':
+      return 'substitution';
+    case MatchEventType.AddedTime:
+    case 'AddedTime':
+      return 'added_time';
+    case MatchEventType.Half:
+    case 'Half':
+      return 'period';
+    case 'Var':
+    case 'VAR':
+      return 'var';
+    default:
+      return 'other';
+  }
+};
+
+export const getEventSide = (event: MatchEvent): MatchEventSide => {
+  if (event.side) return event.side;
+  if (event.isHome === true) return 'home';
+  if (event.isHome === false) return 'away';
+  return 'neutral';
+};
+
+export const isKeyMatchEvent = (event: MatchEvent): boolean => {
+  const kind = getEventKind(event);
+
+  if (event.isPenaltyShootout) return true;
+  if (event.isCancelled) return true;
+
+  return (
+    kind === 'goal' ||
+    kind === 'missed_penalty' ||
+    kind === 'card' ||
+    kind === 'var' ||
+    kind === 'period'
+  );
+};
+
+const getEventSortValue = (event: MatchEvent, index: number): number => {
+  const parsedMinute = parseMinute(event.timeStr ?? event.minute);
+  const kind = getEventKind(event);
+
+  let offset = 1;
+  if (kind === 'added_time') offset = 2;
+  if (kind === 'period') offset = 3;
+
+  return parsedMinute.total * 10 + offset + index / 1000;
+};
+
+const isFinalPeriodLabel = (label?: string | null) => {
+  const normalized = String(label ?? '').toUpperCase();
+  return normalized === 'FT' || normalized === 'AET' || normalized === 'AP';
+};
+
+const getBucketForEvent = (event: MatchEvent): TimelineBucketKey => {
+  if (event.isPenaltyShootout) return 'penalties';
+
+  const parsedMinute = parseMinute(event.timeStr ?? event.minute);
+  if (parsedMinute.min > 90) return 'extraTime';
+  if (parsedMinute.min > 45) return 'secondHalf';
+  return 'firstHalf';
+};
+
+const parseScoreFromResult = (result?: string) => {
+  if (!result || !result.includes('-')) return undefined;
+
+  const [homeRaw, awayRaw] = result.split('-', 2);
+  const home = Number(homeRaw);
+  const away = Number(awayRaw);
+
+  if (Number.isNaN(home) || Number.isNaN(away)) return undefined;
+  return { home, away };
+};
+
+const summarizeHiddenEvents = (events: MatchEvent[]): string => {
+  const substitutions = events.filter(
+    (event) => getEventKind(event) === 'substitution',
+  ).length;
+  const addedTimes = events.filter(
+    (event) => getEventKind(event) === 'added_time',
+  ).length;
+
+  if (events.length === substitutions) {
+    return `+${substitutions} cambio${substitutions === 1 ? '' : 's'} oculto${substitutions === 1 ? '' : 's'}`;
+  }
+
+  if (events.length === addedTimes) {
+    return `+${addedTimes} tiempo añadido oculto${addedTimes === 1 ? '' : 's'}`;
+  }
+
+  return `+${events.length} acciones secundarias`;
+};
+
+export const buildMatchTimelineRows = (
+  match: MatchData,
+  mode: ActionViewMode,
+): TimelineRow[] => {
+  const events = [...(match.events ?? [])]
+    .map((event, index) => ({ event, index }))
+    .sort((a, b) => getEventSortValue(a.event, a.index) - getEventSortValue(b.event, b.index))
+    .map(({ event }) => event);
+
+  const buckets: Record<
+    TimelineBucketKey,
+    { title: string; visible: MatchEvent[]; hidden: MatchEvent[] }
+  > = {
+    firstHalf: { title: '1ª parte', visible: [], hidden: [] },
+    secondHalf: { title: '2ª parte', visible: [], hidden: [] },
+    extraTime: { title: 'Prórroga', visible: [], hidden: [] },
+    penalties: { title: 'Penaltis', visible: [], hidden: [] },
+  };
+
+  let halftimeMarker: MatchEvent | undefined;
+  let finalMarker: MatchEvent | undefined;
+
+  events.forEach((event) => {
+    const kind = getEventKind(event);
+
+    if (kind === 'period') {
+      const label = String(event.label ?? '').toUpperCase();
+      if (label === 'HT') {
+        halftimeMarker = event;
+        return;
+      }
+
+      if (isFinalPeriodLabel(label)) {
+        finalMarker = event;
+        return;
+      }
+    }
+
+    const target = isKeyMatchEvent(event) || mode === 'all' ? 'visible' : 'hidden';
+    buckets[getBucketForEvent(event)][target].push(event);
+  });
+
+  const rows: TimelineRow[] = [];
+  const pushBucket = (key: TimelineBucketKey) => {
+    const bucket = buckets[key];
+    if (bucket.visible.length === 0 && bucket.hidden.length === 0) return;
+
+    rows.push({
+      id: `section-${key}`,
+      rowType: 'section',
+      title: bucket.title,
+    });
+
+    bucket.visible.forEach((event, index) => {
+      rows.push({
+        id: `${key}-event-${index}-${event.minute}-${String(event.type)}`,
+        rowType: 'event',
+        event,
+      });
+    });
+
+    if (bucket.hidden.length > 0) {
+      rows.push({
+        id: `summary-${key}`,
+        rowType: 'summary',
+        label: summarizeHiddenEvents(bucket.hidden),
+      });
+    }
+  };
+
+  pushBucket('firstHalf');
+
+  if (
+    halftimeMarker ||
+    POST_HALFTIME_STATUSES.has(match.status) ||
+    parseMinute(match.minute).min > 45
+  ) {
+    rows.push({
+      id: 'marker-halftime',
+      rowType: 'marker',
+      title: halftimeMarker?.title || 'Descanso',
+      score: halftimeMarker?.score,
+    });
+  }
+
+  pushBucket('secondHalf');
+  pushBucket('extraTime');
+  pushBucket('penalties');
+
+  if (finalMarker || isFinished(match.status)) {
+    rows.push({
+      id: 'marker-final',
+      rowType: 'marker',
+      title: finalMarker?.title || 'Final',
+      score: finalMarker?.score ?? parseScoreFromResult(match.result),
+    });
+  }
+
+  return rows;
+};
 
 export const makeActionGroupsForMatch = (
   events: MatchEvent[],
@@ -154,8 +408,10 @@ export const groupBySportAndLeague = (
   });
 
   const comparePredictions = (a: PredictionView, b: PredictionView) => {
-    const aKickoff = getTimestamp(a.kickoff) || getTimestamp(a.createdAt);
-    const bKickoff = getTimestamp(b.kickoff) || getTimestamp(b.createdAt);
+    const aKickoff =
+      getTimestamp(a.kickoffIso ?? a.kickoff) || getTimestamp(a.createdAt);
+    const bKickoff =
+      getTimestamp(b.kickoffIso ?? b.kickoff) || getTimestamp(b.createdAt);
 
     if (sortMode === 'kickoff_asc') {
       if (aKickoff !== bKickoff) return aKickoff - bKickoff;
@@ -188,7 +444,7 @@ export const groupBySportAndLeague = (
     direction: 'asc' | 'desc',
   ) => {
     const values = league.predictions.map(
-      (p) => getTimestamp(p.kickoff) || getTimestamp(p.createdAt),
+      (p) => getTimestamp(p.kickoffIso ?? p.kickoff) || getTimestamp(p.createdAt),
     );
     const filtered = values.filter((v) => v > 0);
     if (filtered.length === 0) return 0;

@@ -1,13 +1,12 @@
+import { ProfileRow } from '@/types/database';
 import { PublicProfile } from '@/types/auth/auth';
 
-interface ProfileRowLike {
-  id: string;
-  username?: string | null;
-  email?: string | null;
-  avatar_url?: string | null;
-}
+type ProfileSummaryRow = Pick<
+  ProfileRow,
+  'id' | 'username' | 'email' | 'avatar_url'
+>;
 
-export const mapProfileRow = (profile: ProfileRowLike): PublicProfile => ({
+export const mapProfileRow = (profile: ProfileSummaryRow): PublicProfile => ({
   id: profile.id,
   username: profile.username || profile.email?.split('@')[0] || 'Usuario',
   email: profile.email || undefined,

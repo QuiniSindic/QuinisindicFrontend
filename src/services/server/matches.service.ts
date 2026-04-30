@@ -1,65 +1,39 @@
 import { CompetitionData } from '@/types/domain/competitions';
-import { FINISHED_MATCH_STATUSES, MatchData } from '@/types/domain/events';
-import {
-  groupMatchesByCompetition,
-  mapMatchRow,
-  RawCompetitionRow,
-  RawMatchRow,
-} from '@/services/shared/matches.mapper';
-import { createClient } from '@/utils/supabase/server';
-import dayjs from 'dayjs';
+import { MatchData } from '@/types/domain/events';
+import { serverApiFetch } from '@/utils/api/server';
+import { ApiError } from '@/utils/api/shared';
 
-interface RawMatchWithCompetitionRow extends RawMatchRow {
-  competitions?: RawCompetitionRow | null;
-}
+const buildMatchesQuery = (
+  sport?: number,
+  competitionId?: number,
+  fromDate?: string,
+  toDate?: string,
+  limit?: number,
+) => ({
+  sport_id: sport,
+  competition_id: competitionId,
+  from_date: fromDate,
+  to_date: toDate,
+  limit,
+});
 
 export async function getServerLiveMatches(
   sport?: number,
   competitionId?: number,
   fromDate?: string,
   toDate?: string,
+  limit?: number,
 ): Promise<CompetitionData[]> {
-  const supabase = await createClient();
-
-  let query = supabase.from('matches').select(`
-      *,
-      home_team_data,
-      away_team_data,
-      competitions!inner (
-        id,
-        name,
-        badge,
-        country,
-        sport_id
-      )
-    `);
-
-  if (competitionId) {
-    query = query.eq('competition_id', competitionId);
-  }
-
-  if (sport) {
-    query = query.eq('competitions.sport_id', sport);
-  }
-
-  if (fromDate && toDate) {
-    query = query
-      .gte('kickoff', dayjs(fromDate).startOf('day').toISOString())
-      .lte('kickoff', dayjs(toDate).endOf('day').toISOString());
-  } else {
-    query = query
-      .gte('kickoff', dayjs().subtract(2, 'hours').toISOString())
-      .lte('kickoff', dayjs().add(48, 'hours').toISOString());
-  }
-
-  const { data, error } = await query.order('kickoff', { ascending: true });
-
-  if (error) {
-    console.error('Error fetching live matches on server:', error);
+  try {
+    return await serverApiFetch<CompetitionData[]>({
+      path: '/api/v2/football/events/live',
+      query: buildMatchesQuery(sport, competitionId, fromDate, toDate, limit),
+      auth: false,
+    });
+  } catch (error) {
+    console.error('Error fetching live matches from backend:', error);
     return [];
   }
-
-  return groupMatchesByCompetition((data ?? []) as RawMatchWithCompetitionRow[]);
 }
 
 export async function getServerPastMatches(
@@ -67,63 +41,34 @@ export async function getServerPastMatches(
   competitionId?: number,
   fromDate?: string,
   toDate?: string,
+  limit?: number,
 ): Promise<CompetitionData[]> {
-  const supabase = await createClient();
-
-  let query = supabase.from('matches').select(`
-      *,
-      competitions!inner (id, name, badge, country, sport_id)
-    `);
-
-  if (competitionId) query = query.eq('competition_id', competitionId);
-  if (sport) query = query.eq('competitions.sport_id', sport);
-
-  query = query.in('status', [...FINISHED_MATCH_STATUSES]);
-
-  if (fromDate && toDate) {
-    query = query
-      .gte('kickoff', dayjs(fromDate).startOf('day').toISOString())
-      .lte('kickoff', dayjs(toDate).endOf('day').toISOString());
-  } else {
-    query = query
-      .gte('kickoff', dayjs().subtract(3, 'day').startOf('day').toISOString())
-      .lte('kickoff', dayjs().endOf('day').toISOString());
-  }
-
-  const { data, error } = await query.order('kickoff', { ascending: false });
-
-  if (error) {
-    console.error('Error fetching past matches on server:', error);
+  try {
+    return await serverApiFetch<CompetitionData[]>({
+      path: '/api/v2/football/events/results',
+      query: buildMatchesQuery(sport, competitionId, fromDate, toDate, limit),
+      auth: false,
+    });
+  } catch (error) {
+    console.error('Error fetching past matches from backend:', error);
     return [];
   }
-
-  return groupMatchesByCompetition((data ?? []) as RawMatchWithCompetitionRow[]);
 }
 
 export async function getServerMatchData(
   id: number,
 ): Promise<MatchData | null> {
-  const supabase = await createClient();
-  const { data: match, error } = await supabase
-    .from('matches')
-    .select(
-      `
-      *,
-      competitions (
-        id,
-        name,
-        country,
-        sport_id
-      )
-    `,
-    )
-    .eq('id', id)
-    .single();
+  try {
+    return await serverApiFetch<MatchData>({
+      path: `/api/v2/football/events/${id}`,
+      auth: false,
+    });
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 404) {
+      return null;
+    }
 
-  if (error || !match) {
-    console.error('Error fetching server match data:', error);
+    console.error('Error fetching match data from backend:', error);
     return null;
   }
-
-  return mapMatchRow(match as RawMatchWithCompetitionRow, match.competitions);
 }

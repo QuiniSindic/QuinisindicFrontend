@@ -26,6 +26,7 @@ export function FilterBar({
     setSelectedLeague,
     setSelectedFrom,
     setSelectedTo,
+    setDateRange,
     clearDates,
   } = useEventFiltersNavigation(filters);
   const { data: competitions = [] } = useCompetitionOptions(
@@ -73,6 +74,7 @@ export function FilterBar({
               clearDates={clearDates}
               setSelectedFrom={setSelectedFrom}
               setSelectedTo={setSelectedTo}
+              setDateRange={setDateRange}
               selectedSport={filters.sport}
               selectedLeague={filters.selectedLeague}
             />

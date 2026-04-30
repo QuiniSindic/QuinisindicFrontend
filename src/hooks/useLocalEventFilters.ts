@@ -1,5 +1,6 @@
 import { EventFilters } from '@/types/domain/filters';
 import { MatchData } from '@/types/domain/events';
+import { getTimestamp, parseDateTime } from '@/utils/common/date';
 import { isFinished, isLive } from '@/utils/domain/events';
 import dayjs from 'dayjs';
 import { useMemo } from 'react';
@@ -40,8 +41,8 @@ export function useLocalEventFilters({
 
     if (filters.mode === 'results' && (filters.from || filters.to)) {
       filtered = filtered.filter((event) => {
-        const eventDate = dayjs(event.kickoff);
-        if (!eventDate.isValid()) return false;
+        const eventDate = parseDateTime(event.kickoffIso ?? event.kickoff);
+        if (!eventDate) return false;
 
         const isAfter = filters.from
           ? !eventDate.isBefore(dayjs(filters.from), 'day')
@@ -61,7 +62,12 @@ export function useLocalEventFilters({
       if (aLive && !bLive) return -1;
       if (!aLive && bLive) return 1;
 
-      return dayjs(a.kickoff).valueOf() - dayjs(b.kickoff).valueOf();
+      const aTimestamp = getTimestamp(a.kickoffIso ?? a.kickoff);
+      const bTimestamp = getTimestamp(b.kickoffIso ?? b.kickoff);
+
+      return filters.mode === 'results'
+        ? bTimestamp - aTimestamp
+        : aTimestamp - bTimestamp;
     });
 
     return full ? sorted : sorted.slice(0, 6);

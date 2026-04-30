@@ -91,6 +91,15 @@ export const useEventFiltersNavigation = (filters: EventFilters) => {
     [replaceFilters],
   );
 
+  const setDateRange = useCallback(
+    (from?: string | null, to?: string | null) =>
+      replaceFilters({
+        from: from || null,
+        to: to || null,
+      }),
+    [replaceFilters],
+  );
+
   const clearDates = useCallback(
     () =>
       replaceFilters({
@@ -106,6 +115,7 @@ export const useEventFiltersNavigation = (filters: EventFilters) => {
     setStatusFilter,
     setSelectedFrom,
     setSelectedTo,
+    setDateRange,
     clearDates,
   };
 };

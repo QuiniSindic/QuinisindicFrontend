@@ -1,4 +1,4 @@
-﻿import { OptionsListButton } from '@/components/ui/buttons/OptionsListButton';
+import { OptionsListButton } from '@/components/ui/buttons/OptionsListButton';
 import { SportOption } from '@/types/domain/sports';
 import { groupCompetitionOptionsByCountry } from '@/utils/domain/competition';
 import { LeagueName } from '@/utils/domain/sports';
@@ -28,15 +28,9 @@ export const SportsListMobile = ({
   handleLeagueSelect,
 }: SportsListMobileProps) => {
   const [isSelectFocused, setIsSelectFocused] = useState(false);
-  const PLAYOFF_LEAGUE_IDS = [42, 73, 77, 138];
-
   const groupedLeagueOptions = useMemo(
     () => groupCompetitionOptionsByCountry(leagueOptions),
     [leagueOptions],
-  );
-
-  const isPlayoffLeague = !!(
-    selectedCompetitionId && PLAYOFF_LEAGUE_IDS.includes(selectedCompetitionId)
   );
 
   return (
@@ -51,7 +45,7 @@ export const SportsListMobile = ({
       />
 
       {selectedSport && (
-        <div className="mt-2 relative">
+        <div className="relative mt-2">
           <select
             onFocus={() => setIsSelectFocused(true)}
             onBlur={() => setIsSelectFocused(false)}
@@ -89,30 +83,19 @@ export const SportsListMobile = ({
         </div>
       )}
 
-      {selectedSport && selectedLeague && (
+      {selectedSport && selectedLeague && selectedCompetitionId && (
         <CarouselScrollContainer
           className="mt-3 animate-appearance-in"
           contentClassName="gap-2"
         >
           <OptionsListButton
-            title="Clasificación"
+            title="Competicion"
             isSelected={false}
-            className={isPlayoffLeague ? 'w-[calc(50%-4px)]' : 'w-full'}
+            className="w-full"
             onClick={() =>
-              window.dispatchEvent(new CustomEvent('open-standings'))
+              window.dispatchEvent(new CustomEvent('open-competition-panel'))
             }
           />
-
-          {isPlayoffLeague && (
-            <OptionsListButton
-              title="Cuadro"
-              isSelected={false}
-              className="w-[calc(50%-4px)]"
-              onClick={() =>
-                window.dispatchEvent(new CustomEvent('open-bracket'))
-              }
-            />
-          )}
         </CarouselScrollContainer>
       )}
     </div>

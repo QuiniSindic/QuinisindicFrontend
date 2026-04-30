@@ -12,6 +12,7 @@ interface DateFilterProps {
   clearDates: () => void;
   setSelectedFrom: (value?: string | null) => void;
   setSelectedTo: (value?: string | null) => void;
+  setDateRange: (from?: string | null, to?: string | null) => void;
   selectedSport?: string | null;
   selectedLeague?: string | null;
 }
@@ -22,6 +23,7 @@ export const DateFilter = ({
   clearDates,
   setSelectedFrom,
   setSelectedTo,
+  setDateRange,
   selectedSport,
   selectedLeague,
 }: DateFilterProps) => {
@@ -96,6 +98,7 @@ export const DateFilter = ({
               selectedTo={selectedTo}
               setSelectedFrom={setSelectedFrom}
               setSelectedTo={setSelectedTo}
+              setDateRange={setDateRange}
               clearDates={clearDates}
               closeWrapper={() => setIsMobileOpen(false)}
             />
@@ -156,6 +159,7 @@ export const DateFilter = ({
                 selectedTo={selectedTo}
                 setSelectedFrom={setSelectedFrom}
                 setSelectedTo={setSelectedTo}
+                setDateRange={setDateRange}
                 clearDates={clearDates}
                 closeWrapper={() => setIsPopoverOpen(false)}
               />

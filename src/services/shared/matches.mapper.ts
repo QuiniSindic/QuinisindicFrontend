@@ -1,57 +1,65 @@
+import { CompetitionRow, MatchRow } from '@/types/database';
+import { DbMatchEventJson, DbTeamInfoJson } from '@/types/database/json';
 import { CompetitionData } from '@/types/domain/competitions';
 import { MatchData, MatchStatus, TeamInfo } from '@/types/domain/events';
+import {
+  buildKnockoutStages,
+  inferCompetitionFormatKind,
+} from '@/utils/domain/competitionStages';
 
-export interface RawCompetitionRow {
-  id: number;
-  name: string;
-  badge: string;
-  country: string | null;
-  sport_id?: number;
-}
+export type CompetitionSummaryRow = Pick<
+  CompetitionRow,
+  'id' | 'name' | 'badge' | 'country' | 'sport_id'
+>;
 
-export interface RawMatchRow {
-  id: number;
-  status: MatchStatus;
-  home_score: number | null;
-  away_score: number | null;
-  kickoff: string;
-  minute?: string | null;
-  home_team_id: number;
-  away_team_id: number;
-  competition_id: number;
-  sport_id: number;
-  home_team_data: TeamInfo;
-  away_team_data: TeamInfo;
-  round?: string | null;
-  events?: MatchData['events'];
-  competitions?: RawCompetitionRow | null;
-}
+export type MatchRowWithCompetition = MatchRow & {
+  competitions?: CompetitionSummaryRow | null;
+};
+
+const createFallbackTeam = (
+  teamId: number | null,
+  side: 'Local' | 'Visitante',
+): TeamInfo => ({
+  id: teamId ?? 0,
+  name: side,
+  abbr: side === 'Local' ? 'LOC' : 'VIS',
+  img: null,
+  country: '',
+});
 
 export const mapMatchRow = (
-  match: RawMatchRow,
-  competition?: RawCompetitionRow | null,
+  match: MatchRowWithCompetition,
+  competition?: CompetitionSummaryRow | null,
 ): MatchData => ({
   id: match.id,
-  status: match.status,
+  status: match.status as MatchStatus,
   result:
     match.home_score !== null && match.away_score !== null
       ? `${match.home_score}-${match.away_score}`
       : 'vs',
-  kickoff: match.kickoff,
+  kickoff: match.kickoff ?? '',
   minute: match.minute || undefined,
-  homeId: match.home_team_id,
-  awayId: match.away_team_id,
-  competitionid: match.competition_id,
-  sportId: competition?.sport_id ?? match.sport_id,
-  homeTeam: match.home_team_data,
-  awayTeam: match.away_team_data,
+  homeId:
+    match.home_team_id ??
+    ((match.home_team_data as DbTeamInfoJson | null)?.id ?? 0),
+  awayId:
+    match.away_team_id ??
+    ((match.away_team_data as DbTeamInfoJson | null)?.id ?? 0),
+  competitionid: match.competition_id ?? competition?.id ?? 0,
+  sportId: competition?.sport_id ?? match.sport_id ?? 0,
+  homeTeam:
+    (match.home_team_data as DbTeamInfoJson | null) ??
+    createFallbackTeam(match.home_team_id, 'Local'),
+  awayTeam:
+    (match.away_team_data as DbTeamInfoJson | null) ??
+    createFallbackTeam(match.away_team_id, 'Visitante'),
   country: competition?.country || '',
-  events: match.events || [],
+  events: (match.events as DbMatchEventJson[] | null) || [],
   round: match.round || undefined,
 });
 
 export const groupMatchesByCompetition = (
-  matches: RawMatchRow[] | null | undefined,
+  matches: MatchRowWithCompetition[] | null | undefined,
 ): CompetitionData[] => {
   const competitionMap = new Map<string, CompetitionData>();
 
@@ -65,7 +73,7 @@ export const groupMatchesByCompetition = (
         id: mapKey,
         name: competition.name,
         fullName: competition.name,
-        badge: competition.badge,
+        badge: competition.badge || '',
         country: competition.country || '',
         matches: [],
       });
@@ -74,5 +82,9 @@ export const groupMatchesByCompetition = (
     competitionMap.get(mapKey)?.matches.push(mapMatchRow(match, competition));
   });
 
-  return Array.from(competitionMap.values());
+  return Array.from(competitionMap.values()).map((competition) => ({
+    ...competition,
+    formatKind: inferCompetitionFormatKind(competition.matches),
+    stages: buildKnockoutStages(competition.matches),
+  }));
 };

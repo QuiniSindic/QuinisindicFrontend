@@ -1,21 +1,10 @@
-import { TeamStandingData } from '@/types/domain/standings';
+import { DbStandingRowJson } from '@/types/database/json';
+import {
+  CompetitionStandingsSnapshot,
+  TeamStandingData,
+} from '@/types/domain/standings';
 
-interface RawStandingTeam {
-  id: string;
-  position: number;
-  name: string;
-  badge: string;
-  played: number;
-  wins: number;
-  draws: number;
-  losses: number;
-  points: number;
-  goalsFor: number;
-  goalsAgainst: number;
-  form: TeamStandingData['form'];
-}
-
-export const mapStandingTeam = (team: RawStandingTeam): TeamStandingData => ({
+export const mapStandingTeam = (team: DbStandingRowJson): TeamStandingData => ({
   id: team.id,
   position: team.position,
   name: team.name,
@@ -29,4 +18,22 @@ export const mapStandingTeam = (team: RawStandingTeam): TeamStandingData => ({
   goalsAgainst: team.goalsAgainst,
   goalDifference: team.goalsFor - team.goalsAgainst,
   form: team.form,
+});
+
+export const buildCompetitionStandingsSnapshot = (
+  competitionId: number,
+  rows: DbStandingRowJson[] | null | undefined,
+): CompetitionStandingsSnapshot => ({
+  competitionId,
+  stageId: 'league_table',
+  stageName: 'Clasificacion',
+  stageType: 'league_table',
+  groups: [
+    {
+      id: 'overall',
+      name: 'Tabla general',
+      order: 0,
+      teams: (rows ?? []).map(mapStandingTeam),
+    },
+  ],
 });
