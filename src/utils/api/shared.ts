@@ -74,7 +74,7 @@ export async function parseApiResponse<T>(response: Response): Promise<T> {
         ? String(payload.detail)
         : typeof payload === 'string' && payload.trim().length > 0
           ? payload
-        : response.statusText || 'Unexpected API error';
+          : response.statusText || 'Unexpected API error';
     throw new ApiError(detail, response.status);
   }
 

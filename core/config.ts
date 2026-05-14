@@ -2,8 +2,6 @@ export const QUINIELA_DATA_URL =
   process.env.QUINIELA_DATA_URL ||
   'https://www.loteriasyapuestas.es/servicios/fechav3?game_id=LAQU&fecha_sorteo=';
 
-export const PROJECT_ID = process.env.NEXT_PUBLIC_SUPABASE_PROJECT_ID || '';
-
 export const BACKEND_URL =
   process.env.BACKEND_URL ||
   process.env.NEXT_PUBLIC_BACKEND_URL ||
