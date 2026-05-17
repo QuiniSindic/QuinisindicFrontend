@@ -63,6 +63,16 @@ body {
   -moz-appearance: textfield;
 }
 
+/* Hide scrollbar for horizontal scroll containers */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 input[type='date']::-webkit-calendar-picker-indicator {
   appearance: none;
   -webkit-appearance: none;
