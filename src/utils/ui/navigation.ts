@@ -1,4 +1,4 @@
-import { Award, Home, LucideProps, Scale } from 'lucide-react';
+import { Award, Home, LucideProps, Scale, Trophy } from 'lucide-react';
 import { ForwardRefExoticComponent, RefAttributes } from 'react';
 
 type HeaderMenuItem = {
@@ -11,12 +11,14 @@ type HeaderMenuItem = {
 
 export const BOTTOM_NAV_ITEMS: HeaderMenuItem[] = [
   { label: 'Home', href: '/home', icon: Home },
+  { label: "Pick'em", href: '/pickem', icon: Trophy },
   { label: 'Predicciones', href: '/predictions', icon: Scale },
   { label: 'Ranking', href: '/leaderboard', icon: Award },
 ];
 
 export const PC_HEADER_ITEMS: HeaderMenuItem[] = [
   { label: 'Eventos', href: '/events' },
+  { label: "Pick'em", href: '/pickem' },
   { label: 'Predicciones', href: '/predictions' },
   { label: 'Quiniela', href: '/quiniela' },
   { label: 'Ranking', href: '/leaderboard' },
