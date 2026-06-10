@@ -1,16 +1,42 @@
-'use client';
+﻿import { EventsPageClient } from '@/components/pages/EventsPageClient';
+import { getServerCompetitionsBySport } from '@/services/server/competitions.service';
+import { getServerPastMatches } from '@/services/server/matches.service';
+import { getServerSportsOptions } from '@/services/server/sports.service';
+import { SearchParams } from '@/types/domain/search-params';
+import { parseEventFilters } from '@/utils/domain/filterParams';
+import { Metadata } from 'next';
 
-import EventsView from '@/components/home/events/EventsView';
-import { useResultsQuery } from '@/hooks/useResultsQuery';
+export const metadata: Metadata = {
+  title: 'Quinisindic | Resultados',
+};
 
-export default function ResultsPage() {
-  const { events, isLoading } = useResultsQuery();
+type Props = {
+  searchParams: SearchParams;
+};
+
+export default async function ResultsPage({ searchParams }: Props) {
+  const filters = parseEventFilters(await searchParams, 'results');
+
+  const [initialData, initialCompetitionOptions, initialSportsOptions] = await Promise.all([
+    getServerPastMatches(
+      filters.sportId ?? undefined,
+      filters.competitionId ?? undefined,
+      filters.from ?? undefined,
+      filters.to ?? undefined,
+    ),
+    filters.sportId
+      ? getServerCompetitionsBySport(filters.sportId)
+      : Promise.resolve([]),
+    getServerSportsOptions(),
+  ]);
+
   return (
-    <EventsView
+    <EventsPageClient
       title="Resultados"
-      mode="results"
-      events={events}
-      isLoading={isLoading}
+      filters={filters}
+      initialData={initialData}
+      initialCompetitionOptions={initialCompetitionOptions}
+      initialSportsOptions={initialSportsOptions}
     />
   );
 }

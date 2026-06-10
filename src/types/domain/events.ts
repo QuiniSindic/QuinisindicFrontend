@@ -4,7 +4,7 @@ export enum MatchEventType {
   Substitution = 'Substitution',
   Half = 'Half',
   AddedTime = 'AddedTime',
-  // Dejamos estos por si acaso, pero el back manda los de arriba
+  MissedPenalty = 'MissedPenalty',
   PenaltyGoal = 'PenaltyGoal',
   FailedPenalty = 'FailedPenalty',
 }
@@ -14,13 +14,33 @@ export const EVENT_TYPE_LABELS: Record<string, string> = {
   [MatchEventType.Card]: 'Tarjeta',
   [MatchEventType.Substitution]: 'Cambio',
   [MatchEventType.Half]: 'Parte',
+  [MatchEventType.MissedPenalty]: 'Penalti fallado',
+  [MatchEventType.PenaltyGoal]: 'Gol de penalti',
   [MatchEventType.AddedTime]: 'Tiempo añadido',
 };
+export type MatchEventKind =
+  | 'goal'
+  | 'missed_penalty'
+  | 'card'
+  | 'substitution'
+  | 'added_time'
+  | 'period'
+  | 'var'
+  | 'other';
+
+export type MatchEventSide = 'home' | 'away' | 'neutral';
+
 export interface MatchEvent {
   type: MatchEventType | string; // Flexible para strings
   minute: number;
   timeStr?: string | number; // Ej: "45+2"
   isHome: boolean | null;
+  kind?: MatchEventKind;
+  side?: MatchEventSide;
+  title?: string;
+  subtitle?: string;
+  detail?: string;
+  isCancelled?: boolean;
 
   score?: {
     home: number;
@@ -36,7 +56,7 @@ export interface MatchEvent {
   ownGoal?: boolean | null; // Gol
   isPenalty?: boolean; // Gol
 
-  cardType?: 'Yellow' | 'Red'; // Tarjeta
+  cardType?: 'Yellow' | 'Red' | 'YellowRed'; // Tarjeta
 
   playerIn?: string; // Cambio
   playerOut?: string; // Cambio
@@ -58,6 +78,7 @@ export interface MatchData {
   status: MatchStatus;
   result: string;
   kickoff: string; // 21:00 01/06/2025
+  kickoffIso?: string | null;
   events?: MatchEvent[];
   homeId: number;
   awayId: number;
@@ -74,6 +95,7 @@ export interface MatchData {
 export type MatchLite = {
   id: number;
   kickoff: string;
+  kickoffIso?: string | null;
   status: string;
   minute?: string | null;
   home_team_data?: TeamInfo | null;
@@ -97,6 +119,7 @@ export interface Odds {
 
 export const MATCH_STATUSES = [
   'NS', // Not Started
+  'LIVE',
   'HT', // Half Time
   'FT', // Full Time
   'OT', // Overtime no se si existe

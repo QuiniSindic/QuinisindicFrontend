@@ -1,15 +1,14 @@
-// src/components/event/form/teamHeader/TeamHeader.tsx
 'use client';
 
 import { MatchData } from '@/types/domain/events';
-import ScoreBadgeForm from './ScoreBadgeForm';
-import TeamBadgeForm from './TeamBadgeForm';
+import { ScoreBadgeForm } from './ScoreBadgeForm';
+import { TeamBadgeForm } from './TeamBadgeForm';
 
 interface TeamHeaderProps {
   event: MatchData;
 }
 
-export default function TeamHeader({ event }: TeamHeaderProps) {
+export function TeamHeader({ event }: TeamHeaderProps) {
   const home = event.homeTeam;
   const away = event.awayTeam;
 

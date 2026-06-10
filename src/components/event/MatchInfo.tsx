@@ -6,15 +6,16 @@ import {
   useMyPrediction,
 } from '@/hooks/useUserPrediction';
 import {
-  saveEventPredictionV2,
-  updateEventPredictionV2,
-} from '@/services/predictions.service';
+  saveEventPrediction,
+  updateEventPrediction,
+} from '@/services/browser/predictions.service';
 
 import { useAuth } from '@/hooks/logic/useAuth';
-import { Prediction } from '@/types/database/table';
+import { User } from '@/types/auth/auth';
 import { MatchData } from '@/types/domain/events';
 import {
   PredictionPayload,
+  PredictionRow,
   PredictionUpdatePayload,
 } from '@/types/domain/prediction';
 import { Spinner } from '@heroui/react';
@@ -26,34 +27,51 @@ import PredictionForm from './form/PredictionForm';
 
 interface MatchInfoProps {
   event: MatchData;
-  predictions?: Prediction[];
+  predictions?: PredictionRow[];
+  initialUser?: User | null;
+  initialUserPrediction?: PredictionRow | null;
   returnTo?: string;
 }
 
-const MatchInfo: React.FC<MatchInfoProps> = ({
+const getErrorMessage = (error: unknown, fallback: string) => {
+  if (error instanceof Error && error.message) {
+    return error.message;
+  }
+
+  return fallback;
+};
+
+export function MatchInfo({
   event,
   predictions: initialPreds,
+  initialUser,
+  initialUserPrediction,
   returnTo,
-}) => {
-  const { data: user, isLoading: authLoading } = useAuth();
+}: MatchInfoProps) {
+  const { data: user, isLoading: authLoading } = useAuth(initialUser);
   const userId = user?.id ?? '';
 
-  const { data: matchData } = useGetMatchQuery(event.id);
+  const { data: matchData } = useGetMatchQuery(event.id, event);
   const liveEvent = matchData ?? event;
 
   const notStarted = liveEvent.status === 'NS';
   const isFinished =
     liveEvent.status === 'FT' ||
     liveEvent.status === 'AET' ||
-    liveEvent.status === 'AP';
+    liveEvent.status === 'AP' ||
+    liveEvent.status === 'Pen';
   const isInProgress =
-    liveEvent.status.includes("'") || liveEvent.status === 'HT';
+    liveEvent.status === 'LIVE' ||
+    liveEvent.status.includes("'") ||
+    liveEvent.status === 'HT' ||
+    liveEvent.status === '2H' ||
+    liveEvent.status === '1H';
 
   const {
     data: userPred,
     refetch: refetchUserPred,
     isLoading: isLoadingUserPred,
-  } = useMyPrediction(userId, event.id);
+  } = useMyPrediction(userId, event.id, initialUserPrediction);
 
   const {
     data: allPredictions,
@@ -71,13 +89,13 @@ const MatchInfo: React.FC<MatchInfoProps> = ({
         sport_id: event.sportId,
       };
 
-      await saveEventPredictionV2(payload);
+      await saveEventPrediction(payload);
 
-      toast.success('¡Predicción guardada con éxito!');
+      toast.success('Prediccion guardada con exito');
       await refetchUserPred();
       await refetchAllPreds();
-    } catch (error: any) {
-      toast.error(error.message || 'Error al guardar la predicción');
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error, 'Error al guardar la prediccion'));
     }
   };
 
@@ -88,13 +106,13 @@ const MatchInfo: React.FC<MatchInfoProps> = ({
         away_score: parseInt(values.away, 10),
       };
 
-      await updateEventPredictionV2(event.id, payload);
+      await updateEventPrediction(event.id, payload);
 
-      toast.success('¡Predicción actualizada con éxito!');
+      toast.success('Prediccion actualizada con exito');
       await refetchUserPred();
       await refetchAllPreds();
-    } catch (error: any) {
-      toast.error(error.message || 'Error al actualizar la predicción');
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error, 'Error al actualizar la prediccion'));
     }
   };
 
@@ -113,12 +131,10 @@ const MatchInfo: React.FC<MatchInfoProps> = ({
       <EventNavigation currentId={event.id} returnTo={returnTo} />
 
       <div className="match-info-container flex flex-col min-h-screen px-4 bg-background text-text pb-32 md:pb-10 max-w-3xl mx-auto">
-        {/* Aviso de estado (Login / No empezado) */}
         <div className="mt-2">
           <NoPredictionWarn status={event.status} prediction={userPred} />
         </div>
 
-        {/* Formulario Principal (Tarjeta de Marcador) */}
         <div className="mt-4">
           <PredictionForm
             key={liveEvent.id}
@@ -133,10 +149,8 @@ const MatchInfo: React.FC<MatchInfoProps> = ({
           />
         </div>
 
-        {/* Separador sutil */}
         <div className="my-6 h-px w-full bg-border/50" />
 
-        {/* Pestañas de Información */}
         <MatchInfoTabs
           event={liveEvent}
           predictions={allPredictions ?? []}
@@ -149,6 +163,6 @@ const MatchInfo: React.FC<MatchInfoProps> = ({
       </div>
     </>
   );
-};
+}
 
 export default MatchInfo;

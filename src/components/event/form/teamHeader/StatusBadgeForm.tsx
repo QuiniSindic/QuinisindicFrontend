@@ -1,6 +1,5 @@
 import { MatchData } from '@/types/domain/events';
-import { formatKickoffBadge } from '@/utils/common/date';
-import dayjs from 'dayjs';
+import { formatKickoffBadge, parseKickoff } from '@/utils/common/date';
 
 //CHECK: refactor paleta de colores si es necesario
 export const StatusBadgeForm = ({ event }: { event: MatchData }) => {
@@ -39,17 +38,17 @@ export const StatusBadgeForm = ({ event }: { event: MatchData }) => {
     );
   }
 
-  const label = formatKickoffBadge(event.kickoff);
+  const label = formatKickoffBadge(event.kickoff, event.kickoffIso);
+  const kickoff = parseKickoff(event.kickoff, event.kickoffIso);
   // NS
   return (
     <span className="inline-flex items-center rounded-full bg-secondary/10 text-secondary px-3 h-7 text-xs font-semibold">
-      {label ? (
-        <time dateTime={dayjs(event.kickoff).toISOString()}>
-          {dayjs(event.kickoff).format('HH:mm')}h
-          {/* O usa la variable label si ya viene formateada */}
+      {kickoff ? (
+        <time dateTime={event.kickoffIso ?? kickoff.toISOString()}>
+          {kickoff.format('HH:mm')}h
         </time>
       ) : (
-        'Empieza pronto'
+        label ?? 'Empieza pronto'
       )}
     </span>
   );

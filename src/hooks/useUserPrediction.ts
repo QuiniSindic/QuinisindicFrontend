@@ -1,14 +1,19 @@
 import {
-  getEventPredictionsV2,
-  getUserMatchPredictionV2,
-} from '@/services/predictions.service';
-import { Prediction } from '@/types/database/table';
+  getEventPredictions,
+  getUserMatchPrediction,
+} from '@/services/browser/predictions.service';
+import { PredictionRow } from '@/types/domain/prediction';
 import { useQuery } from '@tanstack/react-query';
 
-export const useMyPrediction = (userId: string, eventId: number) => {
+export const useMyPrediction = (
+  userId: string,
+  eventId: number,
+  initialData?: PredictionRow | null,
+) => {
   return useQuery({
     queryKey: ['userPrediction', userId, eventId],
-    queryFn: () => getUserMatchPredictionV2(eventId),
+    queryFn: () => getUserMatchPrediction(eventId),
+    initialData,
     enabled: !!userId,
     refetchOnWindowFocus: false,
   });
@@ -16,11 +21,11 @@ export const useMyPrediction = (userId: string, eventId: number) => {
 
 export const useGetEventPredictions = (
   eventId: number,
-  initial?: Prediction[],
+  initial?: PredictionRow[],
 ) => {
   return useQuery({
     queryKey: ['eventPredictions', eventId],
-    queryFn: () => getEventPredictionsV2(eventId),
+    queryFn: () => getEventPredictions(eventId),
     initialData: initial,
     refetchOnWindowFocus: false,
   });

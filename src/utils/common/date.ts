@@ -1,78 +1,92 @@
 import dayjs, { Dayjs } from 'dayjs';
 import 'dayjs/locale/es';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
+import utc from 'dayjs/plugin/utc';
 
 dayjs.extend(customParseFormat);
+dayjs.extend(utc);
 
-export function formatMatchWidget(dateStr: string): string {
-  const djs = dayjs(dateStr, 'HH:mm DD/MM/YYYY', 'es', true).isValid()
-    ? dayjs(dateStr, 'HH:mm DD/MM/YYYY')
-    : dayjs(dateStr);
+const HUMAN_KICKOFF_FORMAT = 'HH:mm DD/MM/YYYY';
+
+export const parseDateTime = (
+  value?: string | number | Dayjs | null,
+): Dayjs | null => {
+  if (value === null || value === undefined) return null;
+
+  if (dayjs.isDayjs(value)) {
+    return value.isValid() ? value : null;
+  }
+
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    if (!trimmed) return null;
+
+    const humanReadableUtc = dayjs.utc(trimmed, HUMAN_KICKOFF_FORMAT, true);
+    if (humanReadableUtc.isValid()) return humanReadableUtc.local();
+
+    const parsed = dayjs(trimmed);
+    return parsed.isValid() ? parsed : null;
+  }
+
+  const parsed = dayjs(value);
+  return parsed.isValid() ? parsed : null;
+};
+
+export const parseKickoff = (
+  kickoff?: string | number | Dayjs,
+  kickoffIso?: string | null,
+): Dayjs | null => {
+  const fromIso = parseDateTime(kickoffIso);
+  if (fromIso) return fromIso;
+
+  return parseDateTime(kickoff);
+};
+
+export function formatMatchWidget(dateStr: string, dateIso?: string | null): string {
+  const djs = parseKickoff(dateStr, dateIso);
+  if (!djs) return dateStr;
 
   const formatted = djs
     .locale('es')
     .format('dddd DD [de] MMMM [a las] HH:mm[h]');
 
-  // Corregido: Capitaliza la primera letra de la frase y
-  // la primera letra que va DESPUÉS de " de "
   return formatted
-    .replace(/^\w/, (c) => c.toUpperCase()) // Primera letra (Domingo)
-    .replace(/ de (\w)/g, (match, p1) => ` de ${p1.toUpperCase()}`); // Letra tras " de " (Febrero)
+    .replace(/^\w/, (c) => c.toUpperCase())
+    .replace(/ de (\w)/g, (_match, monthInitial) => ` de ${monthInitial.toUpperCase()}`);
 }
-
-export const parseKickoff = (
-  kickoff?: string | number | Dayjs,
-): Dayjs | null => {
-  if (kickoff === null || kickoff === undefined) return null;
-
-  let d: Dayjs;
-
-  // 1. Si ya es un objeto Dayjs
-  if (dayjs.isDayjs(kickoff)) {
-    d = kickoff;
-  }
-  // 2. Si es un formato específico 'HH:mm DD/MM/YYYY'
-  else if (
-    typeof kickoff === 'string' &&
-    /^\d{2}:\d{2} \d{2}\/\d{2}\/\d{4}$/.test(kickoff.trim())
-  ) {
-    d = dayjs(kickoff.trim(), 'HH:mm DD/MM/YYYY');
-  }
-  // 3. Fallback para ISO strings, números (timestamps) o Date nativo
-  else {
-    d = dayjs(kickoff);
-  }
-
-  return d.isValid() ? d : null;
-};
 
 export function formatKickoffBadge(
   kickoff?: string | Dayjs | number,
+  kickoffIso?: string | null,
 ): string | null {
-  const d = parseKickoff(kickoff);
+  const d = parseKickoff(kickoff, kickoffIso);
   if (!d) return null;
 
-  const dj = dayjs(d);
   const today = dayjs().startOf('day');
-  const diff = dj.startOf('day').diff(today, 'day');
+  const diff = d.startOf('day').diff(today, 'day');
 
   let prefix: string;
   if (diff === 0) prefix = 'Hoy';
   else if (diff === 1) prefix = 'Mañana';
-  else prefix = dj.locale('es').format('ddd D MMM'); // ej: "sáb. 30 ago"
+  else prefix = d.locale('es').format('ddd D MMM');
 
-  return `${prefix} • ${dj.locale('es').format('HH:mm')}`;
+  return `${prefix} • ${d.locale('es').format('HH:mm')}`;
 }
 
-export const formatKickoff = (kickoff: string) => {
-  const parsed = dayjs(kickoff);
-  if (!parsed.isValid()) return '-';
+export const formatKickoff = (kickoff: string, kickoffIso?: string | null) => {
+  const parsed = parseKickoff(kickoff, kickoffIso);
+  if (!parsed) return '-';
   return parsed.locale('es').format('DD/MM/YY HH:mm');
 };
 
-export const getTimestamp = (value?: string | null) => {
-  if (!value) return 0;
-  const parsed = dayjs(value);
-  if (!parsed.isValid()) return 0;
+export const getTimestamp = (value?: string | number | Dayjs | null) => {
+  const parsed = parseDateTime(value);
+  if (!parsed) return 0;
   return parsed.valueOf();
+};
+
+export const formatDateShort = (dateStr: string) => {
+  if (!dateStr) return '';
+  const [, m, d] = dateStr.split('-');
+  return `${d}/${m}`;
 };

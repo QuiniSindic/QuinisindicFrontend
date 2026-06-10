@@ -1,7 +1,6 @@
 'use client';
 
-import { MatchData, MatchEvent } from '@/types/domain/events';
-import { makeActionGroupsForMatch } from '@/utils/domain/events';
+import { MatchData } from '@/types/domain/events';
 import React from 'react';
 import { ActionsContainer } from './actionsContainer/ActionsContainer';
 
@@ -16,8 +15,6 @@ export const MatchInfoTab: React.FC<MatchInfoProps> = ({ event }) => {
   const actions = event?.events;
   const isEmpty = !actions || actions.length === 0;
 
-  const groups = makeActionGroupsForMatch(actions as MatchEvent[]);
-
   if (isEmpty) {
     return (
       <div className="px-4 py-2">
@@ -29,5 +26,5 @@ export const MatchInfoTab: React.FC<MatchInfoProps> = ({ event }) => {
     );
   }
 
-  return <ActionsContainer event={event} groups={groups} />;
+  return <ActionsContainer event={event} />;
 };

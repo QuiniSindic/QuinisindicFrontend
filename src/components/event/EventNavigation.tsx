@@ -2,8 +2,8 @@
 
 import { useUpcomingEventsQuery } from '@/hooks/useUpcomingEvents';
 import { FINAL_STATUSES, MatchData } from '@/types/domain/events';
+import { getTimestamp, parseKickoff } from '@/utils/common/date';
 import { isFinished, isLive } from '@/utils/domain/events';
-import dayjs from 'dayjs';
 import 'dayjs/locale/es';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -14,11 +14,11 @@ interface EventNavigationProps {
   returnTo?: string;
 }
 
-const formatKickoffLabel = (kickoff?: string) => {
+const formatKickoffLabel = (kickoff?: string, kickoffIso?: string | null) => {
   if (!kickoff) return 'Detalle del partido';
 
-  const parsed = dayjs(kickoff);
-  if (!parsed.isValid()) return 'Detalle del partido';
+  const parsed = parseKickoff(kickoff, kickoffIso);
+  if (!parsed) return 'Detalle del partido';
 
   const formatted = parsed.locale('es').format('dddd DD/MM/YY HH:mm');
   return `${formatted.charAt(0).toUpperCase()}${formatted.slice(1)}`;
@@ -79,7 +79,9 @@ export default function EventNavigation({
     }
 
     return filtered.sort(
-      (a, b) => dayjs(a.kickoff).valueOf() - dayjs(b.kickoff).valueOf(),
+      (a, b) =>
+        getTimestamp(a.kickoffIso ?? a.kickoff) -
+        getTimestamp(b.kickoffIso ?? b.kickoff),
     );
   })();
 
@@ -91,10 +93,10 @@ export default function EventNavigation({
 
   const fallbackReturn = returnTo || '/home';
   const orderedEvents = [...sourceEvents].sort((a, b) => {
-    const aTs = dayjs(a.kickoff).valueOf();
-    const bTs = dayjs(b.kickoff).valueOf();
+    const aTs = getTimestamp(a.kickoffIso ?? a.kickoff);
+    const bTs = getTimestamp(b.kickoffIso ?? b.kickoff);
 
-    if (Number.isNaN(aTs) || Number.isNaN(bTs)) return a.id - b.id;
+    if (aTs === 0 || bTs === 0) return a.id - b.id;
     return aTs - bTs;
   });
   const nsEvents = orderedEvents.filter((event) => event.status === 'NS');
@@ -119,7 +121,7 @@ export default function EventNavigation({
     !FINAL_STATUSES.has(currentEvent.status);
 
   const centerLabel = isLiveMatch
-    ? formatKickoffLabel(currentEvent?.kickoff)
+    ? formatKickoffLabel(currentEvent?.kickoff, currentEvent?.kickoffIso)
     : undefined;
 
   const handleBack = () => {

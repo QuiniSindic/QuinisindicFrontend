@@ -3,9 +3,9 @@
 import { FormValues, MatchData } from '@/types/domain/events';
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import PredictionButton from './prediction/PredictionButton';
-import PredictionInputsContainer from './prediction/PredictionInputsContainer';
-import TeamHeader from './teamHeader/TeamHeader';
+import { PredictionButton } from './prediction/PredictionButton';
+import { PredictionInputsContainer } from './prediction/PredictionInputsContainer';
+import { TeamHeader } from './teamHeader/TeamHeader';
 
 interface Props {
   event: MatchData;

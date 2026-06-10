@@ -2,30 +2,26 @@ import dayjs from 'dayjs';
 import { useCallback } from 'react';
 
 export const useDateFilters = (
-  setFrom: (d: string) => void,
-  setTo: (d: string) => void,
+  setDateRange: (from: string, to: string) => void,
 ) => {
   const format = 'YYYY-MM-DD';
 
   const setToday = useCallback(() => {
     const today = dayjs().format(format);
-    setFrom(today);
-    setTo(today);
-  }, [setFrom, setTo]);
+    setDateRange(today, today);
+  }, [setDateRange]);
 
   const setYesterday = useCallback(() => {
     const yesterday = dayjs().subtract(1, 'day').format(format);
-    setFrom(yesterday);
-    setTo(yesterday);
-  }, [setFrom, setTo]);
+    setDateRange(yesterday, yesterday);
+  }, [setDateRange]);
 
   const setLast7Days = useCallback(() => {
-    const end = dayjs();
-    const start = dayjs().subtract(6, 'day'); // 6 días atrás + hoy = 7 días
+    const end = dayjs().format(format);
+    const start = dayjs().subtract(6, 'day').format(format);
 
-    setFrom(start.format(format));
-    setTo(end.format(format));
-  }, [setFrom, setTo]);
+    setDateRange(start, end);
+  }, [setDateRange]);
 
   return { setToday, setYesterday, setLast7Days };
 };
