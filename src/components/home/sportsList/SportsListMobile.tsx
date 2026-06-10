@@ -1,10 +1,7 @@
 import { OptionsListButton } from '@/components/ui/buttons/OptionsListButton';
-import {
-  getCompetitionIdByLeagueName,
-  LeagueName,
-  SportName,
-} from '@/utils/domain/sports';
+import { SportOption } from '@/types/domain/sports';
 import { groupCompetitionOptionsByCountry } from '@/utils/domain/competition';
+import { LeagueName } from '@/utils/domain/sports';
 import { ChevronDown } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { LeagueFilterOption } from '../../filters/LeagueFilter';
@@ -12,15 +9,17 @@ import { SportsFilter } from '../../filters/SportsFilter';
 import { CarouselScrollContainer } from '../../ui/CarouselScrollContainer';
 
 interface SportsListMobileProps {
-  selectedSport: SportName | null;
+  sports: SportOption[];
+  selectedSport: string | null;
   selectedLeague: LeagueName | null;
   selectedCompetitionId: number | null;
   leagueOptions: LeagueFilterOption[];
-  toggleSport: (sport: SportName) => void;
+  toggleSport: (sport: SportOption) => void;
   handleLeagueSelect: (league: LeagueName | null, leagueId?: number) => void;
 }
 
 export const SportsListMobile = ({
+  sports,
   selectedSport,
   selectedLeague,
   selectedCompetitionId,
@@ -29,22 +28,15 @@ export const SportsListMobile = ({
   handleLeagueSelect,
 }: SportsListMobileProps) => {
   const [isSelectFocused, setIsSelectFocused] = useState(false);
-  const PLAYOFF_LEAGUE_IDS = [42, 73, 77, 138];
-
   const groupedLeagueOptions = useMemo(
     () => groupCompetitionOptionsByCountry(leagueOptions),
     [leagueOptions],
   );
 
-  const selectedLeagueId =
-    selectedCompetitionId ?? getCompetitionIdByLeagueName(selectedLeague);
-  const isPlayoffLeague = !!(
-    selectedLeagueId && PLAYOFF_LEAGUE_IDS.includes(selectedLeagueId)
-  );
-
   return (
     <div className="block lg:hidden">
       <SportsFilter
+        sports={sports}
         selectedSport={selectedSport}
         onSelect={(sport) => {
           if (sport) toggleSport(sport);
@@ -53,7 +45,7 @@ export const SportsListMobile = ({
       />
 
       {selectedSport && (
-        <div className="mt-2 relative">
+        <div className="relative mt-2">
           <select
             onFocus={() => setIsSelectFocused(true)}
             onBlur={() => setIsSelectFocused(false)}
@@ -91,32 +83,19 @@ export const SportsListMobile = ({
         </div>
       )}
 
-      {/* clasificación en mobile (+ results?) */}
-      {selectedSport && selectedLeague && (
+      {selectedSport && selectedLeague && selectedCompetitionId && (
         <CarouselScrollContainer
           className="mt-3 animate-appearance-in"
           contentClassName="gap-2"
         >
           <OptionsListButton
-            title="Clasificación"
+            title="Competicion"
             isSelected={false}
-            className={isPlayoffLeague ? 'w-[calc(50%-4px)]' : 'w-full'}
+            className="w-full"
             onClick={() =>
-              window.dispatchEvent(new CustomEvent('open-standings'))
+              window.dispatchEvent(new CustomEvent('open-competition-panel'))
             }
           />
-
-          {isPlayoffLeague && (
-            <OptionsListButton
-              title="Cuadro"
-              isSelected={false}
-              className="w-[calc(50%-4px)]"
-              onClick={() =>
-                // Emitimos un evento distinto para abrir el bracket
-                window.dispatchEvent(new CustomEvent('open-bracket'))
-              }
-            />
-          )}
         </CarouselScrollContainer>
       )}
     </div>

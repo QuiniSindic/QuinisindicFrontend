@@ -1,14 +1,16 @@
-import { SportListButton } from '@/components/ui/buttons/SportsListButton';
-import { SportName, SPORTS_LIST_ITEMS } from '@/utils/domain/sports';
+﻿import { SportListButton } from '@/components/ui/buttons/SportsListButton';
+import { SportOption } from '@/types/domain/sports';
 import { CarouselScrollContainer } from '../ui/CarouselScrollContainer';
 
 interface SportsFilterProps {
-  selectedSport: SportName | null;
-  onSelect: (sport: SportName | null) => void;
+  sports: SportOption[];
+  selectedSport: string | null;
+  onSelect: (sport: SportOption | null) => void;
   showAllOption?: boolean;
 }
 
 export const SportsFilter = ({
+  sports,
   selectedSport,
   onSelect,
   showAllOption = true,
@@ -22,12 +24,12 @@ export const SportsFilter = ({
       />
     )}
 
-    {SPORTS_LIST_ITEMS.map((sport) => (
+    {sports.map((sport) => (
       <SportListButton
-        key={sport.name}
-        sport={sport}
-        isSelected={selectedSport === sport.name}
-        onClick={() => onSelect(sport.name)}
+        key={sport.id}
+        sport={{ name: sport.displayName }}
+        isSelected={selectedSport === sport.displayName}
+        onClick={() => onSelect(sport)}
       />
     ))}
   </CarouselScrollContainer>

@@ -1,4 +1,3 @@
-// src/components/event/form/teamHeader/TeamBadgeForm.tsx
 'use client';
 
 import Image from 'next/image';
@@ -10,7 +9,7 @@ interface Props {
   align: 'left' | 'right';
 }
 
-export default function TeamBadgeForm({ name, logo, teamId, align }: Props) {
+export function TeamBadgeForm({ name, logo, align }: Props) {
   const isRight = align === 'right'; // True = Local, False = Visitante
 
   return (

@@ -1,91 +1,254 @@
 'use client';
-import { MatchData, MatchEvent, MatchEventType } from '@/types/domain/events';
-import { parseMinute } from '@/utils/domain/events';
+
+import { MatchEvent } from '@/types/domain/events';
+import {
+  getEventKind,
+  getEventSide,
+  parseMinute,
+} from '@/utils/domain/events';
 import React from 'react';
 import { EventIcons } from '../../EventIcons';
-import { ActionData } from './ActionData';
 import { MinuteBadge } from './MinuteBadge';
-import { ScoreBadge } from './ScoreBadge';
 
 interface ActionRowProps {
   matchEvent: MatchEvent;
-  event: MatchData;
-  isPenalties?: boolean;
 }
 
-export const ActionRow: React.FC<ActionRowProps> = ({
-  matchEvent,
-  event,
-  isPenalties = false,
-}) => {
-  const isAddedTime = matchEvent.type === 'AddedTime';
+const formatScore = (score?: { home: number; away: number }) => {
+  if (!score) return null;
+  return `${score.home}-${score.away}`;
+};
 
-  // 1. TIEMPO: Priorizamos el label para el tiempo añadido
-  const displayTime = isAddedTime
-    ? matchEvent.label
-    : parseMinute(matchEvent.timeStr || matchEvent.minute).label;
+const getPrimaryText = (matchEvent: MatchEvent) => {
+  const kind = getEventKind(matchEvent);
 
-  // 2. EQUIPO: No mostramos equipo en tiempo añadido (opcional, según prefieras)
-  const isHome = matchEvent.isHome ?? true;
-  const teamName = isAddedTime
-    ? undefined
-    : isHome
-      ? event.homeTeam.name
-      : event.awayTeam.name;
+  if (matchEvent.title) return matchEvent.title;
 
-  // 3. JUGADOR Y CAMBIOS
-  const isSub =
-    matchEvent.type === MatchEventType.Substitution ||
-    matchEvent.type === 'Substitution';
+  if (kind === 'substitution') {
+    return matchEvent.playerIn || 'Cambio';
+  }
 
-  // Determinamos el nombre a mostrar:
-  // Si es tiempo añadido -> vacío
-  // Si es cambio -> lógica de In/Out
-  // Si es normal -> matchEvent.player
-  const finalPlayerName = isAddedTime
-    ? ''
-    : isSub && matchEvent.playerIn
-      ? `${matchEvent.playerIn} (entra) por ${matchEvent.playerOut}`
-      : matchEvent.player;
+  if (kind === 'added_time') {
+    return matchEvent.label || 'Tiempo añadido';
+  }
 
-  const hasAssist = !!matchEvent.assist && matchEvent.assist !== '-';
+  if (kind === 'period') {
+    return matchEvent.label || 'Parte';
+  }
 
-  return (
+  return matchEvent.player || matchEvent.label || 'Acción';
+};
+
+const getSecondaryText = (matchEvent: MatchEvent) => {
+  if (matchEvent.subtitle) return matchEvent.subtitle;
+
+  const kind = getEventKind(matchEvent);
+
+  if (kind === 'goal' && matchEvent.assist) {
+    return `Asist. ${matchEvent.assist}`;
+  }
+
+  if (kind === 'goal' && matchEvent.ownGoal) {
+    return 'Gol en propia';
+  }
+
+  if (kind === 'goal' && matchEvent.isPenalty && !matchEvent.isPenaltyShootout) {
+    return 'De penalti';
+  }
+
+  if (kind === 'card') {
+    if (matchEvent.cardType === 'Red') {
+      return 'Tarjeta roja';
+    }
+
+    if (matchEvent.cardType === 'YellowRed') {
+      return 'Doble amarilla';
+    }
+
+    return 'Tarjeta amarilla';
+  }
+
+  if (kind === 'missed_penalty') {
+    return 'Penalti fallado';
+  }
+
+  if (kind === 'substitution' && matchEvent.playerOut) {
+    return `Sale ${matchEvent.playerOut}`;
+  }
+
+  return undefined;
+};
+
+const getDetailText = (matchEvent: MatchEvent) => {
+  const kind = getEventKind(matchEvent);
+
+  if (kind === 'var') {
+    return matchEvent.detail;
+  }
+
+  if (matchEvent.subtitle && matchEvent.detail) {
+    return matchEvent.detail;
+  }
+
+  return undefined;
+};
+
+const SideContent = ({
+  align,
+  title,
+  subtitle,
+  detail,
+  score,
+  isCancelled,
+}: {
+  align: 'left' | 'right';
+  title: string;
+  subtitle?: string;
+  detail?: string;
+  score?: string | null;
+  isCancelled?: boolean;
+}) => (
+  <div
+    className={`min-w-0 rounded-2xl border border-border/70 bg-surface/70 px-3 py-2 ${
+      align === 'right' ? 'text-right' : 'text-left'
+    }`}
+  >
     <div
-      className={`
-        grid items-center gap-3 rounded-xl px-4 py-3 shadow-sm mb-3
-        border border-border bg-surface/80 backdrop-blur-sm
-        hover:bg-background hover:shadow-md transition
-        ${isPenalties ? 'grid-cols-[auto_1fr_auto]' : 'grid-cols-[auto_auto_1fr_auto]'} 
-        ${isAddedTime ? 'opacity-90' : ''} 
-      `}
+      className={`truncate text-sm font-semibold text-text ${
+        isCancelled ? 'line-through decoration-text/60' : ''
+      }`}
+      title={title}
     >
-      {!isPenalties && <MinuteBadge label={displayTime as string} />}
-
-      {/* Solo renderizamos el contenedor del icono si NO es tiempo añadido */}
-      {!isAddedTime ? (
-        <div className="shrink-0 flex items-center justify-center">
-          <div className="w-7 h-7 flex items-center justify-center rounded-full bg-background border border-border text-text overflow-hidden">
-            <EventIcons type={matchEvent.type} cardType={matchEvent.cardType} />
-          </div>
-        </div>
-      ) : (
-        /* Div vacío para mantener el hueco del grid si prefieres, 
-           o puedes ajustar el grid-cols dinámicamente */
-        <div className="w-0" />
-      )}
-
+      {title}
+    </div>
+    {subtitle && (
+      <div className="mt-0.5 truncate text-xs text-muted" title={subtitle}>
+        {subtitle}
+      </div>
+    )}
+    {detail && (
+      <div className="mt-0.5 truncate text-[11px] text-muted/80" title={detail}>
+        {detail}
+      </div>
+    )}
+    {score && (
       <div
-        className={`${isAddedTime ? 'flex justify-center text-center' : ''} min-w-0 flex-1`}
+        className={`mt-2 inline-flex rounded-full border border-brand/20 bg-brand/10 px-2 py-0.5 text-[11px] font-semibold text-brand ${
+          align === 'right' ? 'ml-auto' : ''
+        }`}
       >
-        <ActionData
-          playerName={finalPlayerName}
-          teamName={teamName}
-          assist={!isAddedTime && hasAssist ? matchEvent.assist : undefined}
+        {score}
+      </div>
+    )}
+  </div>
+);
+
+const NeutralContent = ({
+  title,
+  subtitle,
+  detail,
+  matchEvent,
+}: {
+  title: string;
+  subtitle?: string;
+  detail?: string;
+  matchEvent: MatchEvent;
+}) => (
+  <div className="flex justify-center">
+    <div className="inline-flex max-w-full items-center gap-2 rounded-full border border-border/70 bg-surface/70 px-4 py-2 text-center">
+      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-border bg-background">
+        <EventIcons
+          type={matchEvent.type}
+          kind={getEventKind(matchEvent)}
+          cardType={matchEvent.cardType}
+        />
+      </span>
+      <span className="min-w-0">
+        <span className="block truncate text-sm font-semibold text-text">
+          {title}
+        </span>
+        {subtitle && (
+          <span className="block truncate text-xs text-muted">{subtitle}</span>
+        )}
+        {detail && (
+          <span className="block truncate text-[11px] text-muted/80">
+            {detail}
+          </span>
+        )}
+      </span>
+    </div>
+  </div>
+);
+
+export const ActionRow: React.FC<ActionRowProps> = ({ matchEvent }) => {
+  const kind = getEventKind(matchEvent);
+  const side = getEventSide(matchEvent);
+  const minuteLabel = parseMinute(matchEvent.timeStr ?? matchEvent.minute).label;
+  const title = getPrimaryText(matchEvent);
+  const subtitle = getSecondaryText(matchEvent);
+  const detail = getDetailText(matchEvent);
+  const score =
+    kind === 'goal' || matchEvent.isPenaltyShootout
+      ? formatScore(matchEvent.score)
+      : null;
+
+  if (side === 'neutral' || kind === 'added_time') {
+    return (
+      <div className="py-1">
+        <NeutralContent
+          title={title}
+          subtitle={subtitle}
+          detail={detail}
+          matchEvent={matchEvent}
         />
       </div>
+    );
+  }
 
-      <ScoreBadge score={matchEvent.score} />
+  const leftContent =
+    side === 'home' ? (
+      <SideContent
+        align="right"
+        title={title}
+        subtitle={subtitle}
+        detail={detail}
+        score={score}
+        isCancelled={matchEvent.isCancelled && kind !== 'var'}
+      />
+    ) : (
+      <div />
+    );
+
+  const rightContent =
+    side === 'away' ? (
+      <SideContent
+        align="left"
+        title={title}
+        subtitle={subtitle}
+        detail={detail}
+        score={score}
+        isCancelled={matchEvent.isCancelled && kind !== 'var'}
+      />
+    ) : (
+      <div />
+    );
+
+  return (
+    <div className="grid grid-cols-[minmax(0,1fr)_4.25rem_minmax(0,1fr)] items-start gap-3 py-1">
+      {leftContent}
+
+      <div className="flex flex-col items-center gap-2">
+        <MinuteBadge label={minuteLabel || `${matchEvent.minute}'`} />
+        <div className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-background text-text shadow-sm">
+          <EventIcons
+            type={matchEvent.type}
+            kind={kind}
+            cardType={matchEvent.cardType}
+          />
+        </div>
+      </div>
+
+      {rightContent}
     </div>
   );
 };

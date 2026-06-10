@@ -1,5 +1,5 @@
 import { LeagueListButton } from '@/components/ui/buttons/LeagueListButton';
-import { CompetitionOption } from '@/hooks/useCompetitionOptions';
+import { CompetitionOption } from '@/types/domain/competitions';
 import { groupCompetitionOptionsByCountry } from '@/utils/domain/competition';
 import { LeagueName } from '@/utils/domain/sports';
 import { ChevronDown } from 'lucide-react';

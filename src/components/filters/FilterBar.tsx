@@ -1,81 +1,83 @@
-'use client';
+﻿'use client';
 
 import { useCompetitionOptions } from '@/hooks/useCompetitionOptions';
-import { useSportsFilter } from '@/store/sportsLeagueFilterStore';
-import {
-  SPORT_ID_MAP,
-  SPORTS_LIST_ITEMS,
-  SPORTS_MAP,
-} from '@/utils/domain/sports';
-import { useMemo } from 'react';
+import { useEventFiltersNavigation } from '@/hooks/useEventFiltersNavigation';
+import { useSportsOptions } from '@/hooks/useSportsOptions';
+import { CompetitionOption } from '@/types/domain/competitions';
+import { EventFilters } from '@/types/domain/filters';
+import { SportOption } from '@/types/domain/sports';
 import { DateFilter } from './date/DateFilter';
 import { LeaguesFilter } from './LeagueFilter';
 import { SportsFilter } from './SportsFilter';
 
 interface FilterBarProps {
-  mode: 'events' | 'results';
+  filters: EventFilters;
+  initialCompetitionOptions?: CompetitionOption[];
+  initialSportsOptions?: SportOption[];
 }
 
-export default function FilterBar({ mode }: FilterBarProps) {
+export function FilterBar({
+  filters,
+  initialCompetitionOptions,
+  initialSportsOptions,
+}: FilterBarProps) {
   const {
-    selectedSport,
     setSelectedSport,
-    selectedLeague,
-    selectedCompetitionId,
     setSelectedLeague,
-  } = useSportsFilter();
+    setSelectedFrom,
+    setSelectedTo,
+    setDateRange,
+    clearDates,
+  } = useEventFiltersNavigation(filters);
+  const { data: competitions = [] } = useCompetitionOptions(
+    filters.sportId ?? undefined,
+    initialCompetitionOptions,
+  );
+  const { data: sports = [] } = useSportsOptions(initialSportsOptions);
 
-  const sportSlug = selectedSport ? SPORTS_MAP[selectedSport] : undefined;
-  const sportId = sportSlug ? SPORT_ID_MAP[sportSlug] : undefined;
-
-  const { data: competitions = [] } = useCompetitionOptions(sportId);
-
-  const { staticLeagues, dynamicLeagueOptions } = useMemo(() => {
-    if (competitions.length > 0) {
-      return { staticLeagues: [], dynamicLeagueOptions: competitions };
-    }
-
-    return {
-      staticLeagues:
-        SPORTS_LIST_ITEMS.find((sport) => sport.name === selectedSport)
-          ?.leagues || [],
-      dynamicLeagueOptions: [],
-    };
-  }, [competitions, selectedSport]);
-
-  const hasLeagues =
-    selectedSport &&
-    (staticLeagues.length > 0 || dynamicLeagueOptions.length > 0);
+  const hasLeagues = competitions.length > 0;
 
   return (
     <div className="flex flex-col w-full">
-      <SportsFilter selectedSport={selectedSport} onSelect={setSelectedSport} />
+      <SportsFilter
+        sports={sports}
+        selectedSport={filters.sport}
+        onSelect={setSelectedSport}
+      />
 
       <div
         className={`
         mt-3 flex flex-col
-        ${mode === 'results' && hasLeagues ? 'gap-3' : ''}
-        lg:flex-row lg:items-start 
+        ${filters.mode === 'results' && hasLeagues ? 'gap-3' : ''}
+        lg:flex-row lg:items-start
         ${hasLeagues ? 'lg:justify-between' : 'lg:justify-start'}
-        ${mode === 'results' && hasLeagues ? 'lg:gap-3' : ''} 
+        ${filters.mode === 'results' && hasLeagues ? 'lg:gap-3' : ''}
       `}
       >
         {hasLeagues && (
           <div className="w-full min-w-0 order-1">
-            {/* order-1 asegura que va primero */}
             <LeaguesFilter
-              leagues={staticLeagues}
-              leagueOptions={dynamicLeagueOptions}
-              selectedLeague={selectedLeague}
-              selectedCompetitionId={selectedCompetitionId}
+              leagues={[]}
+              leagueOptions={competitions}
+              selectedLeague={filters.selectedLeague}
+              selectedCompetitionId={filters.competitionId}
               onSelect={setSelectedLeague}
             />
           </div>
         )}
 
-        {mode === 'results' && (
+        {filters.mode === 'results' && (
           <div className="w-full lg:w-auto order-2">
-            <DateFilter />
+            <DateFilter
+              selectedFrom={filters.from}
+              selectedTo={filters.to}
+              clearDates={clearDates}
+              setSelectedFrom={setSelectedFrom}
+              setSelectedTo={setSelectedTo}
+              setDateRange={setDateRange}
+              selectedSport={filters.sport}
+              selectedLeague={filters.selectedLeague}
+            />
           </div>
         )}
       </div>

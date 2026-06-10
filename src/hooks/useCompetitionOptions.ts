@@ -1,34 +1,20 @@
-import { createClient } from '@/utils/supabase/client';
-import { normalizeCountryLabel } from '@/utils/domain/country';
+import { getCompetitionsBySport } from '@/services/browser/competitions.service';
+import { CompetitionOption } from '@/types/domain/competitions';
 import { useQuery } from '@tanstack/react-query';
 
-export interface CompetitionOption {
-  id: number;
-  name: string;
-  country?: string;
-}
+export type { CompetitionOption };
 
-export const useCompetitionOptions = (sportId?: number) => {
+export const useCompetitionOptions = (
+  sportId?: number,
+  initialData?: CompetitionOption[],
+) => {
   return useQuery({
     queryKey: ['competitions-by-sport', sportId],
     enabled: !!sportId,
-    queryFn: async (): Promise<CompetitionOption[]> => {
-      const supabase = createClient();
-      const { data, error } = await supabase
-        .from('competitions')
-        .select('id, name, country')
-        .eq('sport_id', sportId!)
-        .order('country', { ascending: true })
-        .order('name', { ascending: true });
-
-      if (error) throw error;
-
-      return (data || []).map((competition) => ({
-        id: competition.id,
-        name: competition.name,
-        country: normalizeCountryLabel(competition.country),
-      }));
-    },
+    queryFn: async (): Promise<CompetitionOption[]> =>
+      getCompetitionsBySport(sportId!),
+    initialData,
+    refetchOnMount: false,
     staleTime: 1000 * 60 * 5,
   });
 };

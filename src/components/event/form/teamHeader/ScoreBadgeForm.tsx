@@ -8,7 +8,7 @@ interface Props {
   event: MatchData;
 }
 
-export default function ScoreBadgeForm({ event }: Props) {
+export function ScoreBadgeForm({ event }: Props) {
   const isNS = event.status === 'NS';
   const isFT =
     event.status === 'FT' ||
@@ -19,7 +19,7 @@ export default function ScoreBadgeForm({ event }: Props) {
   const isLive = !isNS && !isFT;
 
   // 1. GESTIÓN DE FECHAS con Day.js
-  const dateObj = parseKickoff(event.kickoff);
+  const dateObj = parseKickoff(event.kickoff, event.kickoffIso);
   const formattedTime = dateObj ? dateObj.format('HH:mm') : '--:--';
   // Formato: "dom. 1 jun" (minúsculas por defecto en dayjs es)
   const formattedDate = dateObj ? dateObj.locale('es').format('ddd D MMM') : '';

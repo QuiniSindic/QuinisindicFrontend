@@ -1,69 +1,88 @@
 'use client';
+
 import FootballBall from '@/components/common/icons/FootballBallIcon';
 import PenaltyIcon from '@/components/common/icons/PenaltyIcon';
 import PenaltyMissedIcon from '@/components/common/icons/PenaltyMissedIcon';
-import { MatchEventType } from '@/types/domain/events';
-import { ArrowRightLeft, Ban, Circle } from 'lucide-react';
+import { MatchEventKind, MatchEventType } from '@/types/domain/events';
+import { ArrowRightLeft, Ban, Circle, Clock3, Flag } from 'lucide-react';
 
 interface EventIconsProps {
   type: string | number;
-  cardType?: 'Yellow' | 'Red' | string; // Añadimos esta prop
+  kind?: MatchEventKind;
+  cardType?: 'Yellow' | 'Red' | 'YellowRed' | string;
 }
 
-export const EventIcons: React.FC<EventIconsProps> = ({ type, cardType }) => {
-  // Convertimos a string para asegurar comparación
+export const EventIcons: React.FC<EventIconsProps> = ({
+  type,
+  kind,
+  cardType,
+}) => {
   const typeStr = String(type);
+
+  if (kind === 'missed_penalty') {
+    return <PenaltyMissedIcon className="h-4 w-4 text-red-500" />;
+  }
+
+  if (kind === 'added_time') {
+    return <Clock3 className="h-4 w-4 text-brand" />;
+  }
+
+  if (kind === 'period') {
+    return <Flag className="h-4 w-4 text-muted" />;
+  }
+
+  if (kind === 'var') {
+    return <Ban className="h-4 w-4 text-text" />;
+  }
 
   switch (typeStr) {
     case MatchEventType.Goal:
     case 'Goal':
-      return <FootballBall className="w-4 h-4 text-brand" />;
+      return <FootballBall className="h-4 w-4 text-brand" />;
 
     case MatchEventType.PenaltyGoal:
     case 'PenaltyGoal':
-      return <PenaltyIcon className="w-4 h-4 text-green-600 fill-current" />;
+      return <PenaltyIcon className="h-4 w-4 fill-current text-green-600" />;
 
+    case MatchEventType.MissedPenalty:
     case MatchEventType.FailedPenalty:
     case 'MissedPenalty':
-      return <PenaltyMissedIcon className="w-4 h-4 text-red-500" />;
+      return <PenaltyMissedIcon className="h-4 w-4 text-red-500" />;
 
-    case MatchEventType.Card:
+    case MatchEventType.Card: {
+      if (cardType === 'YellowRed') {
+        return (
+          <span className="relative inline-flex h-4 w-4 items-center justify-center">
+            <span className="absolute left-0 inline-block h-4 w-2.5 rounded-xs border border-yellow-600 bg-yellow-400" />
+            <span className="absolute right-0 inline-block h-4 w-2.5 rounded-xs border border-red-700 bg-red-500" />
+          </span>
+        );
+      }
+
       const isRed = cardType === 'Red';
       return (
         <span
-          className={`inline-block w-3 h-4 rounded-xs border ${
+          className={`inline-block h-4 w-3 rounded-xs border ${
             isRed
-              ? 'bg-red-500 border-red-700'
-              : 'bg-yellow-400 border-yellow-600'
+              ? 'border-red-700 bg-red-500'
+              : 'border-yellow-600 bg-yellow-400'
           }`}
         />
       );
+    }
 
     case 'AddedTime':
-      return null;
+      return <Clock3 className="h-4 w-4 text-brand" />;
 
     case MatchEventType.Substitution:
     case 'Substitution':
-      return <ArrowRightLeft className="w-4 h-4 text-brand" />;
+      return <ArrowRightLeft className="h-4 w-4 text-brand" />;
 
     case 'Var':
-      return <Ban className="w-4 h-4 text-text" />;
+    case 'VAR':
+      return <Ban className="h-4 w-4 text-text" />;
 
     default:
-      return <Circle className="w-2 h-2 text-muted" />;
+      return <Circle className="h-2 w-2 text-muted" />;
   }
 };
-
-export function SidePill({ score }: { score?: string }) {
-  if (!score) return null;
-  return (
-    <span
-      className="
-        inline-flex items-center gap-1 rounded-full px-2 py-0.5
-        text-xs font-semibold border border-border bg-surface text-text
-      "
-    >
-      {score}
-    </span>
-  );
-}

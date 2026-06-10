@@ -1,4 +1,5 @@
 import { MatchData } from '@/types/domain/events';
+import { getTeamLogoSrc } from '@/utils/domain/events';
 import Image from 'next/image';
 
 interface EventTeamsProps {
@@ -14,17 +15,18 @@ export default function EventTeamsData({
 }: EventTeamsProps) {
   return (
     <>
-      {/* Vista para PC (pantallas grandes) */}
+      {/* DESKTOP */}
       <div className="hidden sm:grid grid-cols-[1fr_40px_80px_40px_1fr] items-center mt-4">
         <span className="text-base font-medium text-right mt-2 text-text">
           {event.homeTeam.name}
         </span>
 
         <Image
-          src={`${event.homeTeam.img as string}` || '/globe.svg'}
+          src={getTeamLogoSrc(event.homeTeam.img)}
           alt={event.homeTeam.abbr}
           width={28}
           height={28}
+          sizes="28px"
           className="justify-self-end"
         />
 
@@ -37,10 +39,11 @@ export default function EventTeamsData({
         </div>
 
         <Image
-          src={`${event.awayTeam.img as string}` || '/globe.svg'}
+          src={getTeamLogoSrc(event.awayTeam.img)}
           alt={event.awayTeam.abbr}
           width={28}
           height={28}
+          sizes="28px"
           className="justify-self-start"
         />
 
@@ -49,14 +52,15 @@ export default function EventTeamsData({
         </span>
       </div>
 
-      {/* Vista para móvil */}
+      {/* MOBILE */}
       <div className="sm:hidden w-full grid grid-cols-[1fr_auto_1fr] items-center gap-2 mt-2">
         <div className="min-w-0 flex items-center gap-2">
           <Image
-            src={`${event.homeTeam.img as string}` || '/globe.svg'}
+            src={getTeamLogoSrc(event.homeTeam.img)}
             alt={event.homeTeam.abbr}
             width={20}
             height={20}
+            sizes="20px"
           />
           <span className="text-sm font-medium text-text truncate">
             {event.homeTeam.name}
@@ -76,10 +80,11 @@ export default function EventTeamsData({
             {event.awayTeam.name}
           </span>
           <Image
-            src={`${event.awayTeam.img as string}` || '/globe.svg'}
+            src={getTeamLogoSrc(event.awayTeam.img)}
             alt={event.awayTeam.name}
             width={20}
             height={20}
+            sizes="20px"
           />
         </div>
       </div>

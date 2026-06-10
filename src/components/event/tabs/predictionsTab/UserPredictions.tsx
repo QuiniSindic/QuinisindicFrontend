@@ -1,13 +1,13 @@
 'use client';
 
 import { useGetUsersUsernames } from '@/hooks/useUsers';
-import { Prediction } from '@/types/database/table';
+import { PredictionRow } from '@/types/domain/prediction';
+import { parseDateTime } from '@/utils/common/date';
 import { Avatar, Spinner } from '@heroui/react';
-import dayjs from 'dayjs';
 import { PredictionScoreBadge } from './PredictionScoreBadge';
 
 interface UsersPredictionsProps {
-  predictions: Prediction[];
+  predictions: PredictionRow[];
 }
 
 const UsersPredictions = ({ predictions }: UsersPredictionsProps) => {
@@ -52,7 +52,7 @@ const UsersPredictions = ({ predictions }: UsersPredictionsProps) => {
             <li key={prediction.id} className="p-3 sm:p-4">
               <div className="flex items-center gap-3">
                 <Avatar
-                  src={undefined} // TODO hacer algo con una foto de perfil
+                  src={undefined}
                   classNames={{
                     base: 'bg-brand text-brand-contrast flex items-center justify-center',
                     icon: 'text-brand-contrast',
@@ -76,7 +76,9 @@ const UsersPredictions = ({ predictions }: UsersPredictionsProps) => {
                   </div>
 
                   <p className="mt-0.5 text-xs text-muted">
-                    {dayjs(prediction.created_at).format('DD/MM/YYYY HH:mm')}
+                    {parseDateTime(prediction.created_at)?.format(
+                      'DD/MM/YYYY HH:mm',
+                    ) ?? '-'}
                   </p>
                 </div>
               </div>

@@ -4,6 +4,7 @@ export interface PredictionView {
   username: string;
   matchId: number;
   kickoff: string;
+  kickoffIso?: string | null;
   matchStatus: string;
   homeTeam: string;
   awayTeam: string;
@@ -17,6 +18,21 @@ export interface PredictionView {
   competitionName: string;
   points: number | null;
   createdAt: string;
+}
+
+export interface PredictionRow {
+  id: string;
+  user_id: string;
+  match_id: number;
+  competition_id: number | null;
+  edition_id: number | null;
+  sport_id: number | null;
+  home_score: number;
+  away_score: number;
+  points: number | null;
+  status: string | null;
+  created_at: string | null;
+  updated_at: string | null;
 }
 
 export interface PredictionPayload {

@@ -1,14 +1,10 @@
 import { useTheme } from 'next-themes';
-import { useEffect, useState } from 'react';
 
 export function useThemeMode() {
-  const [mounted, setMounted] = useState(false);
   const { theme, setTheme, systemTheme } = useTheme();
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
+  const mounted =
+    theme !== undefined && (theme !== 'system' || systemTheme !== undefined);
   const currentTheme = theme === 'system' ? systemTheme : theme;
   const isDark = currentTheme === 'dark';
 

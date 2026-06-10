@@ -1,34 +1,39 @@
-'use client';
+﻿'use client';
+
 import { useCompetitionOptions } from '@/hooks/useCompetitionOptions';
-import { useSportsFilter } from '@/store/sportsLeagueFilterStore';
-import {
-  LeagueName,
-  SPORT_ID_MAP,
-  SportName,
-  SPORTS_MAP,
-} from '@/utils/domain/sports';
+import { useEventFiltersNavigation } from '@/hooks/useEventFiltersNavigation';
+import { useSportsOptions } from '@/hooks/useSportsOptions';
+import { CompetitionOption } from '@/types/domain/competitions';
+import { EventFilters } from '@/types/domain/filters';
+import { SportOption } from '@/types/domain/sports';
+import { LeagueName } from '@/utils/domain/sports';
 import { SportsListDesktop } from './SportsListDesktop';
 import { SportsListMobile } from './SportsListMobile';
 
-export default function SportsList() {
-  const {
-    selectedSport,
-    setSelectedSport,
-    selectedLeague,
-    selectedCompetitionId,
-    setSelectedLeague,
-  } = useSportsFilter();
+interface SportsListProps {
+  filters: EventFilters;
+  initialCompetitionOptions?: CompetitionOption[];
+  initialSportsOptions?: SportOption[];
+}
 
-  const sportSlug = selectedSport ? SPORTS_MAP[selectedSport] : undefined;
-  const sportId = sportSlug ? SPORT_ID_MAP[sportSlug] : undefined;
-
-  const { data: leagueOptions = [] } = useCompetitionOptions(sportId);
+export function SportsList({
+  filters,
+  initialCompetitionOptions,
+  initialSportsOptions,
+}: SportsListProps) {
+  const { setSelectedSport, setSelectedLeague } =
+    useEventFiltersNavigation(filters);
+  const { data: leagueOptions = [] } = useCompetitionOptions(
+    filters.sportId ?? undefined,
+    initialCompetitionOptions,
+  );
+  const { data: sports = [] } = useSportsOptions(initialSportsOptions);
 
   const handleLeagueSelect = (league: LeagueName | null, leagueId?: number) => {
     setSelectedLeague(league, leagueId);
   };
 
-  const toggleSport = (sport: SportName) => {
+  const toggleSport = (sport: SportOption) => {
     setSelectedSport(sport);
   };
 
@@ -36,9 +41,10 @@ export default function SportsList() {
     <>
       {/* Versión para pantallas pequeñas (mobile) */}
       <SportsListMobile
-        selectedSport={selectedSport}
-        selectedLeague={selectedLeague}
-        selectedCompetitionId={selectedCompetitionId}
+        sports={sports}
+        selectedSport={filters.sport}
+        selectedLeague={filters.selectedLeague}
+        selectedCompetitionId={filters.competitionId}
         leagueOptions={leagueOptions}
         toggleSport={toggleSport}
         handleLeagueSelect={handleLeagueSelect}
@@ -46,9 +52,10 @@ export default function SportsList() {
 
       {/* Versión para pantallas grandes (desktop) */}
       <SportsListDesktop
-        selectedSport={selectedSport}
-        selectedLeague={selectedLeague}
-        selectedCompetitionId={selectedCompetitionId}
+        sports={sports}
+        selectedSport={filters.sport}
+        selectedLeague={filters.selectedLeague}
+        selectedCompetitionId={filters.competitionId}
         leagueOptions={leagueOptions}
         toggleSport={toggleSport}
         handleLeagueSelect={handleLeagueSelect}

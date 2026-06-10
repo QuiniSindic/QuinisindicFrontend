@@ -1,67 +1,65 @@
-'use client';
-
-import { useAuth } from '@/hooks/logic/useAuth';
-import { getAllPredictionsV2 } from '@/services/predictions.service';
-import { PredictionView } from '@/types/domain/prediction';
-import { formatKickoff } from '@/utils/common/date';
+import { LocalDateTime } from '@/components/common/LocalDateTime';
+import { getServerCurrentUser } from '@/services/server/auth.service';
+import { getServerPredictionsFeed } from '@/services/server/predictions.service';
+import { SearchParams } from '@/types/domain/search-params';
 import {
   getResultDisplay,
   getStatusBucket,
   getStatusLabel,
   groupBySportAndLeague,
-  PredictionStatusFilter,
 } from '@/utils/domain/events';
-import { Spinner } from '@heroui/react';
-import { useQuery } from '@tanstack/react-query';
+import {
+  buildPredictionsSearchParams,
+  parsePredictionsFilters,
+} from '@/utils/domain/filterParams';
 import { ChevronDown } from 'lucide-react';
+import { Metadata } from 'next';
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
 
-type SortMode = 'status' | 'kickoff_desc' | 'kickoff_asc';
+// TODO: Learn SEO
+export const metadata: Metadata = {
+  title: 'Quinisindic | Predicciones',
+};
 
-export default function PredictionsPage() {
-  const { data: user, isLoading: authLoading } = useAuth();
-  const [view, setView] = useState<'mine' | 'community'>('mine');
-  const [statusFilter, setStatusFilter] =
-    useState<PredictionStatusFilter>('all');
-  const [sortMode, setSortMode] = useState<SortMode>('status');
+type Props = {
+  searchParams: SearchParams;
+};
 
-  const {
-    data: rows = [],
-    isLoading,
-    isError,
-    error,
-  } = useQuery({
-    queryKey: ['predictions-feed'],
-    queryFn: getAllPredictionsV2,
-    refetchOnWindowFocus: false,
-    staleTime: 60_000,
-  });
-
-  const filteredRows = useMemo(() => {
-    let baseRows: PredictionView[] = rows;
-
-    if (view === 'mine') {
-      if (!user?.id) return [];
-      baseRows = rows.filter((row) => row.userId === user.id);
-    } else if (user?.id) {
-      baseRows = rows.filter((row) => row.userId !== user.id);
-    }
-
-    if (statusFilter === 'all') return baseRows;
-    return baseRows.filter(
-      (row) => getStatusBucket(row.matchStatus) === statusFilter,
-    );
-  }, [rows, view, user?.id, statusFilter]);
-
-  const groups = useMemo(
-    () => groupBySportAndLeague(filteredRows, sortMode),
-    [filteredRows, sortMode],
-  );
-  const errorMessage =
-    error instanceof Error ? error.message : 'Error desconocido';
+export default async function PredictionsPage({ searchParams }: Props) {
+  const filters = parsePredictionsFilters(await searchParams);
+  const [user, rows] = await Promise.all([
+    getServerCurrentUser(),
+    getServerPredictionsFeed(),
+  ]);
 
   const canShowMine = !!user?.id;
+
+  let filteredRows = rows;
+  if (filters.view === 'mine') {
+    filteredRows = user?.id ? rows.filter((row) => row.userId === user.id) : [];
+  } else if (user?.id) {
+    filteredRows = rows.filter((row) => row.userId !== user.id);
+  }
+
+  if (filters.status !== 'all') {
+    filteredRows = filteredRows.filter(
+      (row) => getStatusBucket(row.matchStatus) === filters.status,
+    );
+  }
+
+  const groups = groupBySportAndLeague(filteredRows, filters.sort);
+
+  const withFilters = (
+    patch: Partial<typeof filters>,
+    fallbackPath = '/predictions',
+  ) => {
+    const query = buildPredictionsSearchParams({
+      ...filters,
+      ...patch,
+    }).toString();
+
+    return query ? `${fallbackPath}?${query}` : fallbackPath;
+  };
 
   return (
     <div className="min-h-screen pb-20 bg-background">
@@ -74,29 +72,26 @@ export default function PredictionsPage() {
         </div>
 
         <div className="mt-4 flex w-full p-1 rounded-lg border border-border bg-surface">
-          <button
-            type="button"
-            onClick={() => canShowMine && setView('mine')}
-            disabled={!canShowMine}
-            className={`flex-1 px-4 py-2 rounded-md text-sm transition-colors ${
-              view === 'mine'
+          <Link
+            href={canShowMine ? withFilters({ view: 'mine' }) : '/login'}
+            className={`flex-1 px-4 py-2 rounded-md text-sm transition-colors text-center ${
+              filters.view === 'mine'
                 ? 'bg-brand text-white'
                 : 'text-muted hover:text-text'
             } ${!canShowMine ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
             Mis predicciones
-          </button>
-          <button
-            type="button"
-            onClick={() => setView('community')}
-            className={`flex-1 px-4 py-2 rounded-md text-sm transition-colors ${
-              view === 'community'
+          </Link>
+          <Link
+            href={withFilters({ view: 'community' })}
+            className={`flex-1 px-4 py-2 rounded-md text-sm transition-colors text-center ${
+              filters.view === 'community'
                 ? 'bg-brand text-white'
                 : 'text-muted hover:text-text'
             }`}
           >
             Comunidad
-          </button>
+          </Link>
         </div>
 
         <div className="mt-3 space-y-2">
@@ -109,35 +104,41 @@ export default function PredictionsPage() {
                 { id: 'finished', label: 'Finalizados' },
               ] as const
             ).map((item) => (
-              <button
+              <Link
                 key={item.id}
-                type="button"
-                onClick={() => setStatusFilter(item.id)}
-                className={`flex-1 px-3 py-1.5 rounded-md text-xs sm:text-sm transition-colors ${
-                  statusFilter === item.id
+                href={withFilters({ status: item.id })}
+                className={`flex-1 px-3 py-1.5 rounded-md text-xs sm:text-sm transition-colors text-center ${
+                  filters.status === item.id
                     ? 'bg-brand text-white'
                     : 'text-muted hover:text-text'
                 }`}
               >
                 {item.label}
-              </button>
+              </Link>
             ))}
           </div>
 
-          <div className="inline-flex items-center gap-2">
-            <label htmlFor="predictions-sort" className="text-xs text-muted">
-              Ordenar
-            </label>
-            <select
-              id="predictions-sort"
-              value={sortMode}
-              onChange={(e) => setSortMode(e.target.value as SortMode)}
-              className="h-8 px-2 rounded-lg border border-border bg-surface text-xs text-text"
-            >
-              <option value="status">Por estado</option>
-              <option value="kickoff_asc">Hora (proximos primero)</option>
-              <option value="kickoff_desc">Hora (recientes primero)</option>
-            </select>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-xs text-muted">Ordenar</span>
+            {(
+              [
+                { id: 'status', label: 'Por estado' },
+                { id: 'kickoff_asc', label: 'Proximos primero' },
+                { id: 'kickoff_desc', label: 'Recientes primero' },
+              ] as const
+            ).map((option) => (
+              <Link
+                key={option.id}
+                href={withFilters({ sort: option.id })}
+                className={`px-2.5 py-1 rounded-lg border text-xs transition-colors ${
+                  filters.sort === option.id
+                    ? 'border-brand bg-brand/10 text-brand'
+                    : 'border-border bg-surface text-text'
+                }`}
+              >
+                {option.label}
+              </Link>
+            ))}
           </div>
         </div>
 
@@ -147,31 +148,15 @@ export default function PredictionsPage() {
           </p>
         )}
 
-        {(isLoading || authLoading) && (
-          <div className="min-h-[40vh] flex items-center justify-center">
-            <Spinner label="Cargando predicciones..." variant="wave" />
-          </div>
-        )}
-
-        {!isLoading && !authLoading && isError && (
-          <div className="mt-6 rounded-xl border border-danger/30 bg-danger/10 p-4">
-            <p className="text-sm text-danger">
-              No se pudieron cargar las predicciones: {errorMessage}
-            </p>
-          </div>
-        )}
-
-        {!isLoading && !authLoading && !isError && groups.length === 0 && (
+        {groups.length === 0 ? (
           <div className="mt-8 rounded-xl border border-border bg-surface p-5 text-center">
             <p className="text-sm text-muted">
-              {view === 'mine'
+              {filters.view === 'mine'
                 ? 'Aun no tienes predicciones guardadas.'
                 : 'Aun no hay predicciones de otros usuarios.'}
             </p>
           </div>
-        )}
-
-        {!isLoading && !authLoading && !isError && groups.length > 0 && (
+        ) : (
           <div className="mt-6 space-y-6">
             {groups.map((sportGroup) => (
               <section
@@ -233,7 +218,11 @@ export default function PredictionsPage() {
                                     {prediction.awayTeam}
                                   </p>
                                   <span className="text-[11px] text-muted whitespace-nowrap">
-                                    {formatKickoff(prediction.kickoff)}
+                                    <LocalDateTime
+                                      value={prediction.kickoffIso ?? prediction.kickoff}
+                                      format="DD/MM/YY HH:mm"
+                                      fallback="-"
+                                    />
                                   </span>
                                 </div>
 
